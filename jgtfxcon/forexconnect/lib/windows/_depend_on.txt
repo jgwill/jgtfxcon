@@ -1,0 +1,11 @@
+ForexConnect.dll
+quotesmgr2.dll
+pricehistorymgr.dll
+USER32.dll
+MSVCP140.dll
+python37.dll
+VCRUNTIME140.dll
+api-ms-win-crt-runtime-l1-1-0.dll
+api-ms-win-crt-stdio-l1-1-0.dll
+api-ms-win-crt-heap-l1-1-0.dll
+KERNEL32.dll

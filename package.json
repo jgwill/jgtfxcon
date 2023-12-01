@@ -1,0 +1,31 @@
+{
+  "name": "jgtfxcon",
+  "version": "0.1.85",
+  "description": "Enhanced PDS Services",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "bash pypi-conda-gaia-env.sh",
+    "build": "make dist",
+    "release": "make dist && twine upload dist/*",
+    "publish": "twine upload dist/*",
+    "build-release-by-docker-DEPRECATED": "bash build-by-docker.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jgwill/jgtfxcon.git"
+  },
+  "keywords": [
+    "jgt",
+    "jgtpy"
+  ],
+  "author": "Guillaume Isabelle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jgwill/jgtfxcon/issues"
+  },
+  "homepage": "https://github.com/jgwill/jgtfxcon#readme"
+}

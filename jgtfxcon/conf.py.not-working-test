@@ -1,0 +1,16 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
+
+
+
+
+
+
+
+from sphinx.ext.autodoc import between
+def setup(app):
+    # Register a sphinx.ext.autodoc.between listener to ignore everything
+    # between lines that contain the word "SKIP"
+    app.connect('autodoc-process-docstring', between('^.*SKIP.*$', exclude=True))
+
