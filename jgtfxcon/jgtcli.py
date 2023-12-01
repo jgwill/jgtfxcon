@@ -1,4 +1,4 @@
-import jgtpy
+import jgtfxcon
 
 from . import jgtconstants as constants
 from . import jgtfxcommon
@@ -35,7 +35,7 @@ def main():
     if args.dateto:
         date_to = args.dateto.replace('/', '.')
 
-    process_cds=args.cds
+    
     output=False
     compress=False
     verbose_level = args.verbose
@@ -43,9 +43,7 @@ def main():
     if verbose_level == 0:
         quiet=True
     print("Verbose level : " + str(verbose_level))
-    if process_cds:
-        print("Processing CDS")
-        output=True
+
     if args.compress:
         compress = args.compress
         output = True # in case
@@ -71,7 +69,6 @@ def main():
                 if output:
                     fpath = pds.getPH2file(instrument, timeframe, quotes_count, date_from, date_to, False, quiet, compress)
                     print_quiet(quiet, fpath)
-                    createCDS_for_main(instrument, timeframe, quiet, verbose_level)
                 else:
                     p = pds.getPH(instrument, timeframe, quotes_count, date_from, date_to, False, quiet)
                     if verbose_level > 0:
@@ -81,7 +78,7 @@ def main():
         jgtfxcommon.print_exception(e)
 
     try:
-        jgtpy.off()
+        jgtfxcon.off()
     except Exception as e:
         jgtfxcommon.print_exception(e)
 
@@ -91,18 +88,6 @@ def main():
 # print("")
 # #input("Done! Press enter key to exit\n")
 
-def createCDS_for_main(instrument, timeframe, quiet, verbose_level=0):
-    # implementation goes here
-    from jgtpy import JGTCDS as cds
-    col2remove=constants.columns_to_remove
-    config = jgtfxcommon.readconfig()
-    if 'columns_to_remove' in config:  # read it from config otherwise
-        col2remove = config['columns_to_remove']
-    quietting=True
-    if verbose_level> 1:
-        quietting=False
-    cdspath=cds.createFromPDSFileToCDSFile(instrument,timeframe,col2remove,quietting)
-    print_quiet(quiet,cdspath)
 
 
 

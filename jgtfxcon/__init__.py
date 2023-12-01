@@ -40,7 +40,7 @@ with warnings.catch_warnings():
 class NotCompatibleException(Exception):
     pass
 
-#from jgtpy.common_samples import common_samples
+#from jgtfxcon.common_samples import common_samples
 from .jgtetl import svc_offset_dt_by_tf as etl_offset_dt_by_tf,offsetdt as etl_offsetdt
 from .JGTCore import __version__ #,json2dict,jsonfile2prop,json2prop,jsonfile2dict,d2p,fixdtindf,offsetdt
 #from .JGTConfig import getenv,setreal,setdemo,env
@@ -54,7 +54,7 @@ if platform.system() == 'Linux':
   try:
      from . import forexconnect
   except:
-     from jgtpy import forexconnect 
+     from jgtfxcon import forexconnect 
   os.chdir(origin_work_dir)   
 
 else:
@@ -62,7 +62,7 @@ else:
     try:
       from . import forexconnect       
     except:
-     from jgtpy import forexconnect 
+     from jgtfxcon import forexconnect 
   except:
     print("----------------------------------------------------------------")
     print("---Failed to load forexconnect --- Please Install forexconnect")
@@ -92,20 +92,18 @@ def h(instrument,timeframe,quote_count=335,start=None,end=None,quiet=True):
         fpath,df = ph2fs(instrument,timeframe,quote_count,start,end,False,quiet)
         return df
 
-from .JGTIDS import tocds as tocds
-#mk_fn,mk_fullpath,getSubscribed,getPH,getPHByRange,tryConnect
-from .JGTCDS import create as createCDS,createByRange,createFromDF,startSession,stopSession,getLast,getPresentBar,getPresentBarAsList,getLastCompletedBarAsList,createFromDF,createFromFile_and_clean_and_save_data as fromfile,createFromFile_and_clean_and_save_data as ff,createFromDF as fp
+# from .JGTIDS import tocds as tocds
+# #mk_fn,mk_fullpath,getSubscribed,getPH,getPHByRange,tryConnect
+# from .JGTCDS import create as createCDS,createByRange,createFromDF,startSession,stopSession,getLast,getPresentBar,getPresentBarAsList,getLastCompletedBarAsList,createFromDF,createFromFile_and_clean_and_save_data as fromfile,createFromFile_and_clean_and_save_data as ff,createFromDF as fp
 
 def help():
-    print(".h(i,t,400)\t\tGet Prices (PDS): \n\t\t\tjgtpy.h(instrument,timeframe,quote_count=335,start=None,end=None,quiet=True)")
+    print(".h(i,t,400)\t\tGet Prices (PDS): \n\t\t\tjgtfxcon.h(instrument,timeframe,quote_count=335,start=None,end=None,quiet=True)")
     print("\t\t\t\t\treturn DataFrame of PDS Type")
     print("\t\t\t\t\t(Will connect and stay connected)")
-    print(".fp(df)\t\t Create CDS from PDS DF \n\t\t\tjgtpy.fp(df [pd.DataFrame])")
-    print("\t\t\t\t\treturn DataFrame of CDS Type")
-    print(".off()\t\t Disconnect (Bugged)\n\t\t\tjgtpy.off()")
+    print(".off()\t\t Disconnect (Bugged)\n\t\t\tjgtfxcon.off()")
 
-# from jgtpy.JGTADS import ads_chart_pto,retrieve_n_chart as ads_retrieve_n_chart
+# from jgtfxcon.JGTADS import ads_chart_pto,retrieve_n_chart as ads_retrieve_n_chart
 
 # from .jgtcli import main as __main__
-#from jgtpy.jgtconstants import *
+#from jgtfxcon.jgtconstants import *
 

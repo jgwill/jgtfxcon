@@ -2,7 +2,7 @@ from . import env,jsonfile2prop,d2p,createByRange
 import pandas as pd
 from functools import reduce
 from . import jgtetl
-# from jgtpy import env 
+
 ctx=d2p(env)
 
 trainsetfnjson=env['trainfnjson'] 

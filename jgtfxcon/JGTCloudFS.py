@@ -4,7 +4,7 @@ import pathlib
 from dropbox.exceptions import AuthError
 import pandas as pd
 #@title Functions DROPBOX Api
-import jgtpy.JGTCore as jko
+import jgtfxcon.JGTCore as jko
 import os
 from pathlib import Path
 import pathlib

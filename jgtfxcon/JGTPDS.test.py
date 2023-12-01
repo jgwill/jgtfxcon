@@ -1,6 +1,6 @@
 # main.py
 
-import jgtpy.JGTPDS as pds
+import jgtfxcon.JGTPDS as pds
 
 pds.stayConnected=True
 

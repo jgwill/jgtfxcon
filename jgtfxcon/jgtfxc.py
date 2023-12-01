@@ -44,7 +44,7 @@ else:
     if platform.system() == 'Linux':
         try:
             # Try to import ForexConnect and fxcorepy from jgtpy.forexconnect
-            from jgtpy.forexconnect import ForexConnect, fxcorepy
+            from jgtfxcon.forexconnect import ForexConnect, fxcorepy
         except ModuleNotFoundError:
             # If that fails, try to import them directly
             try:

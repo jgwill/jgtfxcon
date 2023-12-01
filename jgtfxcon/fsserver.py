@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-#from jgtpy import sc,up,h,stay
+
 
 from subprocess import check_output
 import shlex
