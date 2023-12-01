@@ -1,6 +1,6 @@
-jgtpy/History
+jgtfxcon/History
 config.json
-jgtpy/config.json
+jgtfxcon/config.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -127,5 +127,5 @@ dist-analyze
 books
 docs/_cache*
 docs/_snote*
-jgtpy/*.html
-jgtpy/*.rst
+jgtfxcon/*.html
+jgtfxcon/*.rst

@@ -1,21 +1,19 @@
-#!/usr/bin/env Python
+#!/usr/bin/env python
 """
-jgtpy
+jgtfxcon
 """
 
 from setuptools import find_packages, setup
 
-from jgtpy import __version__ as version
+from jgtfxcon import __version__ as version
+
+
 
 INSTALL_REQUIRES = [
     'pandas>=0.25.1',
     'python-dotenv>=0.19.2',
-    'kaleido>=0.2.1',
-    'matplotlib>=3.3.1',
-    'plotly>=5.18.0',
     'jgtapy>=1.9.12',
-    'dropbox>=11.36.2',
-    'mplfinance>=0.12.10b0'
+    'dropbox>=11.36.2'
 ]
 
 EXTRAS_DEV_LINT = [
@@ -35,18 +33,18 @@ EXTRAS_DEV_DOCS = [
 ]
 
 setup(
-    name='jgtpy',
+    name='jgtfxcon',
     version=version,
-    description='JGTrading Data maker\' Dataframes',
+    description='JGTrading get data from fxconnect Dataframes',
     long_description=open('README.rst').read(),
     author='GUillaume Isabelle',
     author_email='jgi@jgwill.com',
-    url='https://github.com/jgwill/jgtpy',
-    packages=find_packages(include=['jgtpy', 'jgtpy.forexconnect', 'jgtpy.forexconnect.lib', 'jgtpy.forexconnect.lib.windows', 'jgtpy.forexconnect.lib.linux'], exclude=['*test*']),
+    url='https://github.com/jgwill/jgtfxcon',
+    packages=find_packages(include=['jgtfxcon', 'jgtfxcon.forexconnect', 'jgtfxcon.forexconnect.lib', 'jgtfxcon.forexconnect.lib.windows', 'jgtfxcon.forexconnect.lib.linux'], exclude=['*test*']),
     # packages=find_packages(include=['jgtpy', 'jgtpy.forexconnect', 'jgtpy.forexconnect.lib', 'jgtpy.forexconnect.lib.windows', 'jgtpy.forexconnect.lib.linux'], exclude=['*test*']),
     install_requires=INSTALL_REQUIRES,
     entry_points={
-        'console_scripts': ['jgtcli=jgtpy.jgtcli:main'],
+        'console_scripts': ['jgtfxcli=jgtfxcon.jgtcli:main'],
     },
     extras_require={
         'dev': (EXTRAS_DEV_LINT + EXTRAS_DEV_TEST + EXTRAS_DEV_DOCS),

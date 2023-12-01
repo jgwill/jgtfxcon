@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jgtfxcon"
-version = "0.1.85"
+version = "0.1.86"
 authors = [
   { name="Guillaume Isabelle", email="jgi@jgwill.com" },
 ]
@@ -16,6 +16,7 @@ dependencies = [
   'pandas>=0.25.1',
   'python-dotenv>=0.19.2',
   'dropbox>=11.36.2'
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
