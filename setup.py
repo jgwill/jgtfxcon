@@ -11,34 +11,34 @@ from jgtfxcon import __version__ as version
 
 
 INSTALL_REQUIRES = [
-    pandas>=0.25.1,
-    python-dotenv>=0.19.2,
-    jgtapy>=1.9.12,
-    dropbox>=11.36.2,
-    packaging>=23.2,
-    tqdm>=4.66.1,
-    aiohttp,
-    anyio,
-    async-timeout>=4.0.3,
-    PyYAML>=6.0.1,
-    pydantic>=2.5.2,
-    pydantic_core>=2.14.5
+    'pandas>=0.25.1',
+    'python-dotenv>=0.19.2',
+    'jgtapy>=1.9.12',
+    'dropbox>=11.36.2',
+    'packaging>=23.2',
+    'tqdm>=4.66.1',
+    'aiohttp',
+    'anyio',
+    'async-timeout>=4.0.3',
+    'PyYAML>=6.0.1',
+    'pydantic>=2.5.2',
+    'pydantic_core>=2.14.5'
 ]
 
 EXTRAS_DEV_LINT = [
-    flake8>=3.6.0,<3.7.0=
-    isort>=4.3.4,<4.4.0=
+    "flake8>=3.6.0,<3.7.0",
+    "isort>=4.3.4,<4.4.0",
 ]
 
 EXTRAS_DEV_TEST = [
-    coverage=
-    pytest>=3.10=
+    "coverage",
+    "pytest>=3.10",
 ]
 
 EXTRAS_DEV_DOCS = [
-    readme_renderer=
-    sphinx=
-    sphinx_rtd_theme>=0.4.0=
+    "readme_renderer",
+    "sphinx",
+    "sphinx_rtd_theme>=0.4.0",
 ]
 
 setup(
