@@ -1,0 +1,4 @@
+jgtfxcli -i "EUR/USD,AUD/USD,GBP/USD,SPX500,XAU/USD" -t "m5,m15,m30" -c 11000 -o
+jgtfxcli -i "EUR/USD,AUD/USD,GBP/USD,SPX500,XAU/USD" -t "H1,H4,H8,D1" -c 4000 -o
+jgtfxcli -i "EUR/USD,AUD/USD,GBP/USD,SPX500,XAU/USD" -t "W1" -c 1000 -o
+jgtfxcli -i "EUR/USD,AUD/USD,GBP/USD,SPX500,XAU/USD" -t "M1" -c 500 -o

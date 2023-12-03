@@ -67,7 +67,7 @@ def main():
         for instrument in instruments:
             for timeframe in timeframes:
                 if output:
-                    fpath = pds.getPH2file(instrument, timeframe, quotes_count, date_from, date_to, False, quiet, compress)
+                    fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, date_from, date_to, False, quiet, compress)
                     print_quiet(quiet, fpath)
                 else:
                     p = pds.getPH(instrument, timeframe, quotes_count, date_from, date_to, False, quiet)

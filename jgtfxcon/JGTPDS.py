@@ -193,14 +193,16 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
   - str: The file path where the CSV file was saved.
   """
   df=getPH(instrument,timeframe,quote_count,start,end,False,quiet)
-  #print(df)
+  # print("-----------------getPH------------------->>>>")
+  # print(df)
+  # print("-----------------getPH-------------------<<<<<<")
   # Define the file path based on the environment variable or local path
   if df is not None:
       fpath = write_df_to_filestore(df, instrument, timeframe, compressed)
-      return fpath
+      return fpath,df
   else:
       print("No data from getPH from getPH_to_filestore")
-  return ""
+  return "",None
 
 def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=True):
   
@@ -227,6 +229,8 @@ def create_filestore_path(instrument, timeframe,quiet=True, compressed=False):
   
 def getPH2file(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True,compressed=False):
   return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed)
+
+
 def getPH(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True):
   """Get Price History from Broker
 
