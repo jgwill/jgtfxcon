@@ -43,7 +43,7 @@ if platform.system() == 'Windows':
 else: 
     if platform.system() == 'Linux':
         try:
-            # Try to import ForexConnect and fxcorepy from jgtpy.forexconnect
+            # Try to import ForexConnect and fxcorepy from jgtfxcon.forexconnect
             from jgtfxcon.forexconnect import ForexConnect, fxcorepy
         except ModuleNotFoundError:
             # If that fails, try to import them directly

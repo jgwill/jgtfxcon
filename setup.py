@@ -51,7 +51,6 @@ setup(
     author_email='jgi@jgwill.com',
     url='https://github.com/jgwill/jgtfxcon',
     packages=find_packages(include=['jgtfxcon', 'jgtfxcon.forexconnect', 'jgtfxcon.forexconnect.lib', 'jgtfxcon.forexconnect.lib.windows', 'jgtfxcon.forexconnect.lib.linux'], exclude=['*test*']),
-    # packages=find_packages(include=['jgtpy', 'jgtpy.forexconnect', 'jgtpy.forexconnect.lib', 'jgtpy.forexconnect.lib.windows', 'jgtpy.forexconnect.lib.linux'], exclude=['*test*']),
     install_requires=INSTALL_REQUIRES,
     entry_points={
         'console_scripts': ['jgtfxcli=jgtfxcon.jgtcli:main'],

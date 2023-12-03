@@ -1,9 +1,9 @@
-version := $(shell python3 -c 'from jgtpy import __version__; print(__version__)')
+version := $(shell python3 -c 'from jgtfxcon import __version__; print(__version__)')
 
 .PHONY: venv
 venv:
-	[ -d .venv ] || virtualenv .venv --python=jgtpy
-	conda activate jgtpy
+	[ -d .venv ] || virtualenv .venv --python=jgtfxcon
+	conda activate jgtfxcon
 
 .PHONY: piplocal
 piplocal:
@@ -14,14 +14,14 @@ develop: venv piplocal
 
 .PHONY: lint lint-flake8 lint-isort
 lint-flake8:
-	flake8 test jgtpy
+	flake8 test jgtfxcon
 lint-isort:
-	isort --check-only -rc jgtpy test *.py
+	isort --check-only -rc jgtfxcon test *.py
 lint: lint-flake8 lint-isort
 
 .PHONY: format
 format:
-	isort -rc jgtpy test *.py
+	isort -rc jgtfxcon test *.py
 
 .PHONY: test
 test:

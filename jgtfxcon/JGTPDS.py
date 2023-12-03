@@ -8,12 +8,11 @@ from . import jgtfxc as jfx
 from .JGTConfig import local_fn_compression,get_pov_local_data_filename
 from .JGTPDHelper import *
 from .jgtfxc import *
-# from .JGTConfig import *
 
-# import .JGTPDHelper as jpd
 
-# #import jgtpy.JGTFXCMWrapper as jfx
-# import .jgtfxc as jfx
+
+
+
 
 
 
