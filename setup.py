@@ -15,7 +15,6 @@ INSTALL_REQUIRES = [
     'python-dotenv>=0.19.2',
     'jgtapy>=1.9.12',
     'dropbox>=11.36.2',
-    'anyio>=4.1.0',
     'packaging>=23.2',
     'tqdm>=4.66.1',
     'aiohttp>=3.9.1',
