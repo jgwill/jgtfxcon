@@ -19,7 +19,7 @@ INSTALL_REQUIRES = [
     'packaging>=23.2',
     'tqdm>=4.66.1',
     'aiohttp>=3.9.1',
-    'anyio>=4.1.0',
+    'anyio==3.7.1',
     'async-timeout>=4.0.3',
     'PyYAML>=6.0.1',
     'pydantic>=2.5.2',
