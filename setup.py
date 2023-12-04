@@ -15,14 +15,11 @@ INSTALL_REQUIRES = [
     'python-dotenv>=0.19.2',
     'jgtapy>=1.9.12',
     'dropbox>=11.36.2',
-    'packaging>=23.2',
-    'tqdm>=4.66.1',
-    'aiohttp',
+    'packaging',
+    'tqdm',
     'anyio',
-    'async-timeout>=4.0.3',
-    'PyYAML>=6.0.1',
-    'pydantic>=2.5.2',
-    'pydantic_core>=2.14.5'
+    'aiohttp',
+    'PyYAML'
 ]
 
 EXTRAS_DEV_LINT = [
