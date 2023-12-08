@@ -221,7 +221,7 @@ def create_filestore_path(instrument, timeframe,quiet=True, compressed=False):
     # Define the file path based on the environment variable or local path
     data_path = get_data_path()
     if not os.path.exists(data_path):
-      falledpath=create_use_fallback_datapath(data_path)
+      falledpath=create_use_fallback_datapath()
       print('falledpath:' + falledpath)
       data_path = get_data_path()
       print('data_path falled:' + data_path)
