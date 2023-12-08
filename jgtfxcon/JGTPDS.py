@@ -266,6 +266,14 @@ def create_use_fallback_datapath():
     # Echo the 'JGTPY_DATA' variable in the bash command
     os.environ['JGTPY_DATA'] = data_directory
     print('JGTPY_DATA was fallback being set to: ' + data_directory)
+    
+    if not os.path.exists(data_directory):
+      print("-----------TODO--------------")
+      print("   mkdir -p ./data/pds")
+      print("   mkdir -p ../data/pds")
+      print(" or")
+      print("   export JGTPY_DATA somewhere")
+      print("-----------------------------")
     return data_directory
 
 
