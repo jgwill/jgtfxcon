@@ -3,6 +3,8 @@ debugging=False
 import datetime as dt
 import pandas as pd
 import os
+
+
 from . import JGTPDHelper as jpd
 from . import jgtfxc as jfx
 from .JGTConfig import local_fn_compression,get_pov_local_data_filename
@@ -218,6 +220,12 @@ def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=Tru
 def create_filestore_path(instrument, timeframe,quiet=True, compressed=False):
     # Define the file path based on the environment variable or local path
     data_path = get_data_path()
+    if not os.path.exists(data_path):
+      falledpath=create_use_fallback_datapath(data_path)
+      print('falledpath:' + falledpath)
+      data_path = get_data_path()
+      print('data_path falled:' + data_path)
+      
     print(data_path)
 
     ext = 'csv'
@@ -225,7 +233,45 @@ def create_filestore_path(instrument, timeframe,quiet=True, compressed=False):
         ext = 'csv.gz'
     fpath = mk_fullpath(instrument, timeframe, ext, data_path)
     return fpath
-  
+
+
+def create_use_fallback_datapath():
+    # Set the 'JGTPY_DATA' environment variable
+    #os.environ['JGTPY_DATA'] = data_path
+    if os.path.exists(os.environ['JGTPY_DATA']):
+      return os.path.exists(os.environ['JGTPY_DATA'])
+    
+    # Check if the directory specified by 'JGTPY_DATA' exists
+    data_directory = os.path.abspath(os.path.expanduser(os.environ['JGTPY_DATA']))
+
+    if not os.path.exists(data_directory):
+        # Try using ./data/pds
+        fallback_path_1 = os.path.join(os.getcwd(), 'data', 'pds')
+        if os.path.exists(fallback_path_1):
+            data_directory = fallback_path_1
+        else:
+            # Try using ../data/pds
+            fallback_path_2 = os.path.abspath(os.path.join(os.getcwd(), '..', 'data', 'pds'))
+            if os.path.exists(fallback_path_2):
+                data_directory = fallback_path_2
+            else:
+                # Print an error if the variable exists but the path is not found
+                print("Error: JGTPY_DATA path not found.")
+                data_directory = None
+
+    # If the directory does not exist, create it
+    if data_directory is not None and not os.path.exists(data_directory):
+        os.makedirs(data_directory)
+
+    # Echo the 'JGTPY_DATA' variable in the bash command
+    os.environ['JGTPY_DATA'] = data_directory
+    print('JGTPY_DATA was fallback being set to: ' + data_directory)
+    return data_directory
+
+
+
+
+
 def getPH2file(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True,compressed=False):
   return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed)
 
