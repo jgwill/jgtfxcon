@@ -73,9 +73,10 @@ def run_jgtcli():
     # Optional parameters with default values
     datefrom = data.get('datefrom', None)
     dateto = data.get('dateto', None)
-    qt = data.get('quote_count', 335)
+    quote_count_default = 335
+    qt = data.get('quote_count', quote_count_default)
     quote_count = ''
-    if data.get('quote_count'):
+    if data.get('quote_count') and quote_count_default != data.get('quote_count'):
         quote_count = '-c ' + str(qt)
     #quote_count = '-c ' if data.get('quote_count', 335) else ''
     #output = '-o' if data.get('output', False) else ''
