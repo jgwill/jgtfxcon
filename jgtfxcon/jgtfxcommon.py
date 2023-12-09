@@ -842,6 +842,13 @@ def add_cds_argument(parser):
                         help='Action the creation of CDS')
     return parser
 
+def add_iprop_init_argument(parser):
+    parser.add_argument('-iprop','--iprop',
+                        action='store_true',
+                        default=False,
+                        help='Toggle the downloads of all instrument properties ')
+    return parser
+
 
 def print_exception(exception: Exception):
     logging.error("Exception: {0}\n{1}".format(exception, traceback.format_exc()))

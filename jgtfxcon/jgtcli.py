@@ -18,6 +18,7 @@ def parse_args():
     #jgtfxcommon.add_quiet_argument(parser)
     jgtfxcommon.add_verbose_argument(parser)
     jgtfxcommon.add_cds_argument(parser)
+    jgtfxcommon.add_iprop_init_argument(parser)
     args = parser.parse_args()
     return args
 
@@ -29,7 +30,18 @@ def main():
     quotes_count = args.quotescount
     date_from = None
     date_to = None
-
+    iprop_download = False
+    if args.iprop == True:
+        iprop_download = True
+        try:
+            from . import dl_properties
+            print("--------------------------------------------------")
+            print("------Iprop should be downloaded in $HOME/.jgt---")
+            return # we quit
+        except:
+            print("---BAHHHHHHHHHH Iprop trouble downloading-----")
+            return
+        
     if args.datefrom:
         date_from = args.datefrom.replace('/', '.')
     if args.dateto:
