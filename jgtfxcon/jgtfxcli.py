@@ -17,6 +17,7 @@ def parse_args():
     jgtfxcommon.add_output_argument(parser)
     #jgtfxcommon.add_quiet_argument(parser)
     jgtfxcommon.add_verbose_argument(parser)
+    jgtfxcommon.add_debug_argument(parser)
     jgtfxcommon.add_cds_argument(parser)
     jgtfxcommon.add_iprop_init_argument(parser)
     jgtfxcommon.add_pdsserver_argument(parser)
@@ -31,10 +32,11 @@ def main():
     quotes_count = args.quotescount
     date_from = None
     date_to = None
+    debug = args.debug
     if args.server == True:
         try:
             from . import pdsserver as svr
-            svr.app.run(debug=True)
+            svr.app.run(debug=debug)
         except:
             print("Error starting server")
             return

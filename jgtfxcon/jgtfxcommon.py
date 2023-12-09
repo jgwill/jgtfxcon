@@ -849,6 +849,13 @@ def add_iprop_init_argument(parser):
                         help='Toggle the downloads of all instrument properties ')
     return parser
 
+def add_debug_argument(parser):
+    parser.add_argument('-debug','--debug',
+                        action='store_true',
+                        default=False,
+                        help='Toggle debug ')
+    return parser
+
 def add_pdsserver_argument(parser):
     parser.add_argument('-server','--server',
                         action='store_true',
