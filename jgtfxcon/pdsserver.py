@@ -54,6 +54,16 @@ def fetch_getPH_from_filestore():
     return df.to_json(orient='split')
 
 
+@app.route('/h', methods=['POST'])
+def fetch_getPH_from_filestore():
+    data = request.json
+    instrument = data['instrument']
+    timeframe = data['timeframe']
+    from jgtfxcon.JGTPDS import getPH_from_filestore
+    df = getPH_from_filestore(instrument, timeframe)
+    return df.to_json(orient='split')
+
+
 @app.route('/cli', methods=['POST'])
 def run_jgtcli():
     data = request.json
@@ -63,8 +73,11 @@ def run_jgtcli():
     # Optional parameters with default values
     datefrom = data.get('datefrom', None)
     dateto = data.get('dateto', None)
-    
-    quote_count = '-c' if data.get('quote_count', 335) else ''
+    qt = data.get('quote_count', 335)
+    quote_count = ''
+    if data.get('quote_count'):
+        quote_count = '-c ' + str(qt)
+    #quote_count = '-c ' if data.get('quote_count', 335) else ''
     #output = '-o' if data.get('output', False) else ''
     # cds = '-cds' if data.get('cds', False) else ''
     verbose = '-v %s' % data.get('verbose', 0)
@@ -107,7 +120,7 @@ def fetch_get_instrument_properties():
     data = request.json
     instrument = data['instrument'].replace('-','/')
     from jgtfxcon.JGTPDS import get_instrument_properties
-    properties = get_instrument_properties(instrument)
+    properties = get_instrument_properties(instrument,from_file=True)
     return jsonify({'properties': properties})
 
 

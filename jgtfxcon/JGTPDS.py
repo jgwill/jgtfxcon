@@ -419,20 +419,26 @@ class PDSRangeNotAvailableException(Exception):
 
 
 
-def get_instrument_properties(instrument, quiet=False):
-  return jfx.get_instrument_properties(instrument, quiet)
-    # # Define the path to the directory
-    # home_dir = os.path.expanduser("~")
-    # dir_path = os.path.join(home_dir, '.jgt', 'iprops')
-    # instrument_properties = {}
-    # instrument_filename = instrument.replace('/', '-')
+def get_instrument_properties(instrument, quiet=False,from_file=False):
+  if not from_file:
+    return jfx.get_instrument_properties(instrument, quiet)
+  else:
     
+    # # Define the path to the directory
+    home_dir = os.path.expanduser("~")
+    dir_path = os.path.join(home_dir, '.jgt', 'iprops')
+    instrument_properties = {}
+    instrument_filename = instrument.replace('/', '-')
+    #     # Read the instrument properties from the file
+    iprop_dir_path = os.path.join(dir_path, f'{instrument_filename}.json')
+    with open(iprop_dir_path, 'r') as f:
+      instrument_properties = json.load(f)
+    return instrument_properties
     # # Check if the directory exists
     # if not os.path.exists(dir_path):
     #     # If not, create it
     #     os.makedirs(dir_path)
     
-    # iprop_dir_path = os.path.join(dir_path, f'{instrument_filename}.json')
     # # Check if the file exists
     # if not os.path.exists(iprop_dir_path):
     #     # If not, create the directory if it doesn't exist
