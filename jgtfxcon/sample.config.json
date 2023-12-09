@@ -1,7 +1,1 @@
-{
-  "user_id": "U10D242342347",
-  "password": "v234235G",
-  "url": "https://www.fxcorporate.com/Hosts.jsp",
-  "connection": "Demo",
-  "quotes_count": 300
-}
+{"user_id": "MYFXCMUSER","password": "MYPASSWORD","url": "https://www.fxcorporate.com/Hosts.jsp","connection": "Demo","quotes_count": 800,"pds_server_url":"http://localhost:5000","columns_to_remove" : ["aofvalue", "aofhighao", "aoflowao", "aofhigh", "aoflow", "aocolor", "accolor","fdbbhigh","fdbblow","fdbshigh","fdbslow"]}

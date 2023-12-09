@@ -12,7 +12,7 @@ from subprocess import check_output
 import shlex
 
 
-from jgtfxcon.JGTPDS import getPH, mk_fn, mk_fullpath,getPH_to_filestore as ph2fs,getPH_from_filestore,get_instrument_properties
+# from jgtfxcon.JGTPDS import getPH, mk_fn, mk_fullpath,getPH_to_filestore as ph2fs,getPH_from_filestore,get_instrument_properties
 
 #stayConnectedSetter(True)
 
@@ -33,6 +33,7 @@ def fetch_getPH():
     timeframe = data['timeframe']
     #result = h(instrument, timeframe)
     #df = getPH_from_filestore(instrument, timeframe)
+    from jgtfxcon.JGTPDS import getPH
     df = getPH(instrument, timeframe)
     result = df.to_csv()
     print(result)
@@ -48,11 +49,12 @@ def fetch_getPH_from_filestore():
     quiet = data.get('quiet', True)  # Optional parameter, defaults to True
     compressed = data.get('compressed', False)  # Optional parameter, defaults to False
     with_index = data.get('with_index', True)  # Optional parameter, defaults to True
+    from jgtfxcon.JGTPDS import getPH_from_filestore
     df = getPH_from_filestore(instrument, timeframe, quiet, compressed, with_index)
     return df.to_json(orient='split')
 
 
-@app.route('/run_jgtcli', methods=['POST'])
+@app.route('/cli', methods=['POST'])
 def run_jgtcli():
     data = request.json
     instrument = data['instrument']
@@ -64,7 +66,7 @@ def run_jgtcli():
     
     quote_count = '-c' if data.get('quote_count', 335) else ''
     #output = '-o' if data.get('output', False) else ''
-    cds = '-cds' if data.get('cds', False) else ''
+    # cds = '-cds' if data.get('cds', False) else ''
     verbose = '-v %s' % data.get('verbose', 0)
 
     # Construct the command
@@ -94,6 +96,7 @@ def fetch_mk_fn():
     instrument = request.args.get('instrument')
     timeframe = request.args.get('timeframe')
     ext = request.args.get('ext')
+    from jgtfxcon.JGTPDS import mk_fn
     result = mk_fn(instrument, timeframe, ext)
     return jsonify({'filename': result})
 
@@ -103,6 +106,7 @@ def fetch_mk_fn():
 def fetch_get_instrument_properties():
     data = request.json
     instrument = data['instrument'].replace('-','/')
+    from jgtfxcon.JGTPDS import get_instrument_properties
     properties = get_instrument_properties(instrument)
     return jsonify({'properties': properties})
 

@@ -9,23 +9,7 @@ env = dotenv_values(".env")
 
 
 
-#@DEPRECATED
-if os.getenv('FXCM_TOKEN_REST_API_DEMO') == "":
-  load_dotenv(os.getenv('HOME'))
-if os.getenv('FXCM_TOKEN_REST_API_DEMO') == "":
-  load_dotenv(os.getenv(os.getcwd()))
-#@title TOKENS
-def getenv(tvar):
-  return os.getenv(tvar)
 
-
-
-#@DEPRECATED: 
-
-_FXCM_TOKEN_REST_API_DEMO = os.getenv('FXCM_TOKEN_REST_API_DEMO')
-_FXCM_TOKEN_REST_API_REAL = os.getenv('FXCM_TOKEN_REST_API_REAL')
-_FXCM_DROPBOX_ACCESS_TOKEN = os.getenv('FXCM_DROPBOX_ACCESS_TOKEN')
-_DROPBOX_ACCESS_TOKEN= _FXCM_DROPBOX_ACCESS_TOKEN
 # print(FXCM_TOKEN_REST_API_DEMO)
 
 local_fn_compression='gzip'
@@ -46,22 +30,20 @@ phurlbase=CDS_URL_BASE
 
 DROPBOX_ETC_PATH= '/w/etc/'
 
-#@title Demo Token
-_tokendemo =_FXCM_TOKEN_REST_API_DEMO
-_tokenreal=_FXCM_TOKEN_REST_API_REAL
 
-_token=_tokendemo #default
 if os.getenv('usereal') == 'True' :
-  _token=_tokenreal
+  #@STCIssue FIXING REQUIRED
   print('TRADING REAL ACTIVATED')
 
 def setreal():
-  global _token
-  _token=_tokenreal
+  #@STCIssue FIXING REQUIRED
+  print('TRADING REAL ACTIVATED')
+  
 
 def setdemo():
-  global _token
-  _token=_tokendemo
+  #@STCIssue FIXING REQUIRED
+  print('TRADING DEMO/PAPER ACTIVATED')
+  
 
 
 # %%
@@ -75,6 +57,7 @@ contextInstruments=['AUD/CAD',
  'GBP/CAD',
  'GBP/USD',
  'NAS100',
+ 'SPX500',
  'NZD/CAD',
  'NZD/USD',
  'USD/CAD'
@@ -82,3 +65,5 @@ contextInstruments=['AUD/CAD',
 
 contextTimeframes=['m1','m5','m15']
 # contextTimeframes=['m1','m5','m15','H1','H4','D1','W1','M1']
+
+
