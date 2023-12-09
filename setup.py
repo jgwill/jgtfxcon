@@ -19,7 +19,8 @@ INSTALL_REQUIRES = [
     'tqdm',
     'anyio',
     'aiohttp',
-    'PyYAML'
+    'PyYAML',
+    'flask'
 ]
 
 EXTRAS_DEV_LINT = [
@@ -49,7 +50,7 @@ setup(
     packages=find_packages(include=['jgtfxcon', 'jgtfxcon.forexconnect', 'jgtfxcon.forexconnect.lib', 'jgtfxcon.forexconnect.lib.windows', 'jgtfxcon.forexconnect.lib.linux'], exclude=['*test*']),
     install_requires=INSTALL_REQUIRES,
     entry_points={
-        'console_scripts': ['jgtfxcli=jgtfxcon.jgtcli:main'],
+        'console_scripts': ['jgtfxcli=jgtfxcon.jgtfxcli:main'],
     },
     extras_require={
         'dev': (EXTRAS_DEV_LINT + EXTRAS_DEV_TEST + EXTRAS_DEV_DOCS),
