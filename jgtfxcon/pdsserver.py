@@ -55,7 +55,7 @@ def fetch_getPH_from_filestore():
 
 
 @app.route('/h', methods=['POST'])
-def fetch_getPH_from_filestore():
+def fetch_h():
     data = request.json
     instrument = data['instrument']
     timeframe = data['timeframe']
@@ -102,7 +102,7 @@ def run_jgtcli():
         result = check_output(shlex.split(cmd)).decode('utf-8')
         return jsonify({'result': result})
     except Exception as e:
-        return jsonify({'error': str(e)})
+        return jsonify({'error': str(e), 'cmd':cmd})
 
 
 @app.route('/mk_fn', methods=['GET'])
