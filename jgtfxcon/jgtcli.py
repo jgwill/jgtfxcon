@@ -19,6 +19,7 @@ def parse_args():
     jgtfxcommon.add_verbose_argument(parser)
     jgtfxcommon.add_cds_argument(parser)
     jgtfxcommon.add_iprop_init_argument(parser)
+    jgtfxcommon.add_pdsserver_argument(parser)
     args = parser.parse_args()
     return args
 
@@ -30,9 +31,14 @@ def main():
     quotes_count = args.quotescount
     date_from = None
     date_to = None
-    iprop_download = False
+    if args.server == True:
+        try:
+            from . import pdsserver as svr
+            svr.app.run(debug=True)
+        except:
+            print("Error starting server")
+            return
     if args.iprop == True:
-        iprop_download = True
         try:
             from . import dl_properties
             print("--------------------------------------------------")

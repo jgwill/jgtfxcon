@@ -849,6 +849,13 @@ def add_iprop_init_argument(parser):
                         help='Toggle the downloads of all instrument properties ')
     return parser
 
+def add_pdsserver_argument(parser):
+    parser.add_argument('-server','--server',
+                        action='store_true',
+                        default=False,
+                        help='Run the server ')
+    return parser
+
 
 def print_exception(exception: Exception):
     logging.error("Exception: {0}\n{1}".format(exception, traceback.format_exc()))

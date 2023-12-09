@@ -28,14 +28,14 @@ import pandas as pd
 
 from io import StringIO
 
-print("-----------------------from market data ---------------")
-response = requests.post('http://localhost:5000/getPH',
-                         json={'instrument': 'EUR/USD',
-                               'timeframe': 'H4'})
+# print("-----------------------from market data ---------------")
+# response = requests.post('http://localhost:5000/getPH',
+#                          json={'instrument': 'EUR/USD',
+#                                'timeframe': 'H4'})
                              
-df = pd.read_json(StringIO(response.text), orient='split')
+# df = pd.read_json(StringIO(response.text), orient='split')
 
-print(df)
+# print(df)
 
 
 print("-----------------------from filestore ---------------")
@@ -72,4 +72,9 @@ response = requests.post('http://localhost:5000/run_jgtcli',
                                'output': True,
                                'cds': True})
                                
+print(response.json())
+
+
+response = requests.post('http://localhost:5000/iprop',
+                         json={'instrument': 'EUR/USD'})
 print(response.json())

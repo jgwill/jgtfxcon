@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from jgtfxcon import sc,up,h,stay
+#from jgtfxcon import sc,up,h,stay
 
 
 import warnings
@@ -12,7 +12,7 @@ from subprocess import check_output
 import shlex
 
 
-from jgtfxcon.JGTPDS import getPH, mk_fn, mk_fullpath,getPH_to_filestore as ph2fs,getPH_from_filestore
+from jgtfxcon.JGTPDS import getPH, mk_fn, mk_fullpath,getPH_to_filestore as ph2fs,getPH_from_filestore,get_instrument_properties
 
 #stayConnectedSetter(True)
 
@@ -61,12 +61,15 @@ def run_jgtcli():
     # Optional parameters with default values
     datefrom = data.get('datefrom', None)
     dateto = data.get('dateto', None)
+    
+    quote_count = '-c' if data.get('quote_count', 335) else ''
     #output = '-o' if data.get('output', False) else ''
     cds = '-cds' if data.get('cds', False) else ''
     verbose = '-v %s' % data.get('verbose', 0)
 
     # Construct the command
-    cmd = f'jgtcli -i {instrument} -t {timeframe} -o {cds} {verbose}'
+    cmd = f'jgtfxcli -i {instrument} -t {timeframe} {quote_count} -o  {verbose}'
+    # cmd = f'jgtfxcli -i {instrument} -t {timeframe} -o {cds} {verbose}'
 
 
     if datefrom:
@@ -95,6 +98,14 @@ def fetch_mk_fn():
     return jsonify({'filename': result})
 
 # More routes for other functions...
+
+@app.route('/iprop', methods=['POST'])
+def fetch_get_instrument_properties():
+    data = request.json
+    instrument = data['instrument'].replace('-','/')
+    properties = get_instrument_properties(instrument)
+    return jsonify({'properties': properties})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
