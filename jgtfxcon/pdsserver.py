@@ -105,6 +105,21 @@ def run_jgtcli():
         return jsonify({'error': str(e), 'cmd':cmd})
 
 
+@app.route('/init', methods=['GET'])
+def run_init():
+    cmd = 'jgtfxcli --iprop'
+    # Execute the command
+    print("==================CLI===================")
+    print(cmd)
+    print("========================================")
+
+    try:
+        result = check_output(shlex.split(cmd)).decode('utf-8')
+        return jsonify({'result': result})
+    except Exception as e:
+        return jsonify({'error': str(e), 'cmd':cmd})
+
+
 @app.route('/mk_fn', methods=['GET'])
 def fetch_mk_fn():
     instrument = request.args.get('instrument')
