@@ -66,6 +66,7 @@ def main():
     compress=False
     verbose_level = args.verbose
     quiet=False
+    output = True   # We always output
     if verbose_level == 0:
         quiet=True
     #print("Verbose level : " + str(verbose_level))
