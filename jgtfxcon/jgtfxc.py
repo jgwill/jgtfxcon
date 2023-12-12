@@ -191,7 +191,7 @@ def readconfig(json_config_str=None):
     return _config
 
 
-def get_price_history(instrument, timeframe, datefrom=None, dateto=None,quotes_count_spec=None,quiet=True):
+def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, dateto:datetime=None,quotes_count_spec:int=None,quiet: bool=True):
     global quotes_count,fx
     if quotes_count_spec is None:
         quotes_count_spec=quotes_count
@@ -199,10 +199,11 @@ def get_price_history(instrument, timeframe, datefrom=None, dateto=None,quotes_c
     connect(quiet=quiet)
     # if home_dir/.jgt/iprops make it and run a save of this instrument properties
     iprop=get_instrument_properties(instrument,quiet)
-    
     try:
         print_quiet(quiet,"Requesting a price history...")
   
+        print_quiet(quiet,"   (not Parsed) from : " + str(datefrom) + ", to:" + str(dateto))
+        print_quiet(quiet,"-------------------------------------------------------")
 
         if datefrom is not None:
             date_from_parsed = parse_date(datefrom)
@@ -215,9 +216,8 @@ def get_price_history(instrument, timeframe, datefrom=None, dateto=None,quotes_c
             date_to_parsed = parse_date(dateto)
         
         if not quiet:
-            print("Date from : " + str(date_from_parsed))
-            print("Date to : " + str(date_to_parsed))
-        print_quiet(quiet,"from : " + str(datefrom) + ", to:" + str(dateto))
+            print("  (Parsed) Date from : " + str(date_from_parsed))
+            print("  (Parsed) Date to : " + str(date_to_parsed))
  
 
 
@@ -285,9 +285,10 @@ def get_pipsize(s_instrument):
 
 
 
-def parse_date(date_str):
-    if date_str is not None:
-        for fmt in ('%d.%m.%Y %H:%M:%S', '%d.%m.%Y %H:%M','%d.%m.%Y','%Y%m%d%H%M','%y%m%d%H%M','%Y-%m-%d %H:%M'):
+def parse_date(date_str) -> datetime:
+    if date_str is not None: 
+        date_format = '%m.%d.%Y %H:%M:%S' # was bugged '%d.%m.%Y %H:%M'
+        for fmt in ('%m.%d.%Y %H:%M:%S', '%m.%d.%Y %H:%M','%m.%d.%Y','%Y%m%d%H%M','%y%m%d%H%M','%Y-%m-%d %H:%M'):
             try:
                 #print(date_str)
                 return datetime.strptime(date_str, fmt)

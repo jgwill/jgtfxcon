@@ -308,7 +308,7 @@ def getPH(instrument,timeframe,quote_count=335,start=None,end=None,with_index=Tr
     con=connect(quiet=quiet)
 
     try:
-        p=jfx.get_price_history(instrument, timeframe, start,end, quote_count+89,quiet=quiet)
+        p=jfx.get_price_history(instrument, timeframe, start, end, quote_count+89,quiet=quiet)
     except:
         try:
             disconnect()
