@@ -17,8 +17,8 @@ with warnings.catch_warnings():
     # your code here
 
 
-from jgtfxcommon import get_connection_status,get_connection_status
-#from . import jgtfxcommon
+from jgtfxcommon import get_connection_status,get_connection_status,readconfig
+import jgtfxcommon
 
 import jgtflags
 
