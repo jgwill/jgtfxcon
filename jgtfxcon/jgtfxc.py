@@ -143,7 +143,7 @@ def disconnect(quiet=True):
 
 
 def status(quiet=True):
-    return get_session_status()
+    return jgtfxcommon.get_session_status()
     # if session is None:
     #     print_quiet(quiet,"UNKNOWN STATUS...")
     #     return False
@@ -193,7 +193,6 @@ def readconfig(json_config_str=None):
 
 def get_price_history(instrument, timeframe, datefrom=None, dateto=None,quotes_count_spec=None,quiet=True):
     global quotes_count,fx
-
     if quotes_count_spec is None:
         quotes_count_spec=quotes_count
 
@@ -218,6 +217,8 @@ def get_price_history(instrument, timeframe, datefrom=None, dateto=None,quotes_c
         if not quiet:
             print("Date from : " + str(date_from_parsed))
             print("Date to : " + str(date_to_parsed))
+        print_quiet(quiet,"from : " + str(datefrom) + ", to:" + str(dateto))
+ 
 
 
         history = fx.get_history(instrument, timeframe, date_from_parsed, date_to_parsed, quotes_count_spec)
@@ -285,9 +286,10 @@ def get_pipsize(s_instrument):
 
 
 def parse_date(date_str):
-    if date_str is None:
+    if date_str is not None:
         for fmt in ('%d.%m.%Y %H:%M:%S', '%d.%m.%Y %H:%M','%d.%m.%Y','%Y%m%d%H%M','%y%m%d%H%M','%Y-%m-%d %H:%M'):
             try:
+                #print(date_str)
                 return datetime.strptime(date_str, fmt)
             except ValueError:
                 pass

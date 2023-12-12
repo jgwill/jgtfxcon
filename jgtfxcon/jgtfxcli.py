@@ -78,9 +78,9 @@ def main():
 
     if verbose_level > 1:
         if date_from:
-            print("Date from : " + str(date_from))
+            print(" Date from : " + str(date_from))
         if date_to:
-            print("Date to : " + str(date_to))
+            print(" Date to : " + str(date_to))
 
 
     try:
@@ -108,9 +108,6 @@ def main():
     except Exception as e:
         jgtfxcommon.print_exception(e)
 
-# if __name__ == "__main__":
-#     main()
-
 # print("")
 # #input("Done! Press enter key to exit\n")
 
@@ -120,3 +117,7 @@ def main():
 def print_quiet(quiet,content):
     if not quiet:
         print(content)
+
+
+if __name__ == "__main__":
+    main()
