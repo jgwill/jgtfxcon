@@ -42,12 +42,12 @@ import jgtflags
 
 # from forexconnect import ForexConnect, fxcorepy
 if platform.system() == 'Windows':
-    from .forexconnect import ForexConnect, fxcorepy
+    from forexconnect import ForexConnect, fxcorepy
 else: 
     if platform.system() == 'Linux':
         try:
             # Try to import ForexConnect and fxcorepy from jgtfxcon.forexconnect
-            from jgtfxcon.forexconnect import ForexConnect, fxcorepy
+            from forexconnect import ForexConnect, fxcorepy
         except ModuleNotFoundError:
             # If that fails, try to import them directly
             try:
