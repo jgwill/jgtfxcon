@@ -5,11 +5,15 @@ import pandas as pd
 import os
 
 
-from . import JGTPDHelper as jpd
-from . import jgtfxc as jfx
-from .JGTConfig import local_fn_compression,get_pov_local_data_filename
-from .JGTPDHelper import *
-from .jgtfxc import *
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+import JGTPDHelper as jpd
+import jgtfxc as jfx
+from JGTConfig import local_fn_compression,get_pov_local_data_filename
+from JGTPDHelper import *
+from jgtfxc import *
 
 
 

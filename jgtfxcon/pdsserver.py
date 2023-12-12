@@ -1,6 +1,9 @@
 from flask import Flask, jsonify, request
 #from jgtfxcon import sc,up,h,stay
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import warnings
 
@@ -33,7 +36,7 @@ def fetch_getPH():
     timeframe = data['timeframe']
     #result = h(instrument, timeframe)
     #df = getPH_from_filestore(instrument, timeframe)
-    from jgtfxcon.JGTPDS import getPH
+    from JGTPDS import getPH
     df = getPH(instrument, timeframe)
     result = df.to_csv()
     print(result)
@@ -49,7 +52,7 @@ def fetch_getPH_from_filestore():
     quiet = data.get('quiet', True)  # Optional parameter, defaults to True
     compressed = data.get('compressed', False)  # Optional parameter, defaults to False
     with_index = data.get('with_index', True)  # Optional parameter, defaults to True
-    from jgtfxcon.JGTPDS import getPH_from_filestore
+    from JGTPDS import getPH_from_filestore
     df = getPH_from_filestore(instrument, timeframe, quiet, compressed, with_index)
     return df.to_json(orient='split')
 
@@ -59,7 +62,7 @@ def fetch_h():
     data = request.json
     instrument = data['instrument']
     timeframe = data['timeframe']
-    from jgtfxcon.JGTPDS import getPH_from_filestore
+    from JGTPDS import getPH_from_filestore
     df = getPH_from_filestore(instrument, timeframe)
     return df.to_json(orient='split')
 
@@ -125,7 +128,7 @@ def fetch_mk_fn():
     instrument = request.args.get('instrument')
     timeframe = request.args.get('timeframe')
     ext = request.args.get('ext')
-    from jgtfxcon.JGTPDS import mk_fn
+    from JGTPDS import mk_fn
     result = mk_fn(instrument, timeframe, ext)
     return jsonify({'filename': result})
 
@@ -135,7 +138,7 @@ def fetch_mk_fn():
 def fetch_get_instrument_properties():
     data = request.json
     instrument = data['instrument'].replace('-','/')
-    from jgtfxcon.JGTPDS import get_instrument_properties
+    from JGTPDS import get_instrument_properties
     properties = get_instrument_properties(instrument,from_file=True)
     return jsonify({'properties': properties})
 

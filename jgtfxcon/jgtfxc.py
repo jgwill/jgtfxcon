@@ -2,6 +2,8 @@
 
 import os
 import platform
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import json
 #import datetime
@@ -15,9 +17,10 @@ with warnings.catch_warnings():
     # your code here
 
 
-from .jgtfxcommon import get_connection_status,get_connection_status
+from jgtfxcommon import get_connection_status,get_connection_status
+#from . import jgtfxcommon
 
-from . import jgtflags
+import jgtflags
 
 # origin_work_dir = os.getcwd()
 # here = os.path.abspath(os.path.dirname(__file__))
@@ -66,7 +69,6 @@ else:
 # fxcon.ForexConnect.get_timeframe
 
 # from . import common_samples as jgtfxcommon
-from . import jgtfxcommon
 
 
 fx=None

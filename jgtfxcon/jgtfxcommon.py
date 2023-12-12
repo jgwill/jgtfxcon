@@ -20,14 +20,25 @@ from typing import List
 from enum import Enum
 import json
 import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+import warnings
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", ".*already registered; second conversion method ignored.*")
+    # your code here
 
 try:
     # Try to import fxcorepy from forexconnect
+    #import forexconnect as fxcon
+    #from fxcon import fxcorepy
     from forexconnect import fxcorepy
 except ModuleNotFoundError:
+    print("ModuleNotFoundError")
     # If that fails, try to import fxcorepy directly
     try:
-        from .forexconnect import fxcorepy
+        from forexconnect import fxcorepy
     except ModuleNotFoundError:
         # If that also fails, print an error message
         print("Could not import fxcorepy. Please ensure the module is installed and available.")

@@ -1,11 +1,14 @@
-import jgtfxcon
+#import jgtfxcon
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from . import jgtconstants as constants
-from . import jgtfxcommon
+import jgtconstants as constants
+import jgtfxcommon
 import argparse
 
-from . import JGTPDS as pds
+import JGTPDS as pds
 
 import pandas as pd
 
@@ -51,10 +54,10 @@ def main():
             print("---BAHHHHHHHHHH Iprop trouble downloading-----")
             return
         
-    # if args.datefrom:
-    #     date_from = args.datefrom.replace('/', '.')
-    # if args.dateto:
-    #     date_to = args.dateto.replace('/', '.')
+    if args.datefrom:
+        date_from = args.datefrom # .replace('/', '.')
+    if args.dateto:
+        date_to = args.dateto # .replace('/', '.')
 
     
     output=False

@@ -28,7 +28,11 @@
 import os
 import platform
 import sys
-from . import jgtflags
+
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+import jgtflags
 
 
 import warnings
@@ -41,47 +45,47 @@ class NotCompatibleException(Exception):
     pass
 
 #from jgtfxcon.common_samples import common_samples
-from .jgtetl import svc_offset_dt_by_tf as etl_offset_dt_by_tf,offsetdt as etl_offsetdt
-from .JGTCore import __version__ #,json2dict,jsonfile2prop,json2prop,jsonfile2dict,d2p,fixdtindf,offsetdt
+from jgtetl import svc_offset_dt_by_tf as etl_offset_dt_by_tf,offsetdt as etl_offsetdt
+from JGTCore import __version__ #,json2dict,jsonfile2prop,json2prop,jsonfile2dict,d2p,fixdtindf,offsetdt
 #from .JGTConfig import getenv,setreal,setdemo,env
 
-if platform.system() == 'Linux':
-  #sys.path.append(os.path.abspath('./'))
+# if platform.system() == 'Linux':
+#   #sys.path.append(os.path.abspath('./'))
 
-  origin_work_dir = os.getcwd()
-  here = os.path.abspath(os.path.dirname(__file__))
-  os.chdir(here)
-  try:
-     from . import forexconnect
-  except:
-     from jgtfxcon import forexconnect 
-  os.chdir(origin_work_dir)   
+#   origin_work_dir = os.getcwd()
+#   here = os.path.abspath(os.path.dirname(__file__))
+#   os.chdir(here)
+#   try:
+#      import forexconnect
+#   except:
+#      from jgtfxcon import forexconnect 
+#   os.chdir(origin_work_dir)   
 
-else:
-  try:
-    try:
-      from . import forexconnect       
-    except:
-     from jgtfxcon import forexconnect 
-  except:
-    print("----------------------------------------------------------------")
-    print("---Failed to load forexconnect --- Please Install forexconnect")
-    print("--------- > pip install forexconnect (only an python =< 3.7)")
-    print("--------")
-    print("-----WINDOWS USER : ----")
-    print("--If you are on an above Windows Python 3.7, it wont work.  ")
-    print("--I made forexconnect to work on later than 3.7 only on Linux, ")
-    print("-- sorry guys, migrate on Linux ;) or get involved migrating it ;) ")
-    print("-----------------------------------------")
-    raise NotCompatibleException("Forexconnect is not compatible with your current environment.")
+# else:
+#   try:
+#     try:
+#       import forexconnect       
+#     except:
+#      from jgtfxcon import forexconnect 
+#   except:
+#     print("----------------------------------------------------------------")
+#     print("---Failed to load forexconnect --- Please Install forexconnect")
+#     print("--------- > pip install forexconnect (only an python =< 3.7)")
+#     print("--------")
+#     print("-----WINDOWS USER : ----")
+#     print("--If you are on an above Windows Python 3.7, it wont work.  ")
+#     print("--I made forexconnect to work on later than 3.7 only on Linux, ")
+#     print("-- sorry guys, migrate on Linux ;) or get involved migrating it ;) ")
+#     print("-----------------------------------------")
+#     raise NotCompatibleException("Forexconnect is not compatible with your current environment.")
 
 
 
 # os.chdir(origin_work_dir)   
-from .jgtfxcommon import _JGT_CONFIG_JSON_SECRET
+from jgtfxcommon import _JGT_CONFIG_JSON_SECRET
 
 
-from .JGTPDS import getPH as get_price, stayConnectedSetter as set_stay_connected, disconnect,connect as on,disconnect as off, status as connection_status,  getPH2file as get_price_to_file, getPHByRange as get_price_range, stayConnectedSetter as sc,getPH as ph,getPH_to_filestore as ph2fs
+from JGTPDS import getPH as get_price, stayConnectedSetter as set_stay_connected, disconnect,connect as on,disconnect as off, status as connection_status,  getPH2file as get_price_to_file, getPHByRange as get_price_range, stayConnectedSetter as sc,getPH as ph,getPH_to_filestore as ph2fs
 def stay():
   sc(True)
 def up():
