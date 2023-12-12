@@ -1,3 +1,6 @@
+
+
+ # OrderMonitor.py
 # Copyright 2019 Gehtsoft USA LLC
 
 # Licensed under the license derived from the Apache License, Version 2.0 (the "License"); 
@@ -13,21 +16,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import List
+from enum import Enum
+import json
+import os
+
+
+#------------------------#
+
+# common.py
+
+
 import logging
 import datetime
 import traceback
 import argparse
 import sys
-import io
-import pathlib
 
- 
-#from forexconnect import fxcorepy
 
 try :
     import __main__
     logging.basicConfig(filename='{0}.log'.format(__main__.__file__), level=logging.INFO,
-                        format='%(asctime)s %(levelname)s %(message)s', datefmt='%m.%d.%Y %H:%M:%S')
+                    format='%(asctime)s %(levelname)s %(message)s', datefmt='%m.%d.%Y %H:%M:%S')
     console = logging.StreamHandler(sys.stdout)
     console.setLevel(logging.INFO)
     logging.getLogger('').addHandler(console)
@@ -35,23 +45,23 @@ except:
     print('logging failed - dont worry')
 
 def add_main_arguments(parser: argparse.ArgumentParser):
-    parser.add_argument('-l',
+    parser.add_argument('--login',
                         metavar="LOGIN",
                         required=True,
                         help='Your user name.')
 
-    parser.add_argument('-p',
+    parser.add_argument('--password',
                         metavar="PASSWORD",
                         required=True,
                         help='Your password.')
 
-    parser.add_argument('-u',
+    parser.add_argument('--urlserver',
                         metavar="URL",
                         required=True,
                         help='The server URL. For example,\
-                                 http://www.fxcorporate.com/Hosts.jsp.')
+                                 https://www.fxcorporate.com/Hosts.jsp.')
 
-    parser.add_argument('-c',
+    parser.add_argument('--connection',
                         metavar="CONNECTION",
                         required=True,
                         help='The connection name. For example, \
@@ -68,7 +78,7 @@ def add_main_arguments(parser: argparse.ArgumentParser):
                                  a pin. Optional parameter.')
 
 def add_candle_open_price_mode_argument(parser: argparse.ArgumentParser):
-    parser.add_argument('-o',
+    parser.add_argument('--openpricemode',
                         metavar="CANDLE_OPEN_PRICE_MODE",
                         default="prev_close",
                         help='Ability to set the open price candles mode. \
@@ -76,15 +86,16 @@ def add_candle_open_price_mode_argument(parser: argparse.ArgumentParser):
                         of O2GCandleOpenPriceMode enumeration. Optional parameter.')
 
 def add_instrument_timeframe_arguments(parser: argparse.ArgumentParser, timeframe: bool = True):
-    parser.add_argument('-i',
+    parser.add_argument('-i','--instrument',
                         metavar="INSTRUMENT",
                         default="EUR/USD",
                         help='An instrument which you want to use in sample. \
                                   For example, "EUR/USD".')
+
     if timeframe:
-        parser.add_argument('-timeframe',
+        parser.add_argument('-t','--timeframe',
                             metavar="TIMEFRAME",
-                            default="m1",
+                            default="m5",
                             help='Time period which forms a single candle. \
                                       For example, m1 - for 1 minute, H1 - for 1 hour.')
     parser.add_argument('-ip',
@@ -92,105 +103,7 @@ def add_instrument_timeframe_arguments(parser: argparse.ArgumentParser, timefram
                         required=False,
                         help='The indicator Pattern. For example, \
                                  "AOAC","JTL,"JTLAOAC","JTLAOAC","AOACMFI".')
-    # parser.add_argument('-nb',
-    #                     metavar='NB',
-    #                     required=False,
-    #                     default=335,
-    #                     type=int,
-    #                     help='Nb period to retrieve')
 
-def add_local_arguments(parser: argparse.ArgumentParser):
-    parser.add_argument('-local', action='store_true')
-    parser.add_argument('-online', dest='local', action='store_false')
-    parser.set_defaults(local=False)
-    
-    # parser.add_argument('-local',
-    #                     metavar="LOCAL",
-    #                     default=False,
-    #                     type=bool,
-    #                     required=False,
-    #                     help='read from local')
-
-def add_nb2retrieve_arguments(parser: argparse.ArgumentParser):
-    parser.add_argument('-nb',
-                        metavar="NB",
-                        default=335,
-                        type=int,
-                        help='number of bars to retrieve')
-
-def get_opov_filenamed(parser: argparse.ArgumentParser):
-    str_instrument = parser.i
-    str_timeframe = parser.timeframe
-    tf=str_timeframe
-    if tf=="m1":
-        tf="mi1"
-    opov_toogle = parser.opov
-    str_outdir = parser.odir
-    str_outsuffix = parser.osuf
-    
-    filesufext ="."+ str_outsuffix + ".csv"
-    
-    povbasename = str_instrument.replace("/","-") + "_" + tf
-    str_outfile= povbasename + filesufext.replace("..",".")
-    if str_outsuffix == "null":
-        str_outfile= povbasename + ".csv"
-        
-    if  str_outdir != '.':
-        str_outfile = str_outdir + "/" + str_outfile 
-    return str_outfile
-    # if str_outdir == ".":
-    #     str_outdir = pathlib.Path.cwd()
-    #     print(str_outdir)
-    #str_outpath=pathlib.Path.joinpath(str_outdir,str_outfile)
-    #print(str_outpath)
-    #return str_outpath 
-   
-def get_opov_filenamed__DEBUGME(parser: argparse.ArgumentParser):
-    str_instrument = parser.i
-    str_timeframe = parser.timeframe
-    tf=str_timeframe
-    if tf=="m1":
-        tf="mi1"
-    opov_toogle = parser.opov
-    str_outdir = parser.odir
-    str_outsuffix = parser.osuf
-    
-    filesufext = ".csv"
-    if opov_toogle:
-        filesufext ="."+ str_outsuffix + ".csv"
-    povbasename = str_instrument.replace("/","-") + "_" + tf
-    str_outfile= povbasename + filesufext.replace("..",".")
-    if str_outdir == ".":
-        str_outdir = pathlib.Path.cwd()
-        print(str_outdir)
-    str_outpath=pathlib.Path.joinpath(str_outdir,str_outfile)
-    print(str_outpath)
-    return str_outpath
-
-def add_out_pov(parser: argparse.ArgumentParser):
-    parser.add_argument('-opov',
-                        metavar="OUTPUTPOV",
-                        default=False,
-                        type=bool,
-                        help='toogle output csv filename pov')    
-    parser.add_argument('-odir',
-                        metavar="OUTPUTDIR",
-                        default='.',
-                        type=str,
-                        help='output dir')
-    parser.add_argument('-osuf',
-                        metavar="OUTPUTSUFFIX",
-                        default='null',
-                        type=str,
-                        help='suffix')
-    
-def add_out(parser: argparse.ArgumentParser):
-    parser.add_argument('-o',
-                        metavar="OUTPUT",
-                        default='out.csv',
-                        type=str,
-                        help='output csv filename')
-    
 def add_direction_rate_lots_arguments(parser: argparse.ArgumentParser, direction: bool = True, rate: bool = True,
                                       lots: bool = True):
     if direction:
@@ -229,7 +142,7 @@ def valid_datetime(check_future: bool):
 
 def add_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, date_to: bool = True):
     if date_from:
-        parser.add_argument('-datefrom',
+        parser.add_argument('-s','--datefrom',
                             metavar="\"m.d.Y H:M:S\"",
                             help='Date/time from which you want to receive\
                                       historical prices. If you leave this argument as it \
@@ -238,7 +151,7 @@ def add_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, 
                             type=valid_datetime(True)
                             )
     if date_to:
-        parser.add_argument('-dateto',
+        parser.add_argument('-e','--dateto',
                             metavar="\"m.d.Y H:M:S\"",
                             help='Datetime until which you want to receive \
                                       historical prices. If you leave this argument as it is, \
@@ -250,7 +163,7 @@ def add_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, 
 
 def add_report_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, date_to: bool = True):
     if date_from:
-        parser.add_argument('-datefrom',
+        parser.add_argument('-s','--datefrom',
                             metavar="\"m.d.Y H:M:S\"",
                             help='Datetime from which you want to receive\
                                       combo account statement report. If you leave this argument as it \
@@ -259,7 +172,7 @@ def add_report_date_arguments(parser: argparse.ArgumentParser, date_from: bool =
                             type=valid_datetime(True)
                             )
     if date_to:
-        parser.add_argument('-dateto',
+        parser.add_argument('-e','--dateto',
                             metavar="\"m.d.Y H:M:S\"",
                             help='Datetime until which you want to receive \
                                       combo account statement report. If you leave this argument as it is, \
@@ -270,49 +183,86 @@ def add_report_date_arguments(parser: argparse.ArgumentParser, date_from: bool =
 
 
 def add_max_bars_arguments(parser: argparse.ArgumentParser):
-    parser.add_argument('-quotescount',
+    parser.add_argument('-c','--quotescount',
                         metavar="MAX",
-                        default=0,
+                        default=335,
                         type=int,
                         help='Max number of bars. 0 - Not limited')
+
+
+# def add_bars_arguments(parser: argparse.ArgumentParser):
+#     parser.add_argument('-bars',
+#                         metavar="COUNT",
+#                         default=3,
+#                         type=int,
+#                         help='Build COUNT bars. Optional parameter.')
+
+
+def add_output_argument(parser: argparse.ArgumentParser):
+    """
+    Adds an output argument to the given argument parser.
+
+    Args:
+        parser (argparse.ArgumentParser): The argument parser to add the output argument to.
+
+    Returns:
+        None
+    """
+    parser.add_argument('-o','--output',
+                        action='store_true',
+                        help='Output file. If specified, output will be written in the filestore.')
     
+    parser.add_argument('-z','--compress',
+                        action='store_true',
+                        help='Compress the output. If specified, it will also activate the output flag.')
 
-def add_bars_arguments(parser: argparse.ArgumentParser):
-    parser.add_argument('-bars',
-                        metavar="COUNT",
-                        default=3,
+    return parser
+
+
+# def add_quiet_argument(parser):
+#     parser.add_argument('-q','--quiet',
+#                         action='store_true',
+#                         help='Suppress all output. If specified, no output will be printed to the console.')
+#     return parser
+
+def add_verbose_argument(parser):
+    parser.add_argument('-v', '--verbose',
                         type=int,
-                        help='Build COUNT bars. Optional parameter.')
+                        default=0,
+                        help='Set the verbosity level. 0 = quiet, 1 = normal, 2 = verbose, 3 = very verbose, etc.')
+    return parser
 
+def add_cds_argument(parser):
+    parser.add_argument('-cds','--cds',
+                        action='store_true',
+                        default=False,
+                        help='Action the creation of CDS')
+    return parser
 
+def add_iprop_init_argument(parser):
+    parser.add_argument('-iprop','--iprop',
+                        action='store_true',
+                        default=False,
+                        help='Toggle the downloads of all instrument properties ')
+    return parser
 
+def add_debug_argument(parser):
+    parser.add_argument('-debug','--debug',
+                        action='store_true',
+                        default=False,
+                        help='Toggle debug ')
+    return parser
 
-
-
-
-
-
+def add_pdsserver_argument(parser):
+    parser.add_argument('-server','--server',
+                        action='store_true',
+                        default=False,
+                        help='Run the server ')
+    return parser
 
 
 def print_exception(exception: Exception):
     logging.error("Exception: {0}\n{1}".format(exception, traceback.format_exc()))
-
-
-
-
-
-# # function for print available descriptors
-# def session_status_changed(session: fxcorepy.O2GSession,
-#                            status: fxcorepy.AO2GSessionStatus.O2GSessionStatus):
-#     logging.info("Status: " + str(status))
-#     if status == fxcorepy.AO2GSessionStatus.O2GSessionStatus.TRADING_SESSION_REQUESTED:
-#         descriptors = session.trading_session_descriptors
-#         logging.info("Session descriptors:")
-#         logging.info(" {0:>7} | {1:>7} | {2:>30} | {3:>7}\n".format("id", "name", "description", "requires pin"))
-#         for desc in descriptors:
-#             logging.info(" {0:>7} | {1:>7} | {2:>30} | {3:>7}\n".format(desc.id, desc.name,
-#                                                                         desc.description,
-#                                                                         str(desc.requires_pin)))
 
 
 
@@ -332,22 +282,52 @@ def diff_month(year: int, month: int, date2: datetime):
 
 
 
-#@STCIssue in less todo
+_JGT_CONFIG_JSON_SECRET=None
 
-# def convert_timeframe_to_seconds(unit: fxcorepy.O2GTimeFrameUnit, size: int):
-#     current_unit = unit
-#     current_size = size
-#     step = 1
-#     if current_unit == fxcorepy.O2GTimeFrameUnit.MIN:
-#         step = 60  # leads to seconds
-#     elif current_unit == fxcorepy.O2GTimeFrameUnit.HOUR:
-#         step = 60*60
-#     elif current_unit == fxcorepy.O2GTimeFrameUnit.DAY:
-#         step = 60*60*24
-#     elif current_unit == fxcorepy.O2GTimeFrameUnit.WEEK:
-#         step = 60*60*24*7
-#     elif current_unit == fxcorepy.O2GTimeFrameUnit.MONTH:
-#         step = 60 * 60 * 24 * 30
-#     elif current_unit == fxcorepy.O2GTimeFrameUnit.TICK:
-#         step = 1
-#     return step * current_size
+def readconfig(json_config_str=None):
+    global _JGT_CONFIG_JSON_SECRET
+    # Try reading config file from current directory
+
+    if json_config_str is not None:
+        config = json.loads(json_config_str)
+        _JGT_CONFIG_JSON_SECRET=json_config_str
+        return config
+
+
+    if _JGT_CONFIG_JSON_SECRET is not None:
+        config = json.loads(_JGT_CONFIG_JSON_SECRET)
+        return config
+    
+    # Otherwise, try reading config file from current directory, home or env var
+    config_file = 'config.json'
+    config = None
+
+    if os.path.isfile(config_file):
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            return config
+    else:
+        # If config file not found, check home directory
+        home_dir = os.path.expanduser("~")
+        config_file = os.path.join(home_dir, 'config.json')
+        if os.path.isfile(config_file):
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+        else:
+            # If config file still not found, try reading from environment variable
+            config_json_str = os.getenv('JGT_CONFIG_JSON_SECRET')
+            if config_json_str:
+                config = json.loads(config_json_str)
+                return config
+
+
+    # Now you can use the config dictionary in your application
+
+    # Read config file
+    with open(config_file, 'r') as file:
+        config = json.load(file)
+        
+    if config is None:
+        raise Exception("Configuration not found")
+    
+    return config

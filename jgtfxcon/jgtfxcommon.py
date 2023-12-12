@@ -746,6 +746,7 @@ def valid_datetime(check_future: bool):
 def add_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, date_to: bool = True):
     if date_from:
         parser.add_argument('-s','--datefrom',
+                            dest='datefrom',
                             metavar="\"m.d.Y H:M:S\"",
                             help='Date/time from which you want to receive\
                                       historical prices. If you leave this argument as it \
@@ -755,6 +756,7 @@ def add_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, 
                             )
     if date_to:
         parser.add_argument('-e','--dateto',
+                            dest='dateto',
                             metavar="\"m.d.Y H:M:S\"",
                             help='Datetime until which you want to receive \
                                       historical prices. If you leave this argument as it is, \
@@ -767,6 +769,7 @@ def add_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, 
 def add_report_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, date_to: bool = True):
     if date_from:
         parser.add_argument('-s','--datefrom',
+                            dest='datefrom',
                             metavar="\"m.d.Y H:M:S\"",
                             help='Datetime from which you want to receive\
                                       combo account statement report. If you leave this argument as it \
@@ -776,6 +779,7 @@ def add_report_date_arguments(parser: argparse.ArgumentParser, date_from: bool =
                             )
     if date_to:
         parser.add_argument('-e','--dateto',
+                            dest='dateto',
                             metavar="\"m.d.Y H:M:S\"",
                             help='Datetime until which you want to receive \
                                       combo account statement report. If you leave this argument as it is, \
