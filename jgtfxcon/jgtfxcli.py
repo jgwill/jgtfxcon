@@ -51,10 +51,10 @@ def main():
             print("---BAHHHHHHHHHH Iprop trouble downloading-----")
             return
         
-    if args.datefrom:
-        date_from = args.datefrom.replace('/', '.')
-    if args.dateto:
-        date_to = args.dateto.replace('/', '.')
+    # if args.datefrom:
+    #     date_from = args.datefrom.replace('/', '.')
+    # if args.dateto:
+    #     date_to = args.dateto.replace('/', '.')
 
     
     output=False
