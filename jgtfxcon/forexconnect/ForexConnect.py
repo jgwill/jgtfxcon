@@ -4,6 +4,8 @@ import threading
 import logging
 from datetime import datetime
 import warnings
+import os
+import platform
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=RuntimeWarning, module="importlib._bootstrap")
@@ -453,9 +455,24 @@ class ForexConnect:
             numpy.ndarray
         
         """
+        
+
+
         if self._com is None:
+            var_jgt_dir = "/var/lib/jgt"
+           
+            if platform.system() == 'Windows':
+                var_jgt_dir = "C:\\var\\lib\\jgt"
+
+            
+            if os.path.isdir(var_jgt_dir) and os.access(var_jgt_dir, os.W_OK):
+                history_dir = os.path.join(var_jgt_dir,"History")
+            else:
+                history_dir = os.path.join(os.getcwd(), "History")
+                print("using ./History, might want to create :  sudo mkdir -p -m 777 " + var_jgt_dir)
+                
             self._com = fxcorepy.PriceHistoryCommunicatorFactory.create_communicator(
-                self._session, "./History")
+                        self._session, history_dir)
 
         timeframe = self._com.timeframe_factory.create(timeframe)
         if not timeframe:
