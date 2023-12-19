@@ -17,10 +17,14 @@ def read_json_file(filename):
 
   return data
 
-def readiprop():
+def readiprop(instrument):
+  i=instrument.replace("/","-")
   # Use the function
   data = read_json_file('iprop.json')
-  return data
+  return data[i]
+
+def get_pips(instrument):
+  return readiprop(instrument)['pips']
 # Use the function
 #data = read_json_file('iprop.json')
 
