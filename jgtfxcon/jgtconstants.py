@@ -7,6 +7,15 @@ nonTradingZoneColor = 'gray'
 sellingZoneColor = 'red'
 buyingZoneColor = 'green'
 
+open_column_name = 'Open'
+close_column_name = 'Close'
+high_column_name = 'High'
+low_column_name = 'Low'
+median_column_name = 'Median'
+volume_column_name = 'Volume'
+date_column_name = 'Date'
+bar_height_column_name= "bar_height"
+
 # List of columns to remove
 columns_to_remove = ['aofvalue', 'aofhighao', 'aoflowao', 'aofhigh', 'aoflow', 'aocolor', 'accolor','fdbbhigh','fdbblow','fdbshigh','fdbslow']
 
