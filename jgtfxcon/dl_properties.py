@@ -75,6 +75,11 @@ Silver,XAG/USD,XAG/USD
 Gold,XAU/USD,XAU/USD
 """)
 
+import json
+
+def write_json_file(path, data):
+  with open(path, 'w') as f:
+    json.dump(data, f)
 
 commodities = pd.read_csv( all_commodities_csv)
 print(commodities['FXCM'])
@@ -82,15 +87,45 @@ forexes = pd.read_csv(all_instrument_csv)
 
 indices = pd.read_csv(all_indices_csv)
 
-def process_fxcm(df):
+def process_fxcm(df,fn_all="iprop-forex.json"):
+  #ind={}
   for fxcm_value in df['FXCM']:
-    pds.get_instrument_properties(fxcm_value)
+    iprop=pds.get_instrument_properties(fxcm_value)
+    #ind[fxcm_value]=iprop
+  #write to file the fn_all
+  # iprop_fpath = os.path.join(".",fn_all)
+  
+  # write_json_file(iprop_fpath,ind)
+  # print("Wrote to file: ",iprop_fpath)
 
 
 pds.stayConnectedSetter(True)
-# Use the function
-process_fxcm(commodities)
-process_fxcm(forexes)
-process_fxcm(indices)
+
+
+iprop_fnname = "iprop-commodities.json"
+process_fxcm(commodities,iprop_fnname)
+iprop_fnname = "iprop-forex.json"
+process_fxcm(forexes,iprop_fnname)
+iprop_fnname = "iprop-indices.json"
+process_fxcm(indices,iprop_fnname)
 
 pds.disconnect()
+
+
+
+
+# def read_json_file(filename):
+#   # Get the directory of the current script
+#   script_dir = os.path.dirname(os.path.realpath(__file__))
+
+#   # Construct the full file path
+#   file_path = os.path.join(script_dir, filename)
+
+#   # Read the JSON file
+#   with open(file_path, 'r') as f:
+#     data = json.load(f)
+
+#   return data
+
+# # Use the function
+# data = read_json_file('iprop.json')
