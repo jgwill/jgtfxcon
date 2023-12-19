@@ -236,8 +236,8 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
     finally:
         if not stayConnected:
             disconnect()
-        else:
-            print("---we stay connected---")
+        #else:
+        #    print("---we stay connected---")
         #logout_forexconnect(fx)
 
 
