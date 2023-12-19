@@ -438,41 +438,6 @@ def get_instrument_properties(instrument, quiet=False,from_file=False):
     with open(iprop_dir_path, 'r') as f:
       instrument_properties = json.load(f)
     return instrument_properties
-    # # Check if the directory exists
-    # if not os.path.exists(dir_path):
-    #     # If not, create it
-    #     os.makedirs(dir_path)
-    
-    # # Check if the file exists
-    # if not os.path.exists(iprop_dir_path):
-    #     # If not, create the directory if it doesn't exist
-    #     if not os.path.exists(dir_path):
-    #         os.makedirs(dir_path)
-
-    #     # Define the instrument properties
-    #     # Replace with your actual instrument properties
-    #     pipsize = get_pipsize(instrument)
-    #     instrument_properties = {
-    #         "pipsize": pipsize
-    #         # Add more properties as needed
-    #     }
-
-    #     # Replace forward slash with hyphen in the instrument name
-
-    #     # Save the instrument properties to the file
-    #     with open(iprop_dir_path, 'w') as f:
-    #         json.dump(instrument_properties, f)
-
-    #     if not quiet:
-    #         print(f"Instrument properties for {instrument} saved.")
-    # else:
-    #     # Read the instrument properties from the file
-    #     with open(iprop_dir_path, 'r') as f:
-    #         instrument_properties = json.load(f)
-
-    #     if not quiet:
-    #         print(f"Instrument properties for {instrument} read.")
-    # return instrument_properties
 
 
 # Might move to JGTTDS later
