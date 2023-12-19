@@ -1,10 +1,16 @@
 #from __init__ import env,jsonfile2prop,d2p,createByRange
-from . import env,jsonfile2prop,d2p,createByRange
+
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+from JGTCore import env,jsonfile2prop,d2p
+from JGTCDS import  createByRange
 
 import pandas as pd
 from functools import reduce
 
-
+# from jgtpy import env 
 ctx=d2p(env)
 
 trainsetfnjson=env['trainfnjson'] 

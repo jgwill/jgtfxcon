@@ -135,3 +135,5 @@ jgtfxcon/*.csv
 _
 *.csv
 env-jgtfxcon-win-python37.create.bat
+zold
+**/zold

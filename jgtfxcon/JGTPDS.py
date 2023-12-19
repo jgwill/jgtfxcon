@@ -15,7 +15,7 @@ from JGTConfig import local_fn_compression,get_pov_local_data_filename
 from JGTPDHelper import *
 from jgtfxc import *
 
-
+import jgtconstants as c
 
 
 
