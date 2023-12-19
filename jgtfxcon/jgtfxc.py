@@ -21,6 +21,7 @@ from jgtfxcommon import get_connection_status,get_connection_status,readconfig
 import jgtfxcommon
 
 import jgtflags
+import jgtconstants as c
 
 # origin_work_dir = os.getcwd()
 # here = os.path.abspath(os.path.dirname(__file__))
@@ -226,9 +227,9 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
         current_unit, _ = ForexConnect.parse_timeframe(timeframe)
 
         if current_unit == fxcorepy.O2GTimeFrameUnit.TICK:
-            data = pd.DataFrame(history, columns=['Date', 'Bid', 'Ask'])
+            data = pd.DataFrame(history, columns=[c.date_column_name, 'Bid', 'Ask'])
         else:
-            data = pd.DataFrame(history, columns=['Date','BidOpen','BidHigh','BidLow','BidClose','AskOpen','AskHigh','AskLow','AskClose','Volume'])
+            data = pd.DataFrame(history, columns=[c.date_column_name,c.bidopen_column_name,c.bidhigh_column_name,c.bidlow_column_name,c.bidclose_column_name,c.askopen_column_name,c.askhigh_column_name,c.asklow_column_name,c.askclose_column_name,c.volume_column_name])
 
         return data
 

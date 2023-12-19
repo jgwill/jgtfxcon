@@ -13,9 +13,9 @@ high_column_name = 'High'
 low_column_name = 'Low'
 
 bidopen_column_name = 'BidOpen'
-bidclose_column_name = 'BidClose'
 bidhigh_column_name = 'BidHigh'
 bidlow_column_name = 'BidLow'
+bidclose_column_name = 'BidClose'
 
 askopen_column_name = 'AskOpen'
 askclose_column_name = 'AskClose'
