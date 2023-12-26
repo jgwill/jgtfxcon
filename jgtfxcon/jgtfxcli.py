@@ -22,6 +22,7 @@ def parse_args():
     jgtfxcommon.add_tlid_range_argument(parser)
     jgtfxcommon.add_max_bars_arguments(parser)
     #jgtfxcommon.add_output_argument(parser)
+    jgtfxcommon.add_compressed_argument(parser)
     #jgtfxcommon.add_quiet_argument(parser)
     jgtfxcommon.add_verbose_argument(parser)
     jgtfxcommon.add_debug_argument(parser)
