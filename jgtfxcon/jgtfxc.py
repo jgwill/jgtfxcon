@@ -178,14 +178,14 @@ _config=None
 
 def readconfig(json_config_str=None):
     global _config
-    # # Try reading config file from current directory
+    # Try reading config file from current directory
     # config_file = 'config.json'
     # if not os.path.isfile(config_file):
-    #     # If config file not found, check home directory
+    #     If config file not found, check home directory
     #     home_dir = os.path.expanduser("~")
     #     config_file = os.path.join(home_dir, 'config.json')
 
-    # # Read config file
+    # Read config file
     # with open(config_file, 'r') as file:
     if _config is None:
         _config = jgtfxcommon.readconfig(json_config_str)
