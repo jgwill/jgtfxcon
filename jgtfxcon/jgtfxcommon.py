@@ -857,6 +857,11 @@ def add_cds_argument(parser):
                         help='Action the creation of CDS')
     return parser
 
+def add_tlid_range_argument(parser):
+    #print("Tlid range active")
+    parser.add_argument('-r', '--range', type=str, required=False, dest='tlidrange',
+                        help='TLID range in the format YYMMDDHHMM_YYMMDDHHMM.')
+
 def add_iprop_init_argument(parser):
     parser.add_argument('-iprop','--iprop',
                         action='store_true',
