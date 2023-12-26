@@ -20,7 +20,7 @@ from typing import List
 from enum import Enum
 import json
 import os
-
+import tlid
 
 #------------------------#
 
@@ -89,14 +89,12 @@ def add_candle_open_price_mode_argument(parser: argparse.ArgumentParser):
 def add_instrument_timeframe_arguments(parser: argparse.ArgumentParser, timeframe: bool = True):
     parser.add_argument('-i','--instrument',
                         metavar="INSTRUMENT",
-                        default="EUR/USD",
                         help='An instrument which you want to use in sample. \
                                   For example, "EUR/USD".')
 
     if timeframe:
         parser.add_argument('-t','--timeframe',
                             metavar="TIMEFRAME",
-                            default="m5",
                             help='Time period which forms a single candle. \
                                       For example, m1 - for 1 minute, H1 - for 1 hour.')
     parser.add_argument('-ip',
@@ -123,6 +121,83 @@ def add_account_arguments(parser: argparse.ArgumentParser):
                         help='An account which you want to use in sample.')
 
 
+def str_to_datetime(date_str):
+    formats = ['%m.%d.%Y %H:%M:%S', '%Y-%m-%d %H:%M:%S', '%Y/%m/%d %H:%M:%S', '%Y/%m/%d', '%Y-%m-%d']
+    
+    for fmt in formats:
+        try:
+            return datetime.datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    return None
+
+def tlid_range_to_start_end_datetime(tlid_range: str):
+    
+    #Support inputting just a Year
+    if len(tlid_range) == 4 or len(tlid_range) == 2 :
+        start_str = tlid_range + "0101" + "0000"
+        end_str = tlid_range +  "1231" + "2359"
+    else:
+        #Normal support start_end
+        try:
+            start_str, end_str = tlid_range.split("_")
+        except:
+            print("TLID ERROR - make use you used a \"_\"")
+            return None,None
+    
+    date_format_start = "%y%m%d%H%M"
+    date_format_end = "%y%m%d%H%M"
+    
+    if len(start_str) == 4 or len(start_str) == 2:
+        start_str = start_str + "0101" + "0000"
+    if len(end_str) == 4 or len(end_str) == 2 :
+        end_str = end_str + "1231" + "2359"
+    
+    if len(start_str) == 6:
+        start_str = start_str + "0000"
+    if len(end_str) == 6:
+        end_str = end_str + "2359"
+   
+    if len(start_str) == 8:
+        start_str = start_str + "0000"
+    if len(end_str) == 8:
+        end_str = end_str + "2359"
+        
+    if len(start_str) == 12:
+        date_format_start = "%Y%m%d%H%M"
+    if len(end_str) == 12:
+        date_format_end = "%Y%m%d%H%M"
+   
+    #print(date_format_end)
+    try:
+        start_dt =  datetime.datetime.strptime(start_str, date_format_start)
+        end_dt = datetime.datetime.strptime(end_str, date_format_end)
+        return start_dt,end_dt
+    except ValueError:
+        return None
+
+def tlid_range_to_jgtfxcon_start_end_str(tlid_range: str):
+    date_format_fxcon = '%m.%d.%Y %H:%M:%S'
+    start_dt,end_dt = tlid_range_to_start_end_datetime(tlid_range)
+    #print(str(start_dt),str(end_dt))
+    if start_dt is None or end_dt is None:
+        return None,None
+    else:
+        return str(start_dt.strftime(date_format_fxcon)),str(end_dt.strftime(date_format_fxcon))
+
+def tlid_dt_to_string(dt):
+    return dt.strftime("%y%m%d%H%M")
+
+def tlidmin_to_dt(tlid_str: str):
+    date_format = "%y%m%d%H%M"
+    try:
+        tlid_dt =  datetime.datetime.strptime(tlid_str, date_format)
+        return tlid_dt
+    except ValueError:
+        pass
+    
+    return None
+
 def valid_datetime(check_future: bool):
     def _valid_datetime(str_datetime: str):
         date_format = '%m.%d.%Y %H:%M:%S'
@@ -140,6 +215,11 @@ def valid_datetime(check_future: bool):
             raise argparse.ArgumentTypeError(msg)
     return _valid_datetime
 
+
+def add_tlid_range_argument(parser: argparse.ArgumentParser):
+    #print("Tlid range active")
+    parser.add_argument('-r', '--range', type=str, required=False, dest='tlidrange',
+                        help='TLID range in the format YYMMDDHHMM_YYMMDDHHMM.')
 
 def add_date_arguments(parser: argparse.ArgumentParser, date_from: bool = True, date_to: bool = True):
     if date_from:
@@ -240,6 +320,12 @@ def add_cds_argument(parser):
                         help='Action the creation of CDS')
     return parser
 
+def add_ads_argument(parser):
+    parser.add_argument('-ads','--ads',
+                        action='store_true',
+                        default=False,
+                        help='Action the creation of ADS and show the chart')
+    return parser
 def add_iprop_init_argument(parser):
     parser.add_argument('-iprop','--iprop',
                         action='store_true',

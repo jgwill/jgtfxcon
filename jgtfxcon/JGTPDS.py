@@ -1,6 +1,6 @@
 debugging=False
 
-import datetime as dt
+import datetime 
 import pandas as pd
 import os
 
@@ -14,6 +14,9 @@ import jgtfxc as jfx
 from JGTConfig import local_fn_compression,get_pov_local_data_filename
 from JGTPDHelper import *
 from jgtfxc import *
+
+import jgtos
+import iprops
 
 import jgtconstants as c
 
@@ -110,20 +113,9 @@ def getPH_from_local1(instrument,timeframe):
   return df
 
 
-def get_data_path():
-    data_path = os.environ.get('JGTPY_DATA', './data')
 
-    if not os.path.exists(data_path):
-      data_path = os.environ.get('JGTPY_DATA', '../data')
-      
 
-    if not os.path.exists(data_path):
-      raise Exception("Data directory not found. Please create a directory named 'data' in the current or parent directory, or set the JGTPY_DATA environment variable.")
-    
-    data_path = os.path.join(data_path, 'pds')
-    return data_path
-  
-def getPH_from_filestore(instrument,timeframe,quiet=True, compressed=False,with_index=True):
+def getPH_from_filestore(instrument,timeframe,quiet=True, compressed=False,with_index=True,tlid_range=None,output_path=None):
   """
   Retrieves OHLC data for a given instrument and timeframe from the filestore.
 
@@ -133,11 +125,13 @@ def getPH_from_filestore(instrument,timeframe,quiet=True, compressed=False,with_
     quiet (bool, optional): Whether to suppress print statements. Defaults to True.
     compressed (bool, optional): Whether the data is compressed. Defaults to False.
     with_index (bool, optional): Whether to include the index in the returned DataFrame. Defaults to True.
+    tlid_range (str, optional): Select a range on disk or return None if unavailable
+    output_path (str, optional): Select a path on disk or return None if unavailable
 
   Returns:
     pandas.DataFrame: The OHLC data for the given instrument and timeframe.
   """  
-  srcpath = create_filestore_path(instrument, timeframe,quiet, compressed)  
+  srcpath = create_filestore_path(instrument, timeframe,quiet, compressed,tlid_range,output_path)  
   
   print_quiet(quiet,srcpath)
   
@@ -180,7 +174,7 @@ def read_ohlc_df_from_file(srcpath, quiet=True, compressed=False,with_index=True
   return df
 
 
-def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=None, with_index=True, quiet=True, compressed=False):
+def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=None, with_index=True, quiet=True, compressed=False,tlid_range=None):
   """
   Saves the OHLC data for a given instrument and timeframe to a CSV file.
 
@@ -193,25 +187,27 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
   - with_index (bool): Whether to include the index in the CSV file (default: True)
   - quiet (bool): Whether to suppress console output (default: True)
   - compressed (bool): Whether to compress the CSV file using gzip (default: False)
+  - tlid_range (str): The tlid range to retrieve (default: None)
 
   Returns:
   - str: The file path where the CSV file was saved.
   """
-  df=getPH(instrument,timeframe,quote_count,start,end,False,quiet)
+  
+  df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
   # print("-----------------getPH------------------->>>>")
   # print(df)
   # print("-----------------getPH-------------------<<<<<<")
   # Define the file path based on the environment variable or local path
   if df is not None:
-      fpath = write_df_to_filestore(df, instrument, timeframe, compressed)
+      fpath = write_df_to_filestore(df, instrument, timeframe, compressed,quiet,tlid_range)
       return fpath,df
   else:
       print("No data from getPH from getPH_to_filestore")
   return "",None
 
-def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=True):
+def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=True,tlid_range=None):
   
-  fpath =  create_filestore_path(instrument, timeframe,quiet, compressed)
+  fpath =  create_filestore_path(instrument, timeframe,quiet, compressed,tlid_range)
   
   if compressed:
     df.to_csv(fpath, compression=local_fn_compression)
@@ -221,74 +217,36 @@ def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=Tru
   return fpath
 
 
-def create_filestore_path(instrument, timeframe,quiet=True, compressed=False):
-    # Define the file path based on the environment variable or local path
-    data_path = get_data_path()
-    if not os.path.exists(data_path):
-      falledpath=create_use_fallback_datapath()
-      print('falledpath:' + falledpath)
-      data_path = get_data_path()
-      print('data_path falled:' + data_path)
-      
-    print(data_path)
-
-    ext = 'csv'
-    if compressed:
-        ext = 'csv.gz'
-    fpath = mk_fullpath(instrument, timeframe, ext, data_path)
-    return fpath
-
-
-def create_use_fallback_datapath():
-    # Set the 'JGTPY_DATA' environment variable
-    #os.environ['JGTPY_DATA'] = data_path
-    if os.path.exists(os.environ['JGTPY_DATA']):
-      return os.path.exists(os.environ['JGTPY_DATA'])
-    
-    # Check if the directory specified by 'JGTPY_DATA' exists
-    data_directory = os.path.abspath(os.path.expanduser(os.environ['JGTPY_DATA']))
-
-    if not os.path.exists(data_directory):
-        # Try using ./data/pds
-        fallback_path_1 = os.path.join(os.getcwd(), 'data', 'pds')
-        if os.path.exists(fallback_path_1):
-            data_directory = fallback_path_1
-        else:
-            # Try using ../data/pds
-            fallback_path_2 = os.path.abspath(os.path.join(os.getcwd(), '..', 'data', 'pds'))
-            if os.path.exists(fallback_path_2):
-                data_directory = fallback_path_2
-            else:
-                # Print an error if the variable exists but the path is not found
-                print("Error: JGTPY_DATA path not found.")
-                data_directory = None
-
-    # If the directory does not exist, create it
-    if data_directory is not None and not os.path.exists(data_directory):
-        os.makedirs(data_directory)
-
-    # Echo the 'JGTPY_DATA' variable in the bash command
-    os.environ['JGTPY_DATA'] = data_directory
-    print('JGTPY_DATA was fallback being set to: ' + data_directory)
-    
-    if not os.path.exists(data_directory):
-      print("-----------TODO--------------")
-      print("   mkdir -p ./data/pds")
-      print("   mkdir -p ../data/pds")
-      print(" or")
-      print("   export JGTPY_DATA somewhere")
-      print("-----------------------------")
-    return data_directory
 
 
 
+def create_filestore_path(instrument, timeframe,quiet=True, compressed=False,tlid_range=None,output_path=None):
+  return jgtos.create_filestore_path(instrument,timeframe,quiet,compressed,tlid_range,output_path)
+  
+  
+def mk_fn(instrument,timeframe,ext="csv"):
+  return jgtos.mk_fn(instrument,timeframe,ext)
 
 
-def getPH2file(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True,compressed=False):
-  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed)
+def mk_fn_range(instrument, timeframe, start: datetime, end: datetime,ext="csv"):
+  return jgtos.mk_fn_range(instrument,timeframe,start,end,ext)
 
 
-def getPH(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True):
+def mk_fullpath(instrument,timeframe,ext,path,tlid_range=None):
+  return jgtos.mk_fullpath(instrument,timeframe,ext,path,tlid_range)
+
+
+def get_data_path():
+  return jgtos.get_data_path('pds')
+  
+
+
+
+def getPH2file(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None):
+  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range)
+
+
+def getPH(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True,tlid_range=None):
   """Get Price History from Broker
 
   Args:
@@ -299,6 +257,8 @@ def getPH(instrument,timeframe,quote_count=335,start=None,end=None,with_index=Tr
       end (str, optional): end DateTime range. Defaults to None.
       with_index (bool, optional): Return DataFrame with Index. Defaults to True.
       quiet  (bool, optional): stay calm ;)
+      compressed (bool, optional): Whether to compress the CSV file using gzip (default: False)
+      tlid_range (str): The tlid range to retrieve (default: None)
 
   Returns:
       pandas.DataFrame: DF with price histories

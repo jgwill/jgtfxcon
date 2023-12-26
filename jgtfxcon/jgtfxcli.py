@@ -18,9 +18,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Process command parameters.')
     #jgtfxcommon.add_main_arguments(parser)
     jgtfxcommon.add_instrument_timeframe_arguments(parser)
-    jgtfxcommon.add_date_arguments(parser)
+    #jgtfxcommon.add_date_arguments(parser)
+    jgtfxcommon.add_tlid_range_argument(parser)
     jgtfxcommon.add_max_bars_arguments(parser)
-    jgtfxcommon.add_output_argument(parser)
+    #jgtfxcommon.add_output_argument(parser)
     #jgtfxcommon.add_quiet_argument(parser)
     jgtfxcommon.add_verbose_argument(parser)
     jgtfxcommon.add_debug_argument(parser)
@@ -35,9 +36,19 @@ def main():
     args = parse_args()
     instrument = args.instrument
     timeframe = args.timeframe
-    quotes_count = args.quotescount
+    using_tlid = False
     date_from = None
     date_to = None
+    if args.tlidrange is not None:
+        using_tlid= True
+        tlid_range = args.tlidrange
+        #print(tlid_range)
+        dtf,dtt = jgtfxcommon.tlid_range_to_start_end_datetime(tlid_range)
+        #print(str(dtf) + " " + str(dtt))
+        date_from =dtf
+        date_to = dtt
+    else:
+        quotes_count = args.quotescount
     debug = args.debug
     if args.server == True:
         try:
@@ -56,13 +67,9 @@ def main():
             print("---BAHHHHHHHHHH Iprop trouble downloading-----")
             return
         
-    if args.datefrom:
-        date_from = args.datefrom # .replace('/', '.')
-    if args.dateto:
-        date_to = args.dateto # .replace('/', '.')
+
 
     
-    output=False
     compress=False
     verbose_level = args.verbose
     quiet=False
@@ -73,9 +80,7 @@ def main():
 
     if args.compress:
         compress = args.compress
-        output = True # in case
-    if args.output:
-        output = True
+        
 
     if verbose_level > 1:
         if date_from:
@@ -93,13 +98,9 @@ def main():
         pds.stayConnectedSetter(True)
         for instrument in instruments:
             for timeframe in timeframes:
-                if output:
-                    fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, date_from, date_to, False, quiet, compress)
-                    print_quiet(quiet, fpath)
-                else:
-                    p = pds.getPH(instrument, timeframe, quotes_count, date_from, date_to, False, quiet)
-                    if verbose_level > 0:
-                        print(p)
+                fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, date_from, date_to, False, quiet, compress)
+                print_quiet(quiet, fpath)
+
         pds.disconnect()  
     except Exception as e:
         jgtfxcommon.print_exception(e)
