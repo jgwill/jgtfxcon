@@ -828,7 +828,7 @@ def add_output_argument(parser: argparse.ArgumentParser):
     """
     parser.add_argument('-o','--output',
                         action='store_true',
-                        help='Output file. If specified, output will be written in the filestore.')
+                        help='Output PATH. If specified, output will be written in the filestore.')
     
     parser.add_argument('-z','--compress',
                         action='store_true',
