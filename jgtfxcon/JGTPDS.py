@@ -16,11 +16,11 @@ from JGTConfig import local_fn_compression,get_pov_local_data_filename
 from JGTPDHelper import *
 from jgtfxc import *
 
-import jgtos
+from jgtutils import jgtos
 from jgtos import create_filestore_path
 import iprops
 
-import jgtconstants as c
+from jgtutils import jgtconstants as c
 
 
 

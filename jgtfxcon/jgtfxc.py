@@ -22,7 +22,7 @@ from jgtfxcommon import get_connection_status,get_connection_status,readconfig
 import jgtfxcommon
 
 import jgtflags
-import jgtconstants as c
+from jgtutils import jgtconstants as c
 
 # origin_work_dir = os.getcwd()
 # here = os.path.abspath(os.path.dirname(__file__))

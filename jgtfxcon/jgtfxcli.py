@@ -4,9 +4,9 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-import jgtconstants as constants
+from jgtutils import jgtconstants as constants
 import jgtfxcommon as jgtfxcommon
-import jgtos
+from jgtutils import jgtos
 import argparse
 
 import JGTPDS as pds
