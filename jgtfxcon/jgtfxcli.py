@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import jgtconstants as constants
 import jgtfxcommon as jgtfxcommon
+import jgtos
 import argparse
 
 import JGTPDS as pds
@@ -26,7 +27,7 @@ def parse_args():
     #jgtfxcommon.add_quiet_argument(parser)
     jgtfxcommon.add_verbose_argument(parser)
     jgtfxcommon.add_debug_argument(parser)
-    jgtfxcommon.add_cds_argument(parser)
+    #jgtfxcommon.add_cds_argument(parser)
     jgtfxcommon.add_iprop_init_argument(parser)
     jgtfxcommon.add_pdsserver_argument(parser)
     args = parser.parse_args()
@@ -37,17 +38,19 @@ def main():
     args = parse_args()
     instrument = args.instrument
     timeframe = args.timeframe
+    quotes_count = 400
     using_tlid = False
+    tlid_range= None
     date_from = None
     date_to = None
     if args.tlidrange is not None:
         using_tlid= True
         tlid_range = args.tlidrange
         #print(tlid_range)
-        dtf,dtt = jgtfxcommon.tlid_range_to_start_end_datetime(tlid_range)
+        #dtf,dtt = jgtfxcommon.tlid_range_to_start_end_datetime(tlid_range)
         #print(str(dtf) + " " + str(dtt))
-        date_from =dtf
-        date_to = dtt
+        #date_from =dtf
+        #date_to = dtt
     else:
         quotes_count = args.quotescount
     debug = args.debug
@@ -83,11 +86,7 @@ def main():
         compress = args.compress
         
 
-    if verbose_level > 1:
-        if date_from:
-            print(" Date from : " + str(date_from))
-        if date_to:
-            print(" Date to : " + str(date_to))
+    print(instrument,timeframe,quotes_count,using_tlid,quiet,compress,tlid_range)
 
 
     try:
@@ -99,7 +98,8 @@ def main():
         pds.stayConnectedSetter(True)
         for instrument in instruments:
             for timeframe in timeframes:
-                fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, date_from, date_to, False, quiet, compress)
+                print("---------DEBUG jgtfxcli ------")
+                fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, None, False, quiet, compress,tlid_range=tlid_range)
                 print_quiet(quiet, fpath)
 
         pds.disconnect()  

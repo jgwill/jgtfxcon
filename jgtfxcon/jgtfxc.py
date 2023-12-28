@@ -9,6 +9,7 @@ import json
 #import datetime
 from datetime import datetime,timezone
 import pandas as pd
+import iprops
 
 import warnings
 
@@ -196,7 +197,8 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
     global quotes_count,fx
     if quotes_count_spec is None:
         quotes_count_spec=quotes_count
-
+    
+    data=None
     connect(quiet=quiet)
     # if home_dir/.jgt/iprops make it and run a save of this instrument properties
     iprop=get_instrument_properties(instrument,quiet)
@@ -206,23 +208,31 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
         print_quiet(quiet,"   (not Parsed) from : " + str(datefrom) + ", to:" + str(dateto))
         print_quiet(quiet,"-------------------------------------------------------")
 
-        if datefrom is not None:
-            date_from_parsed = parse_date(datefrom)
-        else:
-            date_from_parsed=None
+        # if datefrom is not None:
+        #     date_from_parsed = parse_date(datefrom)
+        # else:
+        #     date_from_parsed=None
         
         if dateto is None:
-            date_to_parsed = datetime.now(timezone.utc)
-        else:
-            date_to_parsed = parse_date(dateto)
+            dateto = datetime.now(timezone.utc)
+        # else:
+        #     date_to_parsed = parse_date(dateto)
         
+        #quiet=False
         if not quiet:
-            print("  (Parsed) Date from : " + str(date_from_parsed))
-            print("  (Parsed) Date to : " + str(date_to_parsed))
- 
+            print("  (Parsed) Date from : " + str(datefrom))
+            print("  (Parsed) Date to : " + str(dateto))
+            print("Quote spec:" + quotes_count_spec)
 
-
-        history = fx.get_history(instrument, timeframe, date_from_parsed, date_to_parsed, quotes_count_spec)
+        if fx is None:
+            print("FX IS NONE")
+        if datefrom is not None:
+            history = fx.get_history(instrument, timeframe, datefrom, dateto)
+        else:
+            if dateto is not None:
+                history = fx.get_history(instrument, timeframe, None, dateto, quotes_count_spec)
+            else:
+                history = fx.get_history(instrument, timeframe, None, None, quotes_count_spec)
 
         current_unit, _ = ForexConnect.parse_timeframe(timeframe)
 
@@ -239,6 +249,7 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
         #else:
         #    print("---we stay connected---")
         #logout_forexconnect(fx)
+    return data
 
 
 
@@ -299,46 +310,17 @@ def parse_date(date_str) -> datetime:
     
 
 def get_instrument_properties(instrument, quiet=False):
-    # Define the path to the directory
-    home_dir = os.path.expanduser("~")
-    dir_path = os.path.join(home_dir, '.jgt', 'iprops')
     instrument_properties = {}
-    instrument_filename = instrument.replace('/', '-')
-    
-    # Check if the directory exists
-    if not os.path.exists(dir_path):
-        # If not, create it
-        os.makedirs(dir_path)
-    
-    iprop_dir_path = os.path.join(dir_path, f'{instrument_filename}.json')
-    # Check if the file exists
-    if not os.path.exists(iprop_dir_path):
-        # If not, create the directory if it doesn't exist
-        if not os.path.exists(dir_path):
-            os.makedirs(dir_path)
-
-        # Define the instrument properties
-        # Replace with your actual instrument properties
-        pipsize = get_pipsize(instrument)
-        instrument_properties = {
-            "pipsize": pipsize
-            # Add more properties as needed
-        }
-
-        # Replace forward slash with hyphen in the instrument name
-
-        # Save the instrument properties to the file
-        with open(iprop_dir_path, 'w') as f:
-            json.dump(instrument_properties, f)
-
-        if not quiet:
-            print(f"Instrument properties for {instrument} saved.")
-    else:
-        # Read the instrument properties from the file
+    try:
+        instrument_properties = iprops.get_iprop(instrument)
+        instrument_properties["pipsize"] = instrument_properties["pips"]
+    except:
+        home_dir = os.path.expanduser("~")
+        dir_path = os.path.join(home_dir, '.jgt', 'iprops')
+        instrument_filename = instrument.replace('/', '-')
+        #     # Read the instrument properties from the file
+        iprop_dir_path = os.path.join(dir_path, f'{instrument_filename}.json')
         with open(iprop_dir_path, 'r') as f:
             instrument_properties = json.load(f)
-
-        if not quiet:
-            print(f"Instrument properties for {instrument} read.")
     return instrument_properties
     

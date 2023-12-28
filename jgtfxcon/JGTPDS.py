@@ -1,4 +1,5 @@
 debugging=False
+import pdb
 
 import datetime 
 import pandas as pd
@@ -16,6 +17,7 @@ from JGTPDHelper import *
 from jgtfxc import *
 
 import jgtos
+from jgtos import create_filestore_path
 import iprops
 
 import jgtconstants as c
@@ -194,8 +196,8 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
   """
   
   df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-  # print("-----------------getPH------------------->>>>")
-  # print(df)
+  print("-----------------getPH------------------->>>>")
+  print(df)
   # print("-----------------getPH-------------------<<<<<<")
   # Define the file path based on the environment variable or local path
   if df is not None:
@@ -220,8 +222,8 @@ def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=Tru
 
 
 
-def create_filestore_path(instrument, timeframe,quiet=True, compressed=False,tlid_range=None,output_path=None):
-  return jgtos.create_filestore_path(instrument,timeframe,quiet,compressed,tlid_range,output_path)
+# def create_filestore_path(instrument, timeframe,quiet=True, compressed=False,tlid_range=None,output_path=None):
+#   return jgtos.create_filestore_path(instrument,timeframe,quiet,compressed,tlid_range,output_path)
   
   
 def mk_fn(instrument,timeframe,ext="csv"):
@@ -246,13 +248,14 @@ def getPH2file(instrument,timeframe,quote_count=335,start=None,end=None,with_ind
   return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range)
 
 
-def getPH(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True,tlid_range=None):
+#getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
+def getPH(instrument,timeframe,quote_count=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None):
   """Get Price History from Broker
 
   Args:
       instrument (str): symbal
       timeframe (str): TF
-      quote_count (int, optional): nb bar to retrieve. Defaults to 335.
+      quote_count (int, optional): nb bar to retrieve. Defaults to -1.
       start (str, optional): start DateTime. Defaults to None.
       end (str, optional): end DateTime range. Defaults to None.
       with_index (bool, optional): Return DataFrame with Index. Defaults to True.
@@ -263,21 +266,43 @@ def getPH(instrument,timeframe,quote_count=335,start=None,end=None,with_index=Tr
   Returns:
       pandas.DataFrame: DF with price histories
   """
+  #print("-----------------getPH------------------->>>>")
+  #print(instrument,timeframe,quote_count,start,end,with_index,quiet,tlid_range)
+  if quote_count == -1:
+    quote_count = 335
   df = pd.DataFrame()
   if not useLocal:
     con=connect(quiet=quiet)
 
     try:
-        p=jfx.get_price_history(instrument, timeframe, start, end, quote_count+89,quiet=quiet)
+      if tlid_range is not None:
+        # start,end = jgtos.tlid_range_to_jgtfxcon_start_end_str(tlid_range)
+        start,end = jgtos.tlid_range_to_start_end_datetime(tlid_range)
+        #print("start: " + str(start) + " end: " + str(end))
+        p=jfx.get_price_history(instrument, timeframe, start, end,quiet=quiet) #@STCIssue NOT WORKING
+      else:
+        p=jfx.get_price_history(instrument, timeframe, None, None, quote_count+89,quiet=quiet) #@State WORKS
+        
     except:
-        try:
-            disconnect()
-            connect(quiet=quiet)
-            p=jfx.get_price_history(instrument, timeframe, start,end, quote_count+89,quiet=quiet)
-        except:
-            print("bahhhhhhhhhhhhhhhhhhhhhhh  REINITIALIZATION of the PDS todo")
-            return
+      try:
+        disconnect()
+        connect(quiet=quiet)
+        
+        if tlid_range is not None:
+          start,end = jgtos.tlid_range_to_jgtfxcon_start_end_str(tlid_range)
+          p=jfx.get_price_history(instrument, timeframe, start, end,quiet=quiet)
+        else:
+          p=jfx.get_price_history(instrument, timeframe, None, None, quote_count+89,quiet=quiet)
+      except Exception as e:
+        print("An error occurred: ", e)
+        print("bahhhhhhhhhhhhhhhhhhhhhhh  REINITIALIZATION of the PDS todo")
+        return   
 
+    if p is None:
+      raise ValueError("No data from get_price_history")
+    
+    #print("--------------DEBUG PDS------------")
+    #print(p)
 
     df=pd.DataFrame(p,columns=['Date','BidOpen','BidHigh','BidLow','BidClose','AskOpen','AskHigh','AskLow','AskClose','Volume'])
 
@@ -292,7 +317,7 @@ def getPH(instrument,timeframe,quote_count=335,start=None,end=None,with_index=Tr
     #Read from local
     
     #@STCIssue When we read from filestore, the Date Columnt is ok
-    df =getPH_from_filestore(instrument,timeframe) #@STCIssue add start and end and index name should be already set
+    df =getPH_from_filestore(instrument,timeframe,tlid_range=tlid_range) #@STCIssue add start and end and index name should be already set
     if with_index:
       df.index.rename('Date',inplace=True)
       
