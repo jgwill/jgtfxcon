@@ -1,4 +1,3 @@
-#import jgtfxcon
 
 import os
 import sys
@@ -38,7 +37,7 @@ def main():
     args = parse_args()
     instrument = args.instrument
     timeframe = args.timeframe
-    quotes_count = 400
+    quotes_count = -1
     using_tlid = False
     tlid_range= None
     date_from = None
@@ -98,7 +97,7 @@ def main():
         pds.stayConnectedSetter(True)
         for instrument in instruments:
             for timeframe in timeframes:
-                print("---------DEBUG jgtfxcli ------")
+                #print("---------DEBUG jgtfxcli ------")
                 fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, None, False, quiet, compress,tlid_range=tlid_range)
                 print_quiet(quiet, fpath)
 
