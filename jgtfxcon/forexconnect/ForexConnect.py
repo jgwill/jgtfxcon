@@ -482,8 +482,8 @@ class ForexConnect:
             pass
 
         self._com.candle_open_price_mode = candle_open_price_mode
-        if date_from is not None:
-            print("We are in ForexConnect: " + str(date_from) + ", to:" + str(date_to))
+        #if date_from is not None:
+            #print("We are in ForexConnect: " + str(date_from) + ", to:" + str(date_to))
         reader = self._com.get_history(instrument, timeframe, date_from, date_to, quotes_count)
         if timeframe.unit == fxcorepy.O2GTimeFrameUnit.TICK:
             result = np.zeros(len(reader), np.dtype([('Date', "M8[ns]"), ('Bid', "f8"), ("Ask", "f8")]))
