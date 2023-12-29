@@ -208,15 +208,18 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
   return "",None
 
 def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=True,tlid_range=None):
-  
-  fpath =  create_filestore_path(instrument, timeframe,quiet, compressed,tlid_range)
-  
-  if compressed:
-    df.to_csv(fpath, compression=local_fn_compression)
-  else:
-    df.to_csv(fpath)
-  
-  return fpath
+  try:
+    fpath =  create_filestore_path(instrument, timeframe,quiet, compressed,tlid_range)
+    
+    if compressed:
+      df.to_csv(fpath, compression=local_fn_compression)
+    else:
+      df.to_csv(fpath)
+    
+    return fpath
+  except Exception as e:
+    print(f"Exception: {e}")
+    print(f"Exception details: {str(e)}")
 
 
 
