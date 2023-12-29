@@ -196,8 +196,8 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
   """
   
   df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-  print("-----------------getPH------------------->>>>")
-  print(df)
+  #print("-----------------getPH------------------->>>>")
+  #print(df)
   # print("-----------------getPH-------------------<<<<<<")
   # Define the file path based on the environment variable or local path
   if df is not None:

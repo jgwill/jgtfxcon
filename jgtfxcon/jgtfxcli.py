@@ -85,8 +85,7 @@ def main():
         compress = args.compress
         
 
-    print(instrument,timeframe,quotes_count,using_tlid,quiet,compress,tlid_range)
-
+    
 
     try:
         
