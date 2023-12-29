@@ -82,7 +82,7 @@ from JGTCore import __version__ #,json2dict,jsonfile2prop,json2prop,jsonfile2dic
 
 
 # os.chdir(origin_work_dir)   
-from jgtfxcommon import _JGT_CONFIG_JSON_SECRET
+#from jgtfxcommon import _JGT_CONFIG_JSON_SECRET
 
 
 from JGTPDS import getPH as get_price, stayConnectedSetter as set_stay_connected, disconnect,connect as on,disconnect as off, status as connection_status,  getPH2file as get_price_to_file, getPHByRange as get_price_range, stayConnectedSetter as sc,getPH as ph,getPH_to_filestore as ph2fs
