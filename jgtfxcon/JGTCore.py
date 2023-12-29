@@ -6,7 +6,7 @@ import pathlib
 from pathlib import Path
 import pandas as pd
 
-__version__ = "0.2.6"
+__version__ = "0.2.7"
 
 from datetime import datetime
 from datetime import timedelta
@@ -17,7 +17,7 @@ def offsetdt(time_str,nbhoursoffset=4,date_format_str= '%m/%d/%Y %H:%M:%S',outpu
   return final_time_str
   
 def fixdtindf(dfsrc,fieldname="dt",n=4,date_format_str= '%m/%d/%Y %H:%M:%S',output_dt_format='%Y-%m-%d %H:%M:%S'):
-  #date_format_str = '%m/%d/%Y %H:%M:%S' #06/08/20.2.69:00:00
+  #date_format_str = '%m/%d/%Y %H:%M:%S' #06/08/20.2.79:00:00
   dfo=pd.DataFrame()
   for index,row in dfsrc.iterrows():
     #print(index)
@@ -30,7 +30,7 @@ def fixdtindf(dfsrc,fieldname="dt",n=4,date_format_str= '%m/%d/%Y %H:%M:%S',outp
     final_time = given_time + timedelta(hours=n)
     #print('Final Time : ', final_time)
     # Convert datetime object to string in specific format 
-    final_time_str = final_time.strftime(output_dt_format) #20.2.66-08 13:00:00
+    final_time_str = final_time.strftime(output_dt_format) #20.2.76-08 13:00:00
     #print('Final Time as string object: ', final_time_str)
     dfsrc.at[index,fieldname]=final_time_str
     #_df[index][fieldname]=final_time_str
