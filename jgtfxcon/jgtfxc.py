@@ -270,16 +270,6 @@ def getSubscribedSymbols():
     print("Not implemented yet")
 
 
-def get_pipsize(s_instrument):
-    if fx is None:
-        connect()
-    table_manager = fx.table_manager
-    offers_table = table_manager.get_table(ForexConnect.OFFERS)
-    for offer_row in offers_table:
-        if offer_row.instrument == s_instrument:
-            return offer_row.PointSize
-
-
 
 def parse_date(date_str) -> datetime:
     if date_str is not None: 
@@ -298,13 +288,8 @@ def get_instrument_properties(instrument, quiet=False):
     try:
         instrument_properties = iprops.get_iprop(instrument)
         instrument_properties["pipsize"] = instrument_properties["pips"]
-    except:
-        home_dir = os.path.expanduser("~")
-        dir_path = os.path.join(home_dir, '.jgt', 'iprops')
-        instrument_filename = instrument.replace('/', '-')
-        #     # Read the instrument properties from the file
-        iprop_dir_path = os.path.join(dir_path, f'{instrument_filename}.json')
-        with open(iprop_dir_path, 'r') as f:
-            instrument_properties = json.load(f)
+    except Exception as e:
+        print("An error occurred: ", e)
+     
     return instrument_properties
     
