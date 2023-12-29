@@ -206,7 +206,7 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
         if not quiet:
             print("  (Parsed) Date from : " + str(datefrom))
             print("  (Parsed) Date to : " + str(dateto))
-            print("Quote spec:" + quotes_count_spec)
+            print("Quote spec:" + str(quotes_count_spec))
             
         if fx is None:
             print("FX IS NONE")

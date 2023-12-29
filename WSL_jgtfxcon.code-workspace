@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../../../../b/Dropbox/jgt/drop/data/scn"
 		}
 	],
 	"settings": {}
