@@ -4,8 +4,8 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
-import jgtfxcommon as jgtfxcommon
-from jgtutils import jgtos
+#import jgtfxcommon as jgtcommon
+from jgtutils import jgtos,jgtcommon
 import argparse
 
 import JGTPDS as pds
@@ -17,18 +17,18 @@ import pandas as pd
 def parse_args():
     parser = argparse.ArgumentParser(description='Process command parameters.')
     #jgtfxcommon.add_main_arguments(parser)
-    jgtfxcommon.add_instrument_timeframe_arguments(parser)
+    jgtcommon.add_instrument_timeframe_arguments(parser)
     #jgtfxcommon.add_date_arguments(parser)
-    jgtfxcommon.add_tlid_range_argument(parser)
-    jgtfxcommon.add_max_bars_arguments(parser)
+    jgtcommon.add_tlid_range_argument(parser)
+    jgtcommon.add_max_bars_arguments(parser)
     #jgtfxcommon.add_output_argument(parser)
-    jgtfxcommon.add_compressed_argument(parser)
+    jgtcommon.add_compressed_argument(parser)
     #jgtfxcommon.add_quiet_argument(parser)
-    jgtfxcommon.add_verbose_argument(parser)
-    jgtfxcommon.add_debug_argument(parser)
+    jgtcommon.add_verbose_argument(parser)
+    jgtcommon.add_debug_argument(parser)
     #jgtfxcommon.add_cds_argument(parser)
-    jgtfxcommon.add_iprop_init_argument(parser)
-    jgtfxcommon.add_pdsserver_argument(parser)
+    jgtcommon.add_iprop_init_argument(parser)
+    jgtcommon.add_pdsserver_argument(parser)
     args = parser.parse_args()
     return args
 
@@ -103,12 +103,12 @@ def main():
 
         pds.disconnect()  
     except Exception as e:
-        jgtfxcommon.print_exception(e)
+        jgtcommon.print_exception(e)
 
     try:
         off()
     except Exception as e:
-        jgtfxcommon.print_exception(e)
+        jgtcommon.print_exception(e)
 
 # print("")
 # #input("Done! Press enter key to exit\n")

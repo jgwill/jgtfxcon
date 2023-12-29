@@ -17,8 +17,8 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=RuntimeWarning, module="importlib._bootstrap")
     # your code here
 
-
-from jgtfxcommon import get_connection_status,get_connection_status,readconfig
+from jgtutils.jgtcommon import readconfig
+from jgtfxcommon import get_connection_status,get_connection_status
 import jgtfxcommon
 
 import jgtflags
@@ -175,22 +175,6 @@ def print_quiet(quiet,content):
     if not quiet:
         print(content)
 
-_config=None
-
-def readconfig(json_config_str=None):
-    global _config
-    # Try reading config file from current directory
-    # config_file = 'config.json'
-    # if not os.path.isfile(config_file):
-    #     If config file not found, check home directory
-    #     home_dir = os.path.expanduser("~")
-    #     config_file = os.path.join(home_dir, 'config.json')
-
-    # Read config file
-    # with open(config_file, 'r') as file:
-    if _config is None:
-        _config = jgtfxcommon.readconfig(json_config_str)
-    return _config
 
 
 def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, dateto:datetime=None,quotes_count_spec:int=None,quiet: bool=True):
@@ -223,7 +207,7 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
             print("  (Parsed) Date from : " + str(datefrom))
             print("  (Parsed) Date to : " + str(dateto))
             print("Quote spec:" + quotes_count_spec)
-
+            
         if fx is None:
             print("FX IS NONE")
         if datefrom is not None:

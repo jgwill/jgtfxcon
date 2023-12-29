@@ -51,7 +51,7 @@ setup(
     packages=find_packages(include=['jgtfxcon', 'jgtfxcon.forexconnect', 'jgtfxcon.forexconnect.lib', 'jgtfxcon.forexconnect.lib.windows', 'jgtfxcon.forexconnect.lib.linux'], exclude=['*test*']),
     install_requires=INSTALL_REQUIRES,
     entry_points={
-        'console_scripts': ['jgtfxcli=jgtfxcon.jgtfxcli:main'],
+        'console_scripts': ['jgtfxcli=jgtfxcon.jgtfxcli:main','fxcli2console=jgtfxcon.fxcli2console:main'],
     },
     extras_require={
         'dev': (EXTRAS_DEV_LINT + EXTRAS_DEV_TEST + EXTRAS_DEV_DOCS),
