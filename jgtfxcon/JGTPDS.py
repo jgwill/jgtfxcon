@@ -337,52 +337,6 @@ def getPH(instrument,timeframe,quote_count=-1,start=None,end=None,with_index=Tru
   return df
 
 
-def getPHByRange(instrument,timeframe,start=None,end=None,with_index=True,quiet=True):
-  """Get Price History from Broker
-
-  Args:
-      instrument (str): symbal
-      timeframe (str): TF
-      start (str, optional): start DateTime. Defaults to None.
-      end (str, optional): end DateTime range. Defaults to None.
-      with_index (bool, optional): Return DataFrame with Index. Defaults to True.
-      quiet  (bool, optional): stay calm ;)
-
-  Returns:
-      pandas.DataFrame: DF with price histories
-  """
-  df = pd.DataFrame()
-  #if disconnected:
-  # con=connect()
-  if not useLocal:
-    con=connect(quiet=quiet)
-    df=getPH(instrument, timeframe,with_index=with_index,start=start,end=end,quiet=quiet)
-    #print(df)
-    
-    # if addOhlc and renameColumns:
-    #   df=pds_add_ohlc_stc_columns(df)
-    # if cleanseOriginalColumns:
-    #   df=_cleanse_original_columns(df)
-    
-    if not stayConnected:
-       con=disconnect(quiet=quiet)
-
-  else:
-    #Read from local
-    print_quiet(quiet,"Reading from local")
-    df =getPH_from_filestore(instrument,timeframe) 
-    
-
-    
-    if 'Date' in df.columns and start >= df['Date'].min() and end <= df['Date'].max():
-        mask = (df['Date'] > end) & (df['Date'] <= start)
-        df = df.loc[mask]
-    else:
-        raise PDSRangeNotAvailableException("The specified range is not available in the DataFrame")
- 
-  return df
-
-
 
 def getPresentBarAsList(dfsrc):
   _paf =dfsrc.iloc[-1:]
