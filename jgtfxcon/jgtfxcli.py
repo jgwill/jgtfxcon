@@ -22,6 +22,7 @@ def parse_args():
     jgtcommon.add_tlid_range_argument(parser)
     jgtcommon.add_max_bars_arguments(parser)
     jgtcommon.add_viewpath_argument(parser)
+    jgtcommon.add_exit_if_error(parser)
     #jgtfxcommon.add_output_argument(parser)
     jgtcommon.add_compressed_argument(parser)
     #jgtfxcommon.add_quiet_argument(parser)
@@ -36,6 +37,10 @@ def parse_args():
 
 def main():
     args = parse_args()
+    exit_on_error = False
+    if args.exitonerror:
+        exit_on_error = True
+    
     instrument = args.instrument
     timeframe = args.timeframe
     quotes_count = -1
@@ -101,6 +106,7 @@ def main():
         
         for instrument in instruments:
             for timeframe in timeframes:
+                
                 if not viewpath:
                     #print("---------DEBUG jgtfxcli ------")
                     if quotes_count==-1:
@@ -114,14 +120,22 @@ def main():
                             print("----------TEST_MODE--------")
                             print("start_date : " + str(start_date))
                             print("end_date : " + str(end_date))
-                        
-                        fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, end_date, False, quiet, compress)
+                        try:
+                            fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, end_date, False, quiet, compress)
+                            print_quiet(quiet, fpath)
+                        except Exception as e:
+                            error_message = f"An error occurred with {instrument} {timeframe}: {e}"
+                            if exit_on_error:
+                                print_quiet(quiet,error_message)
+                                
+                                sys.exit(1)
+                            else:
+                                print("Failed getting:" + instrument + "_" + timeframe)
                         if TEST_MODE:
                             print(df.head(1))
                             print(df.tail(1))
                             df.to_csv("test.csv")
                         
-                    print_quiet(quiet, fpath)
                 else:
                     fpath = pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range, None, "pds")
                     print(fpath)

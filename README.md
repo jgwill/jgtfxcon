@@ -28,3 +28,19 @@ pip install -U jgtfxcon
 ## More
 
 
+### Enhancements Idea
+
+#### -l (for --timeline)
+
+* --@STCGoal An easy way to snap a moment in time and save it to our store.
+
+```sh
+jgtfxcli -i "SPX500" -t "H1,H4,H8,D1,W1,M1" -c 500 -l "22101313"
+
+```
+
+```
+$JGTPY_DATA/pds  NORMAL
+$JGTPY_DATA/pdl/  L Item
+
+```

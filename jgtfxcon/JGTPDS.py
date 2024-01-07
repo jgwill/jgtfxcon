@@ -179,7 +179,8 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
       return fpath,df
   else:
       print("No data from getPH from getPH_to_filestore")
-  return "",None
+      raise ValueError("No data from getPH from getPH_to_filestore")
+  #return "",None
 
 def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=True,tlid_range=None):
   try:
@@ -198,25 +199,6 @@ def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=Tru
 
 
 
-
-# def create_filestore_path(instrument, timeframe,quiet=True, compressed=False,tlid_range=None,output_path=None):
-#   return jgtos.create_filestore_path(instrument,timeframe,quiet,compressed,tlid_range,output_path)
-  
-  
-def mk_fn(instrument,timeframe,ext="csv"):
-  return jgtos.mk_fn(instrument,timeframe,ext)
-
-
-def mk_fn_range(instrument, timeframe, start: datetime, end: datetime,ext="csv"):
-  return jgtos.mk_fn_range(instrument,timeframe,start,end,ext)
-
-
-def mk_fullpath(instrument,timeframe,ext,path,tlid_range=None):
-  return jgtos.mk_fullpath(instrument,timeframe,ext,path,tlid_range)
-
-
-def get_data_path():
-  return jgtos.get_data_path('pds')
   
 
 
@@ -272,9 +254,9 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
         else:
           p=jfx.get_price_history(instrument, timeframe, None, end, quote_count+89,quiet=quiet)
       except Exception as e:
-        print("An error occurred: ", e)
-        print("bahhhhhhhhhhhhhhhhhhhhhhh  REINITIALIZATION of the PDS todo")
-        return   
+        #print("An error occurred: ", e)
+        #print("bahhhhhhhhhhhhhhhhhhhhhhh  REINITIALIZATION of the PDS todo")
+        raise   e
 
     if p is None:
       raise ValueError("No data from get_price_history")
