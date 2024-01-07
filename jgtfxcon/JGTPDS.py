@@ -311,29 +311,29 @@ def getPH(instrument,timeframe,quote_count=-1,start=None,end=None,with_index=Tru
 
     if not stayConnected:
       con=disconnect(quiet=quiet)
-    if renameColumns:
-      df=df.rename(columns={'bidopen': 'BidOpen', 'bidhigh': 'BidHigh','bidclose':'BidClose','bidlow':'BidLow','askopen': 'AskOpen', 'askhigh': 'AskHigh','askclose':'AskClose','asklow':'AskLow','tickqty':'Volume','date':'Date'})
-      df= df.astype({'Volume':int})
-    if with_index:
-      df.index.rename('Date',inplace=True)
+    #print(df)
+    
+    # if addOhlc and renameColumns:
+    #   df=pds_add_ohlc_stc_columns(df)
+    # if cleanseOriginalColumns:
+    #   df=_cleanse_original_columns(df)
+    
+    if not stayConnected:
+       con=disconnect(quiet=quiet)
+
   else:
     #Read from local
+    print_quiet(quiet,"Reading from local")
+    df =getPH_from_filestore(instrument,timeframe) 
     
-    #@STCIssue When we read from filestore, the Date Columnt is ok
-    df =getPH_from_filestore(instrument,timeframe,tlid_range=tlid_range) #@STCIssue add start and end and index name should be already set
-    if with_index:
-      df.index.rename('Date',inplace=True)
-      
-    if start != None:
-      mask = (df['Date'] > end) & (df['Date'] <= start)
-      df = df.loc[mask]
 
-  if addOhlc and renameColumns:
-    df=pds_add_ohlc_stc_columns(df)
-  if cleanseOriginalColumns:
-    df=_cleanse_original_columns(df,debugging)
-  # Set 'Date' column as the index
-  df.set_index('Date', inplace=True)
+    
+    if 'Date' in df.columns and start >= df['Date'].min() and end <= df['Date'].max():
+        mask = (df['Date'] > end) & (df['Date'] <= start)
+        df = df.loc[mask]
+    else:
+        raise PDSRangeNotAvailableException("The specified range is not available in the DataFrame")
+ 
   return df
 
 
