@@ -17,7 +17,7 @@ from JGTPDHelper import *
 from jgtfxc import *
 
 from jgtutils import jgtos
-from jgtos import create_filestore_path
+from jgtutils.jgtos import create_filestore_path,mk_fn
 import iprops
 
 from jgtutils import jgtconstants as c
@@ -41,32 +41,6 @@ cleanseOriginalColumns=True
 useLocal=False
 con=None
 
-
-def mk_fn(instrument,timeframe,ext):
-  """Make a file name with instrument and timeframe
-
-  Args:
-      _instrument (str): symbol
-      _timeframe (str): TF
-      _ext (str): ext name "csv"
-
-  Returns:
-      str: file name
-  """
-  _tf = timeframe
-  _i= instrument.replace('/','-')
-  if timeframe == 'm1':
-    _tf = timeframe.replace('m1','mi1')
-  _fn= _i + '_' + _tf + '.' + ext
-  return _fn.replace('..','.')
-
-
-def mk_fullpath(instrument,timeframe,ext,path):
-  fn=mk_fn(instrument,timeframe,ext)
-  rpath= os.path.join(path,fn)
-  #path + '/'+fn
-  return rpath
-#.replace('..','.').replace('//','/')
 
 
 
@@ -252,7 +226,7 @@ def getPH2file(instrument,timeframe,quote_count=335,start=None,end=None,with_ind
 
 
 #getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-def getPH(instrument,timeframe,quote_count=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None):
+def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None):
   """Get Price History from Broker
 
   Args:
@@ -270,7 +244,7 @@ def getPH(instrument,timeframe,quote_count=-1,start=None,end=None,with_index=Tru
       pandas.DataFrame: DF with price histories
   """
   #print("-----------------getPH------------------->>>>")
-  #print(instrument,timeframe,quote_count,start,end,with_index,quiet,tlid_range)
+  #print(instrument,timeframe,quote_count,start,end,with_index,startquiet,tlid_range)
   if quote_count == -1:
     quote_count = 335
   df = pd.DataFrame()
@@ -284,7 +258,8 @@ def getPH(instrument,timeframe,quote_count=-1,start=None,end=None,with_index=Tru
         #print("start: " + str(start) + " end: " + str(end))
         p=jfx.get_price_history(instrument, timeframe, start, end,quiet=quiet) #@STCIssue NOT WORKING
       else:
-        p=jfx.get_price_history(instrument, timeframe, None, None, quote_count+89,quiet=quiet) #@State WORKS
+        #print(end)
+        p=jfx.get_price_history(instrument, timeframe, None, end, quote_count+89,quiet=quiet) #@State WORKS
         
     except:
       try:
@@ -295,7 +270,7 @@ def getPH(instrument,timeframe,quote_count=-1,start=None,end=None,with_index=Tru
           start,end = jgtos.tlid_range_to_jgtfxcon_start_end_str(tlid_range)
           p=jfx.get_price_history(instrument, timeframe, start, end,quiet=quiet)
         else:
-          p=jfx.get_price_history(instrument, timeframe, None, None, quote_count+89,quiet=quiet)
+          p=jfx.get_price_history(instrument, timeframe, None, end, quote_count+89,quiet=quiet)
       except Exception as e:
         print("An error occurred: ", e)
         print("bahhhhhhhhhhhhhhhhhhhhhhh  REINITIALIZATION of the PDS todo")
@@ -311,29 +286,29 @@ def getPH(instrument,timeframe,quote_count=-1,start=None,end=None,with_index=Tru
 
     if not stayConnected:
       con=disconnect(quiet=quiet)
-    #print(df)
-    
-    # if addOhlc and renameColumns:
-    #   df=pds_add_ohlc_stc_columns(df)
-    # if cleanseOriginalColumns:
-    #   df=_cleanse_original_columns(df)
-    
-    if not stayConnected:
-       con=disconnect(quiet=quiet)
-
+    if renameColumns:
+      df=df.rename(columns={'bidopen': 'BidOpen', 'bidhigh': 'BidHigh','bidclose':'BidClose','bidlow':'BidLow','askopen': 'AskOpen', 'askhigh': 'AskHigh','askclose':'AskClose','asklow':'AskLow','tickqty':'Volume','date':'Date'})
+      df= df.astype({'Volume':int})
+    if with_index:
+      df.index.rename('Date',inplace=True)
   else:
     #Read from local
-    print_quiet(quiet,"Reading from local")
-    df =getPH_from_filestore(instrument,timeframe) 
     
+    #@STCIssue When we read from filestore, the Date Columnt is ok
+    df =getPH_from_filestore(instrument,timeframe,tlid_range=tlid_range) #@STCIssue add start and end and index name should be already set
+    if with_index:
+      df.index.rename('Date',inplace=True)
+      
+    if start != None:
+      mask = (df['Date'] > end) & (df['Date'] <= start)
+      df = df.loc[mask]
 
-    
-    if 'Date' in df.columns and start >= df['Date'].min() and end <= df['Date'].max():
-        mask = (df['Date'] > end) & (df['Date'] <= start)
-        df = df.loc[mask]
-    else:
-        raise PDSRangeNotAvailableException("The specified range is not available in the DataFrame")
- 
+  if addOhlc and renameColumns:
+    df=pds_add_ohlc_stc_columns(df)
+  if cleanseOriginalColumns:
+    df=_cleanse_original_columns(df,debugging)
+  # Set 'Date' column as the index
+  df.set_index('Date', inplace=True)
   return df
 
 

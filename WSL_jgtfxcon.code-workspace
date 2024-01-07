@@ -7,5 +7,17 @@
 			"path": "../../../../../b/Dropbox/jgt/drop/data/scn"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"black-formatter.interpreter": [
+			"/home/jgi/anaconda3/envs/jgtfxcon/bin/python"
+		],
+		"jupyter.interactiveWindow.textEditor.executeSelection": true,
+		"python.analysis.extraPaths": [
+			"/mnt/c/usr/src/_jgt/jgtutils/jgtutils"
+		],
+		"python.analysis.include": [
+			"/mnt/c/usr/src/_jgt/jgtutils/jgtutils"
+		],
+		"editor.tabSize": 2
+	}
 }

@@ -1,4 +1,4 @@
-
+TEST_MODE=False
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -10,7 +10,7 @@ import argparse
 
 import JGTPDS as pds
 
-from JGTPDS import getPH as get_price, stayConnectedSetter as set_stay_connected, disconnect,connect as on,disconnect as off, status as connection_status,  getPH2file as get_price_to_file, getPHByRange as get_price_range, stayConnectedSetter as sc,getPH as ph,getPH_to_filestore as ph2fs
+#from JGTPDS import getPH as get_price, stayConnectedSetter as set_stay_connected, disconnect,connect as on,disconnect as off, status as connection_status,  getPH2file as get_price_to_file, stayConnectedSetter as sc,getPH as ph,getPH_to_filestore as ph2fs
 
 import pandas as pd
 
@@ -21,6 +21,7 @@ def parse_args():
     #jgtfxcommon.add_date_arguments(parser)
     jgtcommon.add_tlid_range_argument(parser)
     jgtcommon.add_max_bars_arguments(parser)
+    jgtcommon.add_viewpath_argument(parser)
     #jgtfxcommon.add_output_argument(parser)
     jgtcommon.add_compressed_argument(parser)
     #jgtfxcommon.add_quiet_argument(parser)
@@ -40,6 +41,7 @@ def main():
     quotes_count = -1
     using_tlid = False
     tlid_range= None
+    viewpath = args.viewpath
     date_from = None
     date_to = None
     if args.tlidrange is not None:
@@ -50,8 +52,9 @@ def main():
         #print(str(dtf) + " " + str(dtt))
         #date_from =dtf
         #date_to = dtt
-    else:
-        quotes_count = args.quotescount
+    
+    quotes_count = args.quotescount
+    #print(args.quotescount)
     debug = args.debug
     if args.server == True:
         try:
@@ -93,19 +96,43 @@ def main():
         instruments = instrument.split(',')
         timeframes = timeframe.split(',')
 
-        pds.stayConnectedSetter(True)
+
+        if not viewpath:pds.stayConnectedSetter(True)
+        
         for instrument in instruments:
             for timeframe in timeframes:
-                #print("---------DEBUG jgtfxcli ------")
-                fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, None, False, quiet, compress,tlid_range=tlid_range)
-                print_quiet(quiet, fpath)
+                if not viewpath:
+                    #print("---------DEBUG jgtfxcli ------")
+                    if quotes_count==-1:
+                        fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, None, False, quiet, compress,tlid_range=tlid_range)
+                    else:
+                        #we will try to call with an end date from tlid and a count (so we would have only an end date)
+                        start_date = None;end_date = None
+                        try: start_date,end_date = jgtos.tlid_range_to_start_end_datetime(tlid_range)
+                        except:pass
+                        if TEST_MODE:
+                            print("----------TEST_MODE--------")
+                            print("start_date : " + str(start_date))
+                            print("end_date : " + str(end_date))
+                        
+                        fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, end_date, False, quiet, compress)
+                        if TEST_MODE:
+                            print(df.head(1))
+                            print(df.tail(1))
+                            df.to_csv("test.csv")
+                        
+                    print_quiet(quiet, fpath)
+                else:
+                    fpath = pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range, None, "pds")
+                    print(fpath)
+                        #pds.mk_fullpath(instrument, timeframe, tlid_range=tlid_range)
 
-        pds.disconnect()  
+        if not viewpath:pds.disconnect()  
     except Exception as e:
         jgtcommon.print_exception(e)
 
     try:
-        off()
+        pds.disconnect()
     except Exception as e:
         jgtcommon.print_exception(e)
 
