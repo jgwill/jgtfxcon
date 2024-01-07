@@ -221,7 +221,7 @@ def get_data_path():
 
 
 
-def getPH2file(instrument,timeframe,quote_count=335,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None):
+def getPH2file(instrument:str,timeframe:str,quote_count:int=335,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None):
   return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range)
 
 
