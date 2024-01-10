@@ -185,7 +185,21 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
 def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=True,tlid_range=None):
   try:
     fpath =  create_filestore_path(instrument, timeframe,quiet, compressed,tlid_range)
-    
+
+    try:
+      dir_name = os.path.dirname(fpath)
+      
+      # Check if the directory exists
+      if not os.path.exists(dir_name):
+        # Try to create the directory
+        os.makedirs(dir_name)
+      
+      # Check if the directory is writable
+      if not os.access(dir_name, os.W_OK):
+        raise PermissionError("Cannot write to the directory")
+    except Exception as e:
+      print(f"Failed to access or create directory: {e}")
+      raise
     if compressed:
       df.to_csv(fpath, compression=local_fn_compression)
     else:
