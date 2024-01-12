@@ -46,16 +46,14 @@ con=None
 
 
 
-def pds_add_ohlc_stc_columns(dfsrc):
+def pds_add_ohlc_stc_columns(dfsrc, rounding_nb=8):
   if not 'Open' in dfsrc.columns:
-    dfsrc['Open'] = dfsrc[['BidOpen', 'AskOpen']].mean(axis=1)
-    dfsrc['High'] = dfsrc[['BidHigh', 'AskHigh']].mean(axis=1)
-    dfsrc['Low'] = dfsrc[['BidLow', 'AskLow']].mean(axis=1)
-    dfsrc['Close'] = dfsrc[['BidClose', 'AskClose']].mean(axis=1)
-    #Median
-    dfsrc['Median']= ((dfsrc['High'] + dfsrc['Low']) / 2)
-    return dfsrc
-
+    dfsrc['Open'] = dfsrc[['BidOpen', 'AskOpen']].mean(axis=1).round(rounding_nb)
+    dfsrc['High'] = dfsrc[['BidHigh', 'AskHigh']].mean(axis=1).round(rounding_nb)
+    dfsrc['Low'] = dfsrc[['BidLow', 'AskLow']].mean(axis=1).round(rounding_nb)
+    dfsrc['Close'] = dfsrc[['BidClose', 'AskClose']].mean(axis=1).round(rounding_nb)
+    dfsrc['Median'] = ((dfsrc['High'] + dfsrc['Low']) / 2).round(rounding_nb)
+  return dfsrc
 
 def _cleanse_original_columns(dfsrc,quiet=True):
   dfsrc=jpd.pds_cleanse_original_columns(dfsrc,quiet)
@@ -222,7 +220,7 @@ def getPH2file(instrument:str,timeframe:str,quote_count:int=335,start=None,end=N
 
 
 #getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None):
+def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=8):
   """Get Price History from Broker
 
   Args:
@@ -235,6 +233,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
       quiet  (bool, optional): stay calm ;)
       compressed (bool, optional): Whether to compress the CSV file using gzip (default: False)
       tlid_range (str): The tlid range to retrieve (default: None)
+      rounding_nb (int, optional): Number of decimal to round. Defaults to 8.
 
   Returns:
       pandas.DataFrame: DF with price histories
@@ -300,7 +299,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
       df = df.loc[mask]
 
   if addOhlc and renameColumns:
-    df=pds_add_ohlc_stc_columns(df)
+    df=pds_add_ohlc_stc_columns(df, rounding_nb)
   if cleanseOriginalColumns:
     df=_cleanse_original_columns(df,debugging)
   # Set 'Date' column as the index
