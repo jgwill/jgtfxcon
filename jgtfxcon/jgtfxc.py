@@ -103,8 +103,8 @@ def connect(quiet=True,json_config_str=None):
     global fx,quotes_count,_config
     
     if fx is not None or get_connection_status()== "CONNECTED":
-        if not quiet:
-            print("Already connected")
+        #if not quiet:
+        #    print("Already connected")
         return
     
     if _config is None:
@@ -189,8 +189,8 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
     try:
         print_quiet(quiet,"Requesting a price history..." + instrument)
   
-        print_quiet(quiet,"   (not Parsed) from : " + str(datefrom) + ", to:" + str(dateto))
-        print_quiet(quiet,"-------------------------------------------------------")
+        #print_quiet(quiet,"   (not Parsed) from : " + str(datefrom) + ", to:" + str(dateto))
+        #print_quiet(quiet,"-------------------------------------------------------")
 
         # if datefrom is not None:
         #     date_from_parsed = parse_date(datefrom)
@@ -204,9 +204,9 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
         
         #quiet=False
         if not quiet:
-            print("  (Parsed) Date from : " + str(datefrom))
-            print("  (Parsed) Date to : " + str(dateto))
-            print("Quote spec:" + str(quotes_count_spec))
+            print(" Date from  : " + str(datefrom))
+            print(" Date to    : " + str(dateto))
+            print(" Quote count: " + str(quotes_count_spec))
             
         if fx is None:
             print("FX IS NONE")
