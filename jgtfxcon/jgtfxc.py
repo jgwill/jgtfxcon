@@ -187,7 +187,7 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
     # if home_dir/.jgt/iprops make it and run a save of this instrument properties
     iprop=get_instrument_properties(instrument,quiet)
     try:
-        print_quiet(quiet,"Requesting a price history..." + instrument)
+        print_quiet(quiet,"Getting PH: " + instrument + " " + timeframe)
   
         #print_quiet(quiet,"   (not Parsed) from : " + str(datefrom) + ", to:" + str(dateto))
         #print_quiet(quiet,"-------------------------------------------------------")

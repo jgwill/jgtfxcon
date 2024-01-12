@@ -97,7 +97,7 @@ def main():
 
     try:
         
-        print_quiet(quiet,"Getting for : " + instrument + "_" + timeframe)
+        #print_quiet(quiet,"Getting for : " + instrument + "_" + timeframe)
         instruments = instrument.split(',')
         timeframes = timeframe.split(',')
 
