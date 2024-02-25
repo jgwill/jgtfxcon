@@ -143,7 +143,10 @@ def main():
                                 sys.exit(1)
                             else:
                                 print("Failed getting:" + instrument + "_" + timeframe)
-                                print("fxcli2console ", sys.argv[1:])
+                                to_run_cmd="fxcli2console " 
+                                for myarg in sys.argv:
+                                    to_run_cmd += myarg + " "
+                                print(to_run_cmd)
                         if TEST_MODE:
                             print(df.head(1))
                             print(df.tail(1))
