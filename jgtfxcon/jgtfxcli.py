@@ -146,14 +146,15 @@ def main():
                                 to_run_cmd="fxcli2console " 
                                 for myarg in sys.argv[1:]:
                                     to_run_cmd += myarg + " "
-                                print(to_run_cmd)
+                                opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
+                                print(to_run_cmd + " > " + opath)
                         if TEST_MODE:
                             print(df.head(1))
                             print(df.tail(1))
                             df.to_csv("test.csv")
                         
                 else:
-                    fpath = pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range,output_path=None,nsdir="pds",use_full=use_full)
+                    fpath = get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
                     print(fpath)
                         #pds.mk_fullpath(instrument, timeframe, tlid_range=tlid_range)
 
@@ -165,6 +166,9 @@ def main():
         pds.disconnect()
     except Exception as e:
         jgtcommon.print_exception(e)
+
+def get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet):
+    return pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range,output_path=None,nsdir="pds",use_full=use_full)
 
 # print("")
 # #input("Done! Press enter key to exit\n")
