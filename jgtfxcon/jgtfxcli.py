@@ -114,7 +114,7 @@ def main():
         for instrument in instruments:
             for timeframe in timeframes:
                 if use_full and quotes_count == -1:
-                    pov_full_M1 = os.getenv('pov_full_M1',1000)
+                    pov_full_M1:int = os.getenv('pov_full_M1',1000)
                     quotes_count = jgtpov.calculate_quote_counts_tf(pov_full_M1)[timeframe] #We will download a lot of data relative to each timeframe
                     print("DEBUG::  Quotes count Adjusted (--full): " + str(quotes_count))
                     
