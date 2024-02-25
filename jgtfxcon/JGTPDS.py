@@ -380,3 +380,39 @@ def get_price_plus_minus_ticks(instrument, ticks_multiplier, context_price, dire
     raise ValueError("Invalid direction side. Must be 'S' or 'B'.")
 
 
+
+
+def calculate_quote_counts_tf(month_amount):
+    # The base data
+    M1 = month_amount
+    W1 = M1 * 4 
+    D1 = 22 * M1
+    H8 = D1 * 3 
+    H6 = D1 * 4 
+    H4 = D1 * 6 
+    H3 = D1 * 8 
+    H2 = D1 * 12
+    H1 = D1 * 24
+    m30 = H1 * 2 
+    m15 = H1 * 4 
+    m5 = H1 * 12 
+    m1 = H1 * 60
+
+    # Create a dictionary with the calculated data
+    data = {
+        "M1": M1,
+        "W1": W1,
+        "D1": D1,
+        "H8": H8,
+        "H6": H6,
+        "H4": H4,
+        "H3": H3,
+        "H2": H2,
+        "H1": H1,
+        "m30": m30,
+        "m15": m15,
+        "m5": m5,
+        "m1": m1
+    }
+
+    return data

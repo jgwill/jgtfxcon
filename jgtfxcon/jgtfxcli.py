@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
 #import jgtfxcommon as jgtcommon
-from jgtutils import jgtos,jgtcommon
+from jgtutils import jgtos,jgtcommon,jgtpov
 import argparse
 
 import JGTPDS as pds
@@ -64,8 +64,7 @@ def main():
         #date_to = dtt
     
     quotes_count = args.quotescount
-    if use_full:
-        quotes_count = -1 #We will download a lot of data relative to each timeframe
+    
         
     #print(args.quotescount)
     debug = args.debug
@@ -114,7 +113,13 @@ def main():
         
         for instrument in instruments:
             for timeframe in timeframes:
-                
+                if use_full and quotes_count == -1:
+                    pov_full_M1 = os.getenv('pov_full_M1',1000)
+                    quotes_count = jgtpov.calculate_quote_counts_tf(pov_full_M1)[timeframe] #We will download a lot of data relative to each timeframe
+                    print("DEBUG::  Quotes count Adjusted (--full): " + str(quotes_count))
+                    
+                    
+                    
                 if not viewpath:
                     #print("---------DEBUG jgtfxcli ------")
                     if quotes_count==-1:
@@ -145,7 +150,7 @@ def main():
                             df.to_csv("test.csv")
                         
                 else:
-                    fpath = pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range, None, "pds",use_full=use_full)
+                    fpath = pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range,output_path=None,nsdir="pds",use_full=use_full)
                     print(fpath)
                         #pds.mk_fullpath(instrument, timeframe, tlid_range=tlid_range)
 
