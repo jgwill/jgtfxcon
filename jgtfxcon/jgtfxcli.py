@@ -25,6 +25,8 @@ def parse_args():
     jgtcommon.add_exit_if_error(parser)
     #jgtfxcommon.add_output_argument(parser)
     jgtcommon.add_compressed_argument(parser)
+    jgtcommon.add_use_full_argument(parser)
+    
     #jgtfxcommon.add_quiet_argument(parser)
     jgtcommon.add_verbose_argument(parser)
     jgtcommon.add_debug_argument(parser)
@@ -43,6 +45,9 @@ def main():
     
     instrument = args.instrument
     timeframe = args.timeframe
+    use_full=False
+    if args.full:
+        use_full = True
     quotes_count = -1
     using_tlid = False
     tlid_range= None
@@ -59,6 +64,9 @@ def main():
         #date_to = dtt
     
     quotes_count = args.quotescount
+    if use_full:
+        quotes_count = -1 #We will download a lot of data relative to each timeframe
+        
     #print(args.quotescount)
     debug = args.debug
     if args.server == True:
@@ -110,7 +118,7 @@ def main():
                 if not viewpath:
                     #print("---------DEBUG jgtfxcli ------")
                     if quotes_count==-1:
-                        fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, None, False, quiet, compress,tlid_range=tlid_range)
+                        fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, None, False, quiet, compress,tlid_range=tlid_range,use_full=use_full)
                     else:
                         #we will try to call with an end date from tlid and a count (so we would have only an end date)
                         start_date = None;end_date = None

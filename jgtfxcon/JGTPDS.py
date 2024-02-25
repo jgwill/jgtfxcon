@@ -148,7 +148,7 @@ def read_ohlc_df_from_file(srcpath, quiet=True, compressed=False,with_index=True
   return df
 
 
-def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=None, with_index=True, quiet=True, compressed=False,tlid_range=None):
+def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=None, with_index=True, quiet=True, compressed=False,tlid_range=None,use_full=False):
   """
   Saves the OHLC data for a given instrument and timeframe to a CSV file.
 
@@ -162,27 +162,28 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
   - quiet (bool): Whether to suppress console output (default: True)
   - compressed (bool): Whether to compress the CSV file using gzip (default: False)
   - tlid_range (str): The tlid range to retrieve (default: None)
+  - use_full (bool): Whether to use the full range of data (default: False)
 
   Returns:
   - str: The file path where the CSV file was saved.
   """
   
-  df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
+  df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full)
   #print("-----------------getPH------------------->>>>")
   #print(df)
   # print("-----------------getPH-------------------<<<<<<")
   # Define the file path based on the environment variable or local path
   if df is not None:
-      fpath = write_df_to_filestore(df, instrument, timeframe, compressed,quiet,tlid_range)
+      fpath = write_df_to_filestore(df, instrument, timeframe, compressed,quiet,tlid_range,use_full=use_full)
       return fpath,df
   else:
       print("No data from getPH from getPH_to_filestore")
       raise ValueError("No data from getPH from getPH_to_filestore")
   #return "",None
 
-def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=True,tlid_range=None):
+def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=True,tlid_range=None,use_full=False):
   try:
-    fpath =  create_filestore_path(instrument, timeframe,quiet, compressed,tlid_range)
+    fpath =  create_filestore_path(instrument, timeframe,quiet, compressed,tlid_range,use_full=use_full)
 
     try:
       dir_name = os.path.dirname(fpath)
@@ -215,12 +216,12 @@ def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=Tru
 
 
 
-def getPH2file(instrument:str,timeframe:str,quote_count:int=335,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None):
-  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range)
+def getPH2file(instrument:str,timeframe:str,quote_count:int=335,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False):
+  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full=use_full)
 
 
 #getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=8):
+def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=8,use_full=False):
   """Get Price History from Broker
 
   Args:
@@ -234,6 +235,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
       compressed (bool, optional): Whether to compress the CSV file using gzip (default: False)
       tlid_range (str): The tlid range to retrieve (default: None)
       rounding_nb (int, optional): Number of decimal to round. Defaults to 8.
+      use_full (bool, optional): Whether to use the full range of data (default: False)
 
   Returns:
       pandas.DataFrame: DF with price histories
@@ -247,7 +249,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
     con=connect(quiet=quiet)
 
     try:
-      if tlid_range is not None:
+      if tlid_range is not None and not use_full:
         # start,end = jgtos.tlid_range_to_jgtfxcon_start_end_str(tlid_range)
         start,end = jgtos.tlid_range_to_start_end_datetime(tlid_range)
         #print("start: " + str(start) + " end: " + str(end))
