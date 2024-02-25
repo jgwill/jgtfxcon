@@ -140,7 +140,7 @@ def main():
                             error_message = f"An error occurred with {instrument} {timeframe}: {e}"
                             if exit_on_error:
                                 print_quiet(quiet,error_message)
-                                
+                                print("fxcli2console ", sys.argv[1:])
                                 sys.exit(1)
                             else:
                                 print("Failed getting:" + instrument + "_" + timeframe)
