@@ -145,6 +145,8 @@ def main():
                             if exit_on_error:
                                 print_quiet(quiet,error_message)
                                 #run_command(to_run_cmd, opath)
+                                print(to_run_cmd + " > " + opath)
+                                print("------------------------------------")
                                 sys.exit(1)
                             else:
                                 print("# Failed getting:" + instrument + "_" + timeframe)
@@ -155,6 +157,7 @@ def main():
                                 #to_run_cmd = to_run_cmd.replace("--full"," ").replace("-uf"," ")
                                 # Launch the command and redirect the output to the file opath
                                 print(to_run_cmd + " > " + opath)
+                                print("------------------------------------")
                                 run_command(to_run_cmd, opath)
                                 sys.exit(1)
                                 
