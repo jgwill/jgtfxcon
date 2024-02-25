@@ -142,7 +142,7 @@ def main():
                                 print_quiet(quiet,error_message)
                                 sys.exit(1)
                             else:
-                                print("Failed getting:" + instrument + "_" + timeframe)
+                                print("# Failed getting:" + instrument + "_" + timeframe)
                                 to_run_cmd="fxcli2console " 
                                 for myarg in sys.argv:
                                     to_run_cmd += myarg + " "
