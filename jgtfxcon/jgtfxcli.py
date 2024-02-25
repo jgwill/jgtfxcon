@@ -7,6 +7,7 @@ from jgtutils import jgtconstants as constants
 #import jgtfxcommon as jgtcommon
 from jgtutils import jgtos,jgtcommon,jgtpov
 import argparse
+import subprocess
 
 import JGTPDS as pds
 
@@ -138,16 +139,25 @@ def main():
                             print_quiet(quiet, fpath)
                         except Exception as e:
                             error_message = f"An error occurred with {instrument} {timeframe}: {e}"
+                            to_run_cmd = f"fxcli2console -i {instrument} -t {timeframe}" 
+                            opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
+                            
                             if exit_on_error:
                                 print_quiet(quiet,error_message)
+                                #run_command(to_run_cmd, opath)
                                 sys.exit(1)
                             else:
                                 print("# Failed getting:" + instrument + "_" + timeframe)
-                                to_run_cmd="fxcli2console " 
-                                for myarg in sys.argv[1:]:
-                                    to_run_cmd += myarg + " "
-                                opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
-                                print(to_run_cmd.replace("--full"," ").replace("-uf"," ") + " > " + opath)
+                                #to_run_cmd="fxcli2console " 
+                                #for myarg in sys.argv[1:]:
+                                #    to_run_cmd += myarg + " "
+                                
+                                #to_run_cmd = to_run_cmd.replace("--full"," ").replace("-uf"," ")
+                                # Launch the command and redirect the output to the file opath
+                                print(to_run_cmd + " > " + opath)
+                                run_command(to_run_cmd, opath)
+                                sys.exit(1)
+                                
                         if TEST_MODE:
                             print(df.head(1))
                             print(df.tail(1))
@@ -169,6 +179,10 @@ def main():
 
 def get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet):
     return pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range,output_path=None,nsdir="pds",use_full=use_full)
+
+def run_command(command, opath):
+    with open(opath, 'w') as f:
+        subprocess.run(command, stdout=f, shell=True)
 
 # print("")
 # #input("Done! Press enter key to exit\n")
