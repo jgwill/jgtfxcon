@@ -147,7 +147,7 @@ def main():
                                 for myarg in sys.argv[1:]:
                                     to_run_cmd += myarg + " "
                                 opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
-                                print(to_run_cmd + " > " + opath)
+                                print(to_run_cmd.replace("--full"," ").replace("-uf"," ") + " > " + opath)
                         if TEST_MODE:
                             print(df.head(1))
                             print(df.tail(1))
