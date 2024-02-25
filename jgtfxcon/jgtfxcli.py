@@ -129,7 +129,7 @@ def main():
                             print("start_date : " + str(start_date))
                             print("end_date : " + str(end_date))
                         try:
-                            fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, end_date, False, quiet, compress)
+                            fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, end_date, False, quiet, compress,use_full=use_full)
                             print_quiet(quiet, fpath)
                         except Exception as e:
                             error_message = f"An error occurred with {instrument} {timeframe}: {e}"
@@ -145,7 +145,7 @@ def main():
                             df.to_csv("test.csv")
                         
                 else:
-                    fpath = pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range, None, "pds")
+                    fpath = pds.create_filestore_path(instrument, timeframe, quiet, compress, tlid_range, None, "pds",use_full=use_full)
                     print(fpath)
                         #pds.mk_fullpath(instrument, timeframe, tlid_range=tlid_range)
 
