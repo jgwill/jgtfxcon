@@ -144,7 +144,7 @@ def main():
                             else:
                                 print("# Failed getting:" + instrument + "_" + timeframe)
                                 to_run_cmd="fxcli2console " 
-                                for myarg in sys.argv:
+                                for myarg in sys.argv[1:]:
                                     to_run_cmd += myarg + " "
                                 print(to_run_cmd)
                         if TEST_MODE:
