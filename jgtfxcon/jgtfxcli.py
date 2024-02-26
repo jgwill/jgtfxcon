@@ -132,22 +132,26 @@ def main():
                             opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
                             
                             #print("------------------------------------")
-                            #print(to_run_cmd + " > " + opath)
                             #
                             run_alt=os.getenv('RUN_ALT',0)
-                                
-                            if run_alt == 1:
+                            
+                            ran_ok = False
+                            if run_alt == 1 or run_alt == "1":
                                 print("Running ALT command...")
-                                run_command(to_run_cmd, opath)
+                                print(to_run_cmd + " > " + opath)
+                                ran_ok = run_command(to_run_cmd, opath)
                             else:
                                 print("Not running ALT command...(RUN_ALT==)" + str(run_alt))
                                 
                             if exit_on_error:
-                                print_quiet(quiet,error_message)
+                                if not run_alt:
+                                    print_quiet(quiet,error_message)
+                                    sys.exit(1)
+                                else:
+                                    sys.exit(0)
                                 #run_command(to_run_cmd, opath)
-                                sys.exit(1)
-                            else:
-                                print("# Failed getting:" + instrument + "_" + timeframe)
+                            # else:
+                            #     print("# Failed getting:" + instrument + "_" + timeframe)
                                 #to_run_cmd="fxcli2console " 
                                 #for myarg in sys.argv[1:]:
                                 #    to_run_cmd += myarg + " "
@@ -174,30 +178,33 @@ def main():
                             opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
                             
                             run_alt=os.getenv('RUN_ALT',0)
+                            ran_ok = False
                             if run_alt == 1:
                                 print("Running ALT command...")
-                                run_command(to_run_cmd, opath)
+                                ran_ok = run_command(to_run_cmd, opath)
                             else:
                                 print("Not running ALT command...(RUN_ALT==)" + str(run_alt))
+                                
+                            if not ran_ok:                                
+                                print(to_run_cmd + " > " + opath)
+                                print("------------------------------------")
+                                print("# Failed getting:" + instrument + "_" + timeframe)
                                 
                             if exit_on_error:
                                 print_quiet(quiet,error_message)
                                 #run_command(to_run_cmd, opath)
-                                print(to_run_cmd + " > " + opath)
-                                print("------------------------------------")
                                 sys.exit(1)
-                            else:
-                                print("# Failed getting:" + instrument + "_" + timeframe)
-                                #to_run_cmd="fxcli2console " 
-                                #for myarg in sys.argv[1:]:
-                                #    to_run_cmd += myarg + " "
+                            # else:
+                            #     #to_run_cmd="fxcli2console " 
+                            #     #for myarg in sys.argv[1:]:
+                            #     #    to_run_cmd += myarg + " "
                                 
-                                #to_run_cmd = to_run_cmd.replace("--full"," ").replace("-uf"," ")
-                                # Launch the command and redirect the output to the file opath
-                                print(to_run_cmd + " > " + opath)
-                                print("------------------------------------")
-                                #
-                                sys.exit(1)
+                            #     #to_run_cmd = to_run_cmd.replace("--full"," ").replace("-uf"," ")
+                            #     # Launch the command and redirect the output to the file opath
+           
+                            #     #
+                                
+                            #     sys.exit(1)
                                 
                         if TEST_MODE:
                             print(df.head(1))
@@ -224,17 +231,16 @@ def get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, q
 def run_command(command, opath):
     with open(opath, 'w') as f:
         try:
-            subprocess.run(command, stdout=f, shell=True).wait()
+            subprocess.run(command, stdout=f, shell=True)
             print("Ran ALT command ok.")
-        except:
+            return True
+        except Exception as e:
+            print("Exception details: " + str(e))
             print("Error running ALT command")
-            pass
+            return False
 
 # print("")
 # #input("Done! Press enter key to exit\n")
-
-
-
 
 def print_quiet(quiet,content):
     if not quiet:
