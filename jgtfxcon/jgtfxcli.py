@@ -124,7 +124,38 @@ def main():
                 if not viewpath:
                     #print("---------DEBUG jgtfxcli ------")
                     if quotes_count==-1:
-                        fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, None, False, quiet, compress,tlid_range=tlid_range,use_full=use_full)
+                        try:
+                            fpath,df = pds.getPH2file(instrument, timeframe, quotes_count, None, None, False, quiet, compress,tlid_range=tlid_range,use_full=use_full)
+                        except Exception as e:
+                            error_message = f"An error occurred with {instrument} {timeframe}: {e}"
+                            to_run_cmd = f"fxcli2console -i {instrument} -t {timeframe}" 
+                            opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
+                            
+                            #print("------------------------------------")
+                            #print(to_run_cmd + " > " + opath)
+                            #
+                            run_alt=os.getenv('RUN_ALT',0)
+                                
+                            if run_alt == 1:
+                                print("Running ALT command...")
+                                run_command(to_run_cmd, opath)
+                            else:
+                                print("Not running ALT command...(RUN_ALT==)" + str(run_alt))
+                                
+                            if exit_on_error:
+                                print_quiet(quiet,error_message)
+                                #run_command(to_run_cmd, opath)
+                                sys.exit(1)
+                            else:
+                                print("# Failed getting:" + instrument + "_" + timeframe)
+                                #to_run_cmd="fxcli2console " 
+                                #for myarg in sys.argv[1:]:
+                                #    to_run_cmd += myarg + " "
+                                
+                                #to_run_cmd = to_run_cmd.replace("--full"," ").replace("-uf"," ")
+                                # Launch the command and redirect the output to the file opath
+                                #print(to_run_cmd + " > " + opath)
+                                #sys.exit(1)
                     else:
                         #we will try to call with an end date from tlid and a count (so we would have only an end date)
                         start_date = None;end_date = None
@@ -142,6 +173,13 @@ def main():
                             to_run_cmd = f"fxcli2console -i {instrument} -t {timeframe}" 
                             opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
                             
+                            run_alt=os.getenv('RUN_ALT',0)
+                            if run_alt == 1:
+                                print("Running ALT command...")
+                                run_command(to_run_cmd, opath)
+                            else:
+                                print("Not running ALT command...(RUN_ALT==)" + str(run_alt))
+                                
                             if exit_on_error:
                                 print_quiet(quiet,error_message)
                                 #run_command(to_run_cmd, opath)
@@ -158,7 +196,7 @@ def main():
                                 # Launch the command and redirect the output to the file opath
                                 print(to_run_cmd + " > " + opath)
                                 print("------------------------------------")
-                                run_command(to_run_cmd, opath)
+                                #
                                 sys.exit(1)
                                 
                         if TEST_MODE:
@@ -185,7 +223,12 @@ def get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, q
 
 def run_command(command, opath):
     with open(opath, 'w') as f:
-        subprocess.run(command, stdout=f, shell=True)
+        try:
+            subprocess.run(command, stdout=f, shell=True).wait()
+            print("Ran ALT command ok.")
+        except:
+            print("Error running ALT command")
+            pass
 
 # print("")
 # #input("Done! Press enter key to exit\n")
