@@ -168,7 +168,11 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
   - str: The file path where the CSV file was saved.
   """
   
-  df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full)
+  try:
+    df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full)
+  except Exception as e:
+    raise e
+    
   #print("-----------------getPH------------------->>>>")
   #print(df)
   # print("-----------------getPH-------------------<<<<<<")
