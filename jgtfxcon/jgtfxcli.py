@@ -149,13 +149,8 @@ def main():
                                     sys.exit(1)
                                 else:
                                     sys.exit(0)
-                                #run_command(to_run_cmd, opath)
-                            # else:
-                            #     print("# Failed getting:" + instrument + "_" + timeframe)
-                                #to_run_cmd="fxcli2console " 
-                                #for myarg in sys.argv[1:]:
-                                #    to_run_cmd += myarg + " "
-                                
+                         
+                            
                                 #to_run_cmd = to_run_cmd.replace("--full"," ").replace("-uf"," ")
                                 # Launch the command and redirect the output to the file opath
                                 #print(to_run_cmd + " > " + opath)
@@ -202,7 +197,6 @@ def main():
                             #     #to_run_cmd = to_run_cmd.replace("--full"," ").replace("-uf"," ")
                             #     # Launch the command and redirect the output to the file opath
            
-                            #     #
                                 
                             #     sys.exit(1)
                                 
@@ -214,7 +208,7 @@ def main():
                 else:
                     fpath = get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
                     print(fpath)
-                        #pds.mk_fullpath(instrument, timeframe, tlid_range=tlid_range)
+                    
 
         if not viewpath:pds.disconnect()  
     except Exception as e:
@@ -239,8 +233,7 @@ def run_command(command, opath):
             print("Error running ALT command")
             return False
 
-# print("")
-# #input("Done! Press enter key to exit\n")
+
 
 def print_quiet(quiet,content):
     if not quiet:
