@@ -131,18 +131,20 @@ def main():
                             to_run_cmd = f"fxcli2console -i {instrument} -t {timeframe}" 
                             opath=get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet)
                             
-                            #print("------------------------------------")
-                            #
-                            run_alt=os.getenv('RUN_ALT',0)
-                            
+                            # Read RUN_ALT var so we might turn it off
+                            run_alt = os.getenv("RUN_ALT", 1)  # DEFAULT WE RUN IT
+
                             ran_ok = False
                             if run_alt == 1 or run_alt == "1":
                                 print("Running ALT command...")
                                 print(to_run_cmd + " > " + opath)
                                 ran_ok = run_command(to_run_cmd, opath)
                             else:
-                                print("Not running ALT command...(RUN_ALT==)" + str(run_alt))
-                                
+                                print(
+                                    "Not running ALT command...(RUN_ALT==)"
+                                    + str(run_alt)
+                                )
+
                             if exit_on_error:
                                 if not run_alt:
                                     print_quiet(quiet,error_message)
