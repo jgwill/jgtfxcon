@@ -13,8 +13,6 @@ import subprocess
 
 import JGTPDS as pds
 
-# from JGTPDS import getPH as get_price, stayConnectedSetter as set_stay_connected, disconnect,connect as on,disconnect as off, status as connection_status,  getPH2file as get_price_to_file, stayConnectedSetter as sc,getPH as ph,getPH_to_filestore as ph2fs
-
 import pandas as pd
 verbose_level=0
 
@@ -94,6 +92,10 @@ def main():
     compress = False
     verbose_level = args.verbose
     quiet = False
+    with_index = False
+    start_date = None
+    end_date = None
+    
     output = True  # We always output
     if verbose_level == 0 or verbose_level == 1:  # verbose 2 is not quiet
         quiet = True
@@ -130,9 +132,9 @@ def main():
                                 instrument,
                                 timeframe,
                                 quotes_count,
-                                None,
-                                None,
-                                False,
+                                start_date,
+                                end_date,
+                                with_index,
                                 quiet,
                                 compress,
                                 tlid_range=tlid_range,
@@ -142,21 +144,8 @@ def main():
                             error_message = (
                                 f"An error occurred with {instrument} {timeframe}: {e}"
                             )
-                            to_run_cmd = f"fxcli2console -i {instrument} -t {timeframe}"
-                            opath = get_output_fullpath(
-                                instrument,
-                                timeframe,
-                                use_full,
-                                tlid_range,
-                                compress,
-                                quiet,
-                            )
-
                             
-                            # Read RUN_ALT var so we might turn it off
-                            run_alt = os.getenv("RUN_ALT", 1)  # DEFAULT WE RUN IT
-
-                            ran_ok = run_command(to_run_cmd, opath) if run_alt == 1 or run_alt == "1" else vprint("NOT RUnning ALT")
+                            ran_ok=run_alt_get_command(instrument, timeframe, use_full, tlid_range, compress, quiet)
 
 
                             if exit_on_error: #@STCIssue Not so coherent while running with multiple I and T
@@ -169,8 +158,7 @@ def main():
                             
                     else:
                         # we will try to call with an end date from tlid and a count (so we would have only an end date)
-                        start_date = None
-                        end_date = None
+                        
                         try:
                             start_date, end_date = (
                                 jgtos.tlid_range_to_start_end_datetime(tlid_range)
@@ -183,13 +171,15 @@ def main():
                             print("start_date : " + str(start_date))
                             print("end_date : " + str(end_date))
                         try:
+                            
+                            
                             fpath, df = pds.getPH2file(
                                 instrument,
                                 timeframe,
                                 quotes_count,
-                                None,
+                                start_date,
                                 end_date,
-                                False,
+                                with_index,
                                 quiet,
                                 compress,
                                 use_full=use_full,
@@ -244,6 +234,7 @@ def main():
                         instrument, timeframe, use_full, tlid_range, compress, quiet
                     )
                     print(fpath)
+                    vprint("Quote count:" + str(quotes_count))
                     
 
         if not viewpath:
@@ -255,6 +246,27 @@ def main():
         pds.disconnect()
     except Exception as e:
         jgtcommon.print_exception(e)
+
+def run_alt_get_command(instrument, timeframe, use_full, tlid_range, compress, quiet):
+    ran_ok=False
+    # Read RUN_ALT var so we might turn it off
+    run_alt = os.getenv("RUN_ALT", 1)  # DEFAULT WE RUN IT
+                            
+    to_run_cmd = f"fxcli2console -i {instrument} -t {timeframe}"
+    opath = get_output_fullpath(
+                                instrument,
+                                timeframe,
+                                use_full,
+                                tlid_range,
+                                compress,
+                                quiet,
+                            )
+
+                            
+
+
+    ran_ok = run_command(to_run_cmd, opath) if run_alt == 1 or run_alt == "1" else vprint("NOT RUnning ALT")
+    return ran_ok
 
 
 def get_output_fullpath(instrument, timeframe, use_full, tlid_range, compress, quiet):
