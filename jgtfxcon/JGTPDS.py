@@ -148,7 +148,7 @@ def read_ohlc_df_from_file(srcpath, quiet=True, compressed=False,with_index=True
   return df
 
 
-def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=None, with_index=True, quiet=True, compressed=False,tlid_range=None,use_full=False):
+def getPH_to_filestore(instrument:str, timeframe:str, quote_count:int=-1, start=None, end=None, with_index=True, quiet:bool=True, compressed:bool=False,tlid_range:str=None,use_full:bool=False,default_quote_count:int = 335,default_add_quote_count:int = 89):
   """
   Saves the OHLC data for a given instrument and timeframe to a CSV file.
 
@@ -163,13 +163,15 @@ def getPH_to_filestore(instrument, timeframe, quote_count=335, start=None, end=N
   - compressed (bool): Whether to compress the CSV file using gzip (default: False)
   - tlid_range (str): The tlid range to retrieve (default: None)
   - use_full (bool): Whether to use the full range of data (default: False)
+  - default_quote_count (int): The default quote count to use if quote_count is not specified (default: 335)
+  - default_add_quote_count (int): The default additional quote count to use if quote_count is not specified (default: 89)
 
   Returns:
   - str: The file path where the CSV file was saved.
   """
   
   try:
-    df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full)
+    df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count)
   except Exception as e:
     raise e
     
@@ -220,12 +222,12 @@ def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=Tru
 
 
 
-def getPH2file(instrument:str,timeframe:str,quote_count:int=335,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False):
-  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full=use_full)
+def getPH2file(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89):
+  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count)
 
 
 #getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=8,use_full=False):
+def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=8,use_full=False,default_quote_count = 335,default_add_quote_count = 89):
   """Get Price History from Broker
 
   Args:
@@ -240,18 +242,21 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
       tlid_range (str): The tlid range to retrieve (default: None)
       rounding_nb (int, optional): Number of decimal to round. Defaults to 8.
       use_full (bool, optional): Whether to use the full range of data (default: False)
+      default_quote_count (int, optional): The default quote count to use if quote_count is not specified (default: 335)
+      default_add_quote_count (int, optional): The default additional quote count to use if quote_count is not specified (default: 89)
 
   Returns:
       pandas.DataFrame: DF with price histories
   """
   #print("-----------------getPH------------------->>>>")
   #print(instrument,timeframe,quote_count,start,end,with_index,startquiet,tlid_range)
-  if quote_count == -1:
-    quote_count = 335
+  if quote_count == -1:    
+    quote_count = default_quote_count
+    print("   getPH just set quote_count to:" + str(quote_count))
   df = pd.DataFrame()
   if not useLocal:
     con=connect(quiet=quiet)
-
+    quote_count_fixed = quote_count+default_add_quote_count
     try:
       if tlid_range is not None and not use_full:
         # start,end = jgtos.tlid_range_to_jgtfxcon_start_end_str(tlid_range)
@@ -259,8 +264,9 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
         #print("start: " + str(start) + " end: " + str(end))
         p=jfx.get_price_history(instrument, timeframe, start, end,quiet=quiet) #@STCIssue NOT WORKING
       else:
-        #print(end)
-        p=jfx.get_price_history(instrument, timeframe, None, end, quote_count+89,quiet=quiet) #@State WORKS
+        #print(end)        
+        
+        p=jfx.get_price_history(instrument, timeframe, None, end, quote_count_fixed,quiet=quiet) #@State WORKS
         
     except:
       try:
@@ -271,7 +277,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
           start,end = jgtos.tlid_range_to_jgtfxcon_start_end_str(tlid_range)
           p=jfx.get_price_history(instrument, timeframe, start, end,quiet=quiet)
         else:
-          p=jfx.get_price_history(instrument, timeframe, None, end, quote_count+89,quiet=quiet)
+          p=jfx.get_price_history(instrument, timeframe, None, end, quote_count_fixed ,quiet=quiet)
       except Exception as e:
         #print("An error occurred: ", e)
         #print("bahhhhhhhhhhhhhhhhhhhhhhh  REINITIALIZATION of the PDS todo")
