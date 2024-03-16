@@ -655,7 +655,8 @@ try :
     console = logging.StreamHandler(sys.stdout)
     console.setLevel(logging.INFO)
     logging.getLogger('').addHandler(console)
-except:
+except Exception as e:
+    print("Exception: {0}\n{1}".format(e, traceback.format_exc()))
     print('logging failed - dont worry')
 
 def add_main_arguments(parser: argparse.ArgumentParser):
