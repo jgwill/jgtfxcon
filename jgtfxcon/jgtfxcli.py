@@ -8,6 +8,9 @@ from jgtutils import jgtconstants as constants
 
 # import jgtfxcommon as jgtcommon
 from jgtutils import jgtos, jgtcommon, jgtpov
+
+#from jgtutils import jlog
+
 import argparse
 import subprocess
 
@@ -116,6 +119,7 @@ def main():
         
             
     except Exception as e:
+        #jlog.error("Error in main ",e)
         jgtcommon.print_exception(e)
 
     # try:

@@ -13,7 +13,7 @@ from jgtfxcon import __version__ as version
 INSTALL_REQUIRES = [
     'pandas>=0.25.1',
     'python-dotenv>=0.19.2',
-    'jgtutils>=0.1.37',
+    'jgtutils>=0.1.38',
     'tlid',
     'flask'
 ]
@@ -46,7 +46,7 @@ setup(
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
     entry_points={
-        'console_scripts': ['jgtfxcli=jgtfxcon.jgtfxcli:main','fxcli2console=jgtfxcon.fxcli2console:main'],
+        'console_scripts': ['jgtfxcli=jgtfxcon.jgtfxcli:main'],
     },
     extras_require={
         'dev': (EXTRAS_DEV_LINT + EXTRAS_DEV_TEST + EXTRAS_DEV_DOCS),

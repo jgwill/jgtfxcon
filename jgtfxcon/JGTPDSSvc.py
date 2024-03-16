@@ -28,7 +28,11 @@ def getPHs(instrument,timeframe,quote_count:int=-1,start=None,end=None,with_inde
     for timeframe in timeframes:
       pov=instrument + "_" + timeframe         
       vprint("Getting for : " + instrument + "_" + timeframe,1)
-      fpath,df = getPH(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full,default_quote_count,default_add_quote_count,verbose_level,view_output_path_only)
+      try:
+        fpath,df = getPH(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full,default_quote_count,default_add_quote_count,verbose_level,view_output_path_only)
+      except Exception as e:
+        print("Exception in svc::getPHs " + pov + "\n-------------------------\n" + str(e) + "\n-------------------------")
+        continue
       
       if view_output_path_only or verbose_level>0 or not quiet: #@a Print Path only
         print(fpath)
