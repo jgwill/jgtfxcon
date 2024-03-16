@@ -47,7 +47,7 @@ setup(
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
     entry_points={
-        'console_scripts': ['jgtfxcli=jgtfxcon.jgtfxcli:main'],
+        'console_scripts': ['jgtfxcli=jgtfxcon.jgtfxcli:main','fxcli2console=jgtfx2console.fxcli2console:main'],
     },
     extras_require={
         'dev': (EXTRAS_DEV_LINT + EXTRAS_DEV_TEST + EXTRAS_DEV_DOCS),
