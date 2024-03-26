@@ -46,7 +46,7 @@ con=None
 
 
 
-def pds_add_ohlc_stc_columns(dfsrc, rounding_nb=8):
+def pds_add_ohlc_stc_columns(dfsrc, rounding_nb=10):
   if not 'Open' in dfsrc.columns:
     dfsrc['Open'] = dfsrc[['BidOpen', 'AskOpen']].mean(axis=1).round(rounding_nb)
     dfsrc['High'] = dfsrc[['BidHigh', 'AskHigh']].mean(axis=1).round(rounding_nb)
@@ -227,7 +227,7 @@ def getPH2file(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=No
 
 
 #getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=8,use_full=False,default_quote_count = 335,default_add_quote_count = 89):
+def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=10,use_full=False,default_quote_count = 335,default_add_quote_count = 89):
   """Get Price History from Broker
 
   Args:
