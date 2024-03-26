@@ -13,7 +13,7 @@ from jgtfxcon import __version__ as version
 INSTALL_REQUIRES = [
     'pandas>=0.25.1',
     'python-dotenv>=0.19.2',
-    'jgtutils>=0.1.41',
+    'jgtutils>=0.1.46',
     'jgtfx2console',
     'tlid',
     'flask'
