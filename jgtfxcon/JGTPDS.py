@@ -257,7 +257,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
   #print(instrument,timeframe,quote_count,start,end,with_index,startquiet,tlid_range)
   if quote_count == -1:    
     quote_count = default_quote_count
-    print("   getPH just set quote_count to:" + str(quote_count))
+    #print("   getPH just set quote_count to:" + str(quote_count))
   df = pd.DataFrame()
   if not useLocal:
     con=connect(quiet=quiet)
