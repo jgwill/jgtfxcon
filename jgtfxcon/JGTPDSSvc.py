@@ -73,9 +73,9 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
                         keep_bid_ask=keep_bid_ask,
                     )
   except Exception as e:
-    print("Exception in svc::getPH " + str(e))
+    vprint("Exception in svc::getPH " + str(e),2)
     vprint("INFO::Running ALT command...",1)
-    ran_alt_ok,fpath = _run_get_ph_using_alt_command(instrument,timeframe,use_full,tlid_range,compressed,quiet)
+    ran_alt_ok,fpath = _run_get_ph_using_alt_command(instrument,timeframe,use_full,tlid_range,compressed,quiet,keep_bid_ask=keep_bid_ask)
     if not ran_alt_ok:
       raise Exception("Failed to run ALT command")
     else:
@@ -97,12 +97,21 @@ def _run_get_ph_using_alt_command(instrument,
                         compressed, 
                         quiet,
                         fxcli2console="fxcli2console",
-                        run_alt_env_var = "RUN_ALT"):
+                        run_alt_env_var = "RUN_ALT",
+                        keep_bid_ask=False):
     ran_ok=False
     # Read RUN_ALT var so we might turn it off
     
+    
+    if os.getenv("JGT_KEEP_BID_ASK","0") == "1":
+        keep_bid_ask = True
+    
+    bidask_arg = " "
+    if keep_bid_ask:
+        bidask_arg = " -kba"
+        
     run_alt = os.getenv(run_alt_env_var, 1)  # DEFAULT WE RUN IT
-    to_run_cmd = f"{fxcli2console} -i {instrument} -t {timeframe}"
+    to_run_cmd = f"{fxcli2console} -i {instrument} -t {timeframe}{bidask_arg}"
     fpath = _make_output_fullpath(
                                 instrument,
                                 timeframe,
