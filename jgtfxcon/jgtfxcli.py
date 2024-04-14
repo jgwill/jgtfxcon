@@ -70,7 +70,7 @@ def main():
     keep_bid_ask = args.keepbidask
     #env variable bypass if env exist JGT_KEEP_BID_ASK=1, keep_bid_ask = True
     if os.getenv("JGT_KEEP_BID_ASK","0") == "1":
-        print("KEEP BID ASK ENV VAR ON (bypassing the --keepbidask argument)")
+        #print("KEEP BID ASK ENV VAR ON (bypassing the --keepbidask argument)")
         keep_bid_ask = True
         
     quotes_count = args.quotescount if not use_full and tlid_range is None else -1
