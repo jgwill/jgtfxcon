@@ -89,7 +89,7 @@ def getPH_from_local1(instrument,timeframe):
 
 
 
-def getPH_from_filestore(instrument,timeframe,quiet=True, compressed=False,with_index=True,tlid_range=None,output_path=None):
+def getPH_from_filestore(instrument,timeframe,quiet=True, compressed=False,with_index=True,tlid_range=None,output_path=None,keep_bid_ask=False):
   """
   Retrieves OHLC data for a given instrument and timeframe from the filestore.
 
@@ -109,14 +109,14 @@ def getPH_from_filestore(instrument,timeframe,quiet=True, compressed=False,with_
   
   print_quiet(quiet,srcpath)
   
-  df = read_ohlc_df_from_file(srcpath,quiet,compressed,with_index)
+  df = read_ohlc_df_from_file(srcpath,quiet,compressed,with_index,keep_bid_ask=keep_bid_ask)
   
   return df
 
 
 
 
-def read_ohlc_df_from_file(srcpath, quiet=True, compressed=False,with_index=True):
+def read_ohlc_df_from_file(srcpath, quiet=True, compressed=False,with_index=True,keep_bid_ask=False):
   """
   Reads an OHLC (Open-High-Low-Close) +Date as DataFrame index from a CSV file.
 
@@ -124,6 +124,7 @@ def read_ohlc_df_from_file(srcpath, quiet=True, compressed=False,with_index=True
     srcpath (str): The path to the CSV file.
     quiet (bool, optional): Whether to print progress messages. Defaults to True.
     compressed (bool, optional): Whether the CSV file is compressed. Defaults to False.
+    keep_bid_ask (bool, optional): Whether to keep the bid and ask columns in the DataFrame. Defaults to False.
 
   Returns:
     pandas.DataFrame: The OHLC DataFrame.
@@ -145,10 +146,12 @@ def read_ohlc_df_from_file(srcpath, quiet=True, compressed=False,with_index=True
     else:
       raise ValueError("Column 'Date' is not present in the DataFrame")
 
+  if not keep_bid_ask:
+    df.drop(columns=['BidOpen', 'BidHigh', 'BidLow', 'BidClose', 'AskOpen', 'AskHigh', 'AskLow', 'AskClose'], inplace=True)
   return df
 
 
-def getPH_to_filestore(instrument:str, timeframe:str, quote_count:int=-1, start=None, end=None, with_index=True, quiet:bool=True, compressed:bool=False,tlid_range:str=None,use_full:bool=False,default_quote_count:int = 335,default_add_quote_count:int = 89):
+def getPH_to_filestore(instrument:str, timeframe:str, quote_count:int=-1, start=None, end=None, with_index=True, quiet:bool=True, compressed:bool=False,tlid_range:str=None,use_full:bool=False,default_quote_count:int = 335,default_add_quote_count:int = 89,keep_bid_ask=False):
   """
   Saves the OHLC data for a given instrument and timeframe to a CSV file.
 
@@ -165,13 +168,14 @@ def getPH_to_filestore(instrument:str, timeframe:str, quote_count:int=-1, start=
   - use_full (bool): Whether to use the full range of data (default: False)
   - default_quote_count (int): The default quote count to use if quote_count is not specified (default: 335)
   - default_add_quote_count (int): The default additional quote count to use if quote_count is not specified (default: 89)
+  - keep_bid_ask (bool): Whether to keep the bid and ask columns in the CSV file (default: False)
 
   Returns:
   - str: The file path where the CSV file was saved.
   """
   
   try:
-    df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count)
+    df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count,keep_bid_ask=keep_bid_ask)
   except Exception as e:
     raise e
     
@@ -222,12 +226,12 @@ def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=Tru
 
 
 
-def getPH2file(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89):
-  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count)
+def getPH2file(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89,keep_bid_ask=False):
+  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count,keep_bid_ask=keep_bid_ask)
 
 
 #getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=10,use_full=False,default_quote_count = 335,default_add_quote_count = 89):
+def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=10,use_full=False,default_quote_count = 335,default_add_quote_count = 89,keep_bid_ask=False):
   """Get Price History from Broker
 
   Args:
@@ -244,6 +248,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
       use_full (bool, optional): Whether to use the full range of data (default: False)
       default_quote_count (int, optional): The default quote count to use if quote_count is not specified (default: 335)
       default_add_quote_count (int, optional): The default additional quote count to use if quote_count is not specified (default: 89)
+      keep_bid_ask (bool, optional): Whether to keep the bid and ask columns in the CSV file (default: False)
 
   Returns:
       pandas.DataFrame: DF with price histories
@@ -302,7 +307,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
     #Read from local
     
     #@STCIssue When we read from filestore, the Date Columnt is ok
-    df =getPH_from_filestore(instrument,timeframe,tlid_range=tlid_range) #@STCIssue add start and end and index name should be already set
+    df =getPH_from_filestore(instrument,timeframe,tlid_range=tlid_range,keep_bid_ask=keep_bid_ask) #@STCIssue add start and end and index name should be already set
     if with_index:
       df.index.rename('Date',inplace=True)
       
@@ -312,7 +317,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
 
   if addOhlc and renameColumns:
     df=pds_add_ohlc_stc_columns(df, rounding_nb)
-  if cleanseOriginalColumns:
+  if not keep_bid_ask:
     df=_cleanse_original_columns(df,debugging)
   # Set 'Date' column as the index
   df.set_index('Date', inplace=True)
