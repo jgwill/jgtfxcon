@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 TEST_MODE = False
 import os
 import sys
@@ -67,9 +69,15 @@ def main():
         using_tlid = True
         tlid_range = args.tlidrange
 
+    # Do we have keep_bid_ask set to true?
+    config = jgtcommon.readconfig()
+    
     keep_bid_ask = args.keepbidask
+    config_has_keep_bid_ask = False
+    if 'keep_bid_ask' in config and (config['keep_bid_ask'] == True or config['keep_bid_ask'] == "1" or config['keep_bid_ask'] == "true"):
+        config_has_keep_bid_ask = True
     #env variable bypass if env exist JGT_KEEP_BID_ASK=1, keep_bid_ask = True
-    if os.getenv("JGT_KEEP_BID_ASK","0") == "1":
+    if os.getenv("JGT_KEEP_BID_ASK","0") == "1" or config_has_keep_bid_ask:
         #print("KEEP BID ASK ENV VAR ON (bypassing the --keepbidask argument)")
         keep_bid_ask = True
         
