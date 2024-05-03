@@ -6,3 +6,4 @@ python-dotenv
 tlid
 jgtutils
 jgtfx2console
+flask
