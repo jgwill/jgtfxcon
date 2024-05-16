@@ -54,16 +54,16 @@ setup(
     ),
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
-    entry_points={
-        "console_scripts": ["jgtfxcli=jgtfxcon.jgtfxcli:main"],
-    },
+    # entry_points={
+    #     "console_scripts": ["jgtfxcli=jgtfxcon.jgtfxcli:main"],
+    # },
     extras_require={
         "dev": (EXTRAS_DEV_LINT + EXTRAS_DEV_TEST + EXTRAS_DEV_DOCS),
         "dev-lint": EXTRAS_DEV_LINT,
         "dev-test": EXTRAS_DEV_TEST,
         "dev-docs": EXTRAS_DEV_DOCS,
     },
-    license="MIT",
+    #license="MIT",
     keywords="data",
     classifiers=[
         "Development Status :: 5 - Production/Stable",

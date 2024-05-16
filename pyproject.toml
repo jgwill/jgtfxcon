@@ -27,3 +27,7 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/jgwill/jgtfxcon"
 "Bug Tracker" = "https://github.com/jgwill/jgtfxcon/issues"
+
+
+[project.scripts]
+jgtfxcli = "jgtfxcon.jgtfxcli:main"
