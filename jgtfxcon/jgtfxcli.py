@@ -49,6 +49,11 @@ def parse_args():
 def main():
     global verbose_level
     args = parse_args()
+    #if no arguments, print help
+    if len(sys.argv) == 1:
+        subprocess.run([sys.argv[0], "--help"])
+        return
+    
     exit_on_error = False
     if args.exitonerror: #@STCIssue DEPRECATING
         exit_on_error = True
