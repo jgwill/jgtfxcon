@@ -13,8 +13,8 @@ requires-python = ">=3.7"
 dependencies = [
   'pandas>=0.25.1',
   'python-dotenv>=0.19.2',
-  'jgtutils>=0.1.80',
-  'jgtfx2console>=0.4.17',
+  'jgtutils>=0.1.81',
+  'jgtfx2console>=0.4.35',
   'tlid',
   'flask',
 ]
