@@ -1,3 +1,4 @@
+#pip install -U jgtutils
 
 . scripts/version-patcher.sh
 cversion=$(cat pyproject.toml |tr '"' " " |awk '/version/ {print $3}')
