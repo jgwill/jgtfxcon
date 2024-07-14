@@ -42,7 +42,11 @@ def parse_args():
     jgtcommon.add_pdsserver_argument(parser)
     jgtcommon.add_keepbidask_argument(parser)
     
-    args = parser.parse_args()
+    #dropna_volume
+    jgtcommon.add_dropna_volume_argument(parser)
+
+    args=jgtcommon.parse_args(parser)
+    # args = parser.parse_args()
     return args
 
 
@@ -125,14 +129,16 @@ def main():
     # if (verbose_level == 0 or verbose_level == 1) and not quiet:  # verbose 2 is not quiet
     #     quiet = True
 
-    
+    do_we_dropna_volume = jgtcommon.do_we_dropna_volume() #args.dropna_volume or not args.dont_dropna_volume
+    if do_we_dropna_volume:
+        print("INFO(jgtfxcli)::Dropping NA Volume")
 
     if args.compress:
         compressed = args.compress
 
     try:
 
-        updated_povs:list=svc.getPHs(instrument=instrument,timeframe=timeframe,quote_count=quotes_count,start=start_date,end=end_date,with_index=with_index,quiet=quiet,compressed=compressed,tlid_range=tlid_range,use_full=use_full,verbose_level=verbose_level,view_output_path_only=viewpath,keep_bid_ask=keep_bid_ask)
+        updated_povs:list=svc.getPHs(instrument=instrument,timeframe=timeframe,quote_count=quotes_count,start=start_date,end=end_date,with_index=with_index,quiet=quiet,compressed=compressed,tlid_range=tlid_range,use_full=use_full,verbose_level=verbose_level,view_output_path_only=viewpath,keep_bid_ask=keep_bid_ask,dropna_volume=do_we_dropna_volume)
         
         for i in updated_povs:
             vprint(i,1)

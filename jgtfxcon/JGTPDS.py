@@ -151,7 +151,7 @@ def read_ohlc_df_from_file(srcpath, quiet=True, compressed=False,with_index=True
   return df
 
 
-def getPH_to_filestore(instrument:str, timeframe:str, quote_count:int=-1, start=None, end=None, with_index=True, quiet:bool=True, compressed:bool=False,tlid_range:str=None,use_full:bool=False,default_quote_count:int = 335,default_add_quote_count:int = 89,keep_bid_ask=False):
+def getPH_to_filestore(instrument:str, timeframe:str, quote_count:int=-1, start=None, end=None, with_index=True, quiet:bool=True, compressed:bool=False,tlid_range:str=None,use_full:bool=False,default_quote_count:int = 335,default_add_quote_count:int = 89,keep_bid_ask=False,dropna_volume=True):
   """
   Saves the OHLC data for a given instrument and timeframe to a CSV file.
 
@@ -175,7 +175,7 @@ def getPH_to_filestore(instrument:str, timeframe:str, quote_count:int=-1, start=
   """
   
   try:
-    df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count,keep_bid_ask=keep_bid_ask)
+    df=getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count,keep_bid_ask=keep_bid_ask,dropna_volume=dropna_volume)
   except Exception as e:
     raise e
     
@@ -226,12 +226,12 @@ def write_df_to_filestore(df, instrument, timeframe, compressed=False, quiet=Tru
 
 
 
-def getPH2file(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89,keep_bid_ask=False):
-  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count,keep_bid_ask=keep_bid_ask)
+def getPH2file(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89,keep_bid_ask=False,dropna_volume=True):
+  return getPH_to_filestore(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full=use_full,default_quote_count=default_quote_count,default_add_quote_count=default_add_quote_count,keep_bid_ask=keep_bid_ask,dropna_volume=dropna_volume)
 
 
 #getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
-def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=10,use_full=False,default_quote_count = 335,default_add_quote_count = 89,keep_bid_ask=False):
+def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=10,use_full=False,default_quote_count = 335,default_add_quote_count = 89,keep_bid_ask=False,dropna_volume=True)->pd.DataFrame:
   """Get Price History from Broker
 
   Args:
@@ -321,6 +321,10 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
     df=_cleanse_original_columns(df,debugging)
   # Set 'Date' column as the index
   df.set_index('Date', inplace=True)
+  
+  if dropna_volume:#c.VOLUME, if volume is 0, drop the row
+    df = df[df[c.VOLUME] != 0]
+    
   return df
 
 

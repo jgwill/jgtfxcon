@@ -16,7 +16,7 @@ import JGTPDS as pds
 
 import pandas as pd
 
-def getPHs(instrument,timeframe,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89,verbose_level=0,view_output_path_only=False,keep_bid_ask=False):
+def getPHs(instrument,timeframe,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89,verbose_level=0,view_output_path_only=False,keep_bid_ask=False,dropna_volume=True):
   global _verbose_level
   instruments = instrument if isinstance(instrument, list) else instrument.split(",")
   timeframes = timeframe if isinstance(timeframe, list) else timeframe.split(",")
@@ -29,7 +29,7 @@ def getPHs(instrument,timeframe,quote_count:int=-1,start=None,end=None,with_inde
       pov=instrument + "_" + timeframe         
       vprint("Getting for : " + instrument + "_" + timeframe,1)
       try:
-        fpath,df = getPH(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full,default_quote_count,default_add_quote_count,verbose_level,view_output_path_only,keep_bid_ask)
+        fpath,df = getPH(instrument,timeframe,quote_count,start,end,with_index,quiet,compressed,tlid_range,use_full,default_quote_count,default_add_quote_count,verbose_level,view_output_path_only,keep_bid_ask,dropna_volume)
       except Exception as e:
         print("Exception in svc::getPHs " + pov + "\n-------------------------\n" + str(e) + "\n-------------------------")
         continue
@@ -42,7 +42,13 @@ def getPHs(instrument,timeframe,quote_count:int=-1,start=None,end=None,with_inde
   if not view_output_path_only: pds.disconnect()  #@a Disconnected
   return updated_povs
 
-def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89,verbose_level=0,view_output_path_only=False,keep_bid_ask=False):
+def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89,verbose_level=0,view_output_path_only=False,keep_bid_ask=False,_dropna_volume=True):
+  if _dropna_volume and timeframe == "M1":
+    print("JGTPDSSvc::getPH - Not dropping NA Volume for M1 timeframe")
+    dropna_volume = False
+  else:
+    dropna_volume = _dropna_volume
+    
   # Logics migrated from cli
   pov_full_M1 = int(os.getenv("pov_full_M1", "1000"))
   if view_output_path_only:
@@ -71,6 +77,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
                         compressed=compressed,
                         use_full=use_full,
                         keep_bid_ask=keep_bid_ask,
+                        dropna_volume=dropna_volume,
                     )
   except Exception as e:
     vprint("Exception in svc::getPH " + str(e),2)
