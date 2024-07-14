@@ -27,12 +27,13 @@ def parse_args():
     jgtcommon.add_instrument_timeframe_arguments(parser)
     # jgtfxcommon.add_date_arguments(parser)
     jgtcommon.add_tlid_range_argument(parser)
-    jgtcommon.add_max_bars_arguments(parser)
+    #jgtcommon.add_max_bars_arguments(parser)
     jgtcommon.add_viewpath_argument(parser)
     jgtcommon.add_exit_if_error(parser)
     # jgtfxcommon.add_output_argument(parser)
     jgtcommon.add_compressed_argument(parser)
-    jgtcommon.add_use_full_argument(parser)
+    #jgtcommon.add_use_full_argument(parser)
+    jgtcommon.add_bars_amount_V2_arguments(parser)
 
     # jgtfxcommon.add_quiet_argument(parser)
     jgtcommon.add_verbose_argument(parser)
@@ -90,7 +91,7 @@ def main():
         #print("KEEP BID ASK ENV VAR ON (bypassing the --keepbidask argument)")
         keep_bid_ask = True
         
-    quotes_count = args.quotescount if not use_full and tlid_range is None else -1
+    quotescount = args.quotescount if not use_full and tlid_range is None else -1
 
     # print(args.quotescount)
     debug = args.debug
@@ -129,8 +130,8 @@ def main():
     # if (verbose_level == 0 or verbose_level == 1) and not quiet:  # verbose 2 is not quiet
     #     quiet = True
 
-    do_we_dropna_volume = jgtcommon.do_we_dropna_volume() #args.dropna_volume or not args.dont_dropna_volume
-    if do_we_dropna_volume:
+    do_we_dropna_volume = args.dropna_volume
+    if do_we_dropna_volume and not quiet:
         print("INFO(jgtfxcli)::Dropping NA Volume")
 
     if args.compress:
@@ -138,7 +139,7 @@ def main():
 
     try:
 
-        updated_povs:list=svc.getPHs(instrument=instrument,timeframe=timeframe,quote_count=quotes_count,start=start_date,end=end_date,with_index=with_index,quiet=quiet,compressed=compressed,tlid_range=tlid_range,use_full=use_full,verbose_level=verbose_level,view_output_path_only=viewpath,keep_bid_ask=keep_bid_ask,dropna_volume=do_we_dropna_volume)
+        updated_povs:list=svc.getPHs(instrument=instrument,timeframe=timeframe,quote_count=quotescount,start=start_date,end=end_date,with_index=with_index,quiet=quiet,compressed=compressed,tlid_range=tlid_range,use_full=use_full,verbose_level=verbose_level,view_output_path_only=viewpath,keep_bid_ask=keep_bid_ask,dropna_volume=do_we_dropna_volume)
         
         for i in updated_povs:
             vprint(i,1)
