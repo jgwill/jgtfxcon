@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jgtfxcon"
-version = "0.5.32"
+version = "0.5.33"
 authors = [{ name = "Guillaume Isabelle", email = "jgi@jgwill.com" }]
 
 description = "PDS Services"
