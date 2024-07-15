@@ -249,6 +249,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
       default_quote_count (int, optional): The default quote count to use if quote_count is not specified (default: 335)
       default_add_quote_count (int, optional): The default additional quote count to use if quote_count is not specified (default: 89)
       keep_bid_ask (bool, optional): Whether to keep the bid and ask columns in the CSV file (default: False)
+      dropna_volume (bool, optional): Whether to drop rows with volume = 0. Defaults to True.
 
   Returns:
       pandas.DataFrame: DF with price histories
@@ -323,6 +324,8 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
   df.set_index('Date', inplace=True)
   
   if dropna_volume:#c.VOLUME, if volume is 0, drop the row
+    #dropna volume
+    df.dropna(subset=[c.VOLUME], inplace=True)
     df = df[df[c.VOLUME] != 0]
     
   return df
