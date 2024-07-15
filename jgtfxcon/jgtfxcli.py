@@ -46,6 +46,9 @@ def parse_args():
     #dropna_volume
     jgtcommon.add_dropna_volume_argument(parser)
 
+    jgtcommon.add_jgtclirqdata_arguments(parser)
+    jgtcommon.add_load_json_file_argument(parser)
+
     args=jgtcommon.parse_args(parser)
     # args = parser.parse_args()
     return args
