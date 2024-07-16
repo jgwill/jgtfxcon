@@ -21,8 +21,9 @@ import JGTPDS as pds,JGTPDSSvc as svc
 import pandas as pd
 verbose_level=0
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Process command parameters.")
+def _parse_args():
+    parser:argparse.ArgumentParser=jgtcommon.new_parser("JGT Price History CLI","jgtfxcli","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds")
+
     # jgtfxcommon.add_main_arguments(parser)
     jgtcommon.add_instrument_timeframe_arguments(parser)
     # jgtfxcommon.add_date_arguments(parser)
@@ -56,7 +57,7 @@ def parse_args():
 
 def main():
     global verbose_level
-    args = parse_args()
+    args = _parse_args()
     #if no arguments, print help
     if len(sys.argv) == 1:
         subprocess.run([sys.argv[0], "--help"])
