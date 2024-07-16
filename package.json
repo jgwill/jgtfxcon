@@ -1,6 +1,6 @@
 {
   "name": "jgtfxcon",
-  "version": "0.5.35",
+  "version": "0.5.36",
   "description": "Enhanced PDS Services",
   "main": "index.js",
   "directories": {
