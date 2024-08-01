@@ -13,9 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+
 import argparse
 import datetime
 import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+from jgtutils import jgtconstants as constants
+
+from jgtutils import jgtos, jgtcommon, jgtpov
+
 import re
 from urllib.parse import urlsplit
 from urllib.request import urlopen
@@ -25,10 +35,13 @@ from forexconnect import ForexConnect
 import common_samples
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Process command parameters.')
-    common_samples.add_main_arguments(parser)
+    parser = jgtcommon.new_parser("JGT FX Report CLI", "Obtain a report from FXConnect", "fxreport")
+    parser=jgtcommon.add_demo_flag_argument(parser)
+    #parser = argparse.ArgumentParser(description='Process command parameters.')
+    #common_samples.add_main_arguments(parser)
     common_samples.add_report_date_arguments(parser)
-    args = parser.parse_args()
+    #args = parser.parse_args()
+    args=jgtcommon.parse_args(parser)
 
     return args
 
@@ -73,12 +86,10 @@ def get_reports(fc, dt_from, dt_to):
 
 def main():
     args = parse_args()
-    str_user_id = args.l
-    str_password = args.p
-    str_url = args.u
-    str_connection = args.c
-    str_session_i_d = args.session
-    str_pin = args.pin
+    str_user_id,str_password,str_url, str_connection = jgtcommon.read_fx_str_from_config(demo=args.demo)
+
+    str_session_i_d=""
+    str_pin=""
     date_from = args.datefrom
     date_to = args.dateto
 
@@ -100,4 +111,3 @@ def main():
 if __name__ == "__main__":
     main()
     print("")
-    #input("Done! Press enter key to exit\n")
