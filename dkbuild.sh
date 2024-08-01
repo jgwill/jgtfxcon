@@ -1,2 +1,2 @@
-(cd bin/base && dkbuild && dkpush)
+(cd bin/base && dkbuild --no-cache && dkpush)
 
