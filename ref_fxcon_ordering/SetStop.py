@@ -118,10 +118,12 @@ def on_each_row(fx, row_data):
     global instrument
     trade = None
     if row_data.instrument == instrument:
+        print("Changing trade: {0:s}".format(row_data.trade_id))
         change_trade(fx, row_data)
 
 
 def check_trades(fx, table_manager, account_id):
+    print("AccountID='{0}'".format(account_id))
     orders_table = table_manager.get_table(ForexConnect.TRADES)
     if len(orders_table) == 0:
         print("There are no trades!")

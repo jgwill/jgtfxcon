@@ -2,3 +2,5 @@ numpy
 forexconnect
 pandas
 flask
+requests
+jgtutils

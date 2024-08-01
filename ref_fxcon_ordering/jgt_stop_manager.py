@@ -3,7 +3,7 @@
 import threading
 from forexconnect import ForexConnect, Common
 import common_samples
-from SetStop import on_each_row, check_trades  # Import necessary methods
+from SetStop import check_trades  # Import necessary methods
 
 class StopRequest:
 	def __init__(self, user_id, password, url, connection, session_id, pin, instrument, account, stop):
@@ -30,6 +30,7 @@ class StopManager:
 					 self.request.session_id, self.request.pin, common_samples.session_status_changed)
 
 			account = Common.get_account(fx, self.request.account)
+			print("AccountID='{0}'".format(account.account_id))
 			if not account:
 				raise Exception(f"The account '{self.request.account}' is not valid")
 
