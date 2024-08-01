@@ -76,8 +76,8 @@ def main():
     using_tlid = False
     tlid_range = None
     viewpath = args.viewpath
-    if viewpath:
-        print("Viewpath is on")
+    #if viewpath:
+        #print("Viewpath is on")
 
     if args.tlidrange is not None:
         using_tlid = True
