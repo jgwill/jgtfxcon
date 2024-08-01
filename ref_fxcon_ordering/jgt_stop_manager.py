@@ -1,18 +1,37 @@
 # stop_manager.py
 
-from SetStop import change_trade,check_trades
+import threading
+from forexconnect import ForexConnect, Common
+import common_samples
+from SetStop import on_each_row, check_trades  # Import necessary methods
 
-class JGTStopManager:
-    def __init__(self):
-        self.stop_price = None
-        self.instrument = None
+class StopRequest:
+	def __init__(self, user_id, password, url, connection, session_id, pin, instrument, account, stop):
+		self.user_id = user_id
+		self.password = password
+		self.url = url
+		self.connection = connection
+		self.session_id = session_id
+		self.pin = pin
+		self.instrument = instrument
+		self.account = account
+		self.stop = stop
 
-    def set_stop(self, price, instrument):
-        self.stop_price = price
-        self.instrument = instrument
-        
-        return f"Stop price set to {self.stop_price}"
+class StopManager:
+	def __init__(self, request: StopRequest):
+		self.request = request
 
-# Example usage:
-# stop_manager = StopManager()
-# stop_manager.set_stop(100)
+	def set_stop(self):
+		if not self.request.stop:
+			raise ValueError("Stop level must be specified")
+
+		with ForexConnect() as fx:
+			fx.login(self.request.user_id, self.request.password, self.request.url, self.request.connection, 
+					 self.request.session_id, self.request.pin, common_samples.session_status_changed)
+
+			account = Common.get_account(fx, self.request.account)
+			if not account:
+				raise Exception(f"The account '{self.request.account}' is not valid")
+
+			table_manager = fx.table_manager
+			check_trades(fx, table_manager, self.request.account)
