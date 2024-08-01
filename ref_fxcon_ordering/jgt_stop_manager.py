@@ -28,10 +28,10 @@ class StopManager:
 		with ForexConnect() as fx:
 			fx.login(self.request.user_id, self.request.password, self.request.url, self.request.connection, 
 					 self.request.session_id, self.request.pin, common_samples.session_status_changed)
-
+			print("Getting account:", self.request.account)
 			account = Common.get_account(fx, self.request.account)
-			print("AccountID='{0}'".format(account.account_id))
-			if not account:
+			#print("AccountID='{0}'".format(account.account_id))
+			if not account and self.request.connection == "Real": 
 				raise Exception(f"The account '{self.request.account}' is not valid")
 
 			table_manager = fx.table_manager

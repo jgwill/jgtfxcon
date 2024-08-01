@@ -118,12 +118,12 @@ def on_each_row(fx, row_data):
     global instrument
     trade = None
     if row_data.instrument == instrument:
-        print("Changing trade: {0:s}".format(row_data.trade_id))
+        print("Changing trad, row_data:")
+        print(row_data)
         change_trade(fx, row_data)
 
 
 def check_trades(fx, table_manager, account_id):
-    print("AccountID='{0}'".format(account_id))
     orders_table = table_manager.get_table(ForexConnect.TRADES)
     if len(orders_table) == 0:
         print("There are no trades!")
@@ -159,6 +159,8 @@ def main():
                  pin, common_samples.session_status_changed)
 
         account = Common.get_account(fx, str_account)
+        print("Account:")
+        print(account)
 
         table_manager = fx.table_manager
 
@@ -185,4 +187,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    input("Done! Press enter key to exit\n")
+    print("Done!")
+    #input("Done! Press enter key to exit\n")

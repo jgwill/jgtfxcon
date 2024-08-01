@@ -1,33 +1,34 @@
 # sample_call.py
 
-import os
+import os,sys
 import requests
+import argparse
 
 def main():
-	# Read environment variables
-	user_id = os.getenv('user_id')
-	password = os.getenv('password')
-	url = os.getenv('url')
-	connection = os.getenv('connection')
-	account = os.getenv('account')
-	#print(user_id, password, url, connection)
-
+	parser=argparse.ArgumentParser(description='Process command parameters.')
+	parser.add_argument('-i','--instrument', type=str, help='Instrument')
+	parser.add_argument('-s','--stop', type=float, help='Stop level')
+	#flag demo
+	parser.add_argument('-d','--demo', action='store_true', help='Demo mode')
+	
+	args=parser.parse_args()
+	from jgtutils.jgtcommon import readconfig
+	config=readconfig(demo=True if args.demo else False)
+	user_id = config['user_id']
+	password = config['password']
+	url = config['url']
+	connection = config['connection']
+	account = config['account']
 	if not all([user_id, password, url, connection]):
-		from jgtutils.jgtcommon import readconfig
-		config=readconfig()
-		user_id = config['user_id']
-		password = config['password']
-		url = config['url']
-		connection = config['connection']
-		account = config['account']
-		if not all([user_id, password, url, connection]):
-			print("Please set the environment variables: USER_ID, PASSWORD, URL, CONNECTION")
-			return
+		print("Please set the environment variables: USER_ID, PASSWORD, URL, CONNECTION")
+		return
 
 	# Get input from the user
-	instrument = input("Enter the instrument: ")
-	stop = input("Enter the stop level: ")
+	
+	instrument = input("Enter the instrument: ") if not args.instrument else args.instrument
 
+	stop = input("Enter the stop level: ") if not args.stop else args.stop
+	
 	# Prepare the payload
 	payload = {
 		"user_id": user_id,
@@ -38,8 +39,11 @@ def main():
 		"pin": "",
 		"instrument": instrument,
 		"account": account,  # Assuming account is optional or can be empty
-		"stop": stop
+		"stop": stop,
+		"demo": True if args.demo else False
 	}
+	print(payload)
+	#exit(0)
 
 	# Call the REST API
 	response = requests.post('http://127.0.0.1:5000/set_stop', json=payload)
