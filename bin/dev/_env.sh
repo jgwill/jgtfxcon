@@ -1,5 +1,6 @@
 ctlid=2408011203
 dockertag=jgwill/jgt:fxcon-dev
+dockertag1=jgwill/jgt:fxcon #so we can use the cli wrapper dkfxcli
 
 containername=fxdev
 dkhostname=$containername

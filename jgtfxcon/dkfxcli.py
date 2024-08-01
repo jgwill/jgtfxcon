@@ -8,16 +8,28 @@ def main():
     data_path = os.path.join(home_dir, ".jgt", "data")
     #mkdir local path
     os.makedirs(data_path, exist_ok=True)
-
+    
     docker_command = [
-        "docker", "run", "--rm",
-        "-v", f"{config_path}:/root/.jgt/config.json",
-        "-v", f"{data_path}:/data",
-        "jgwill/jgt:fxcon",
-        "jgtfxcli"
-    ]
+        "docker", "run"]
+    
+    if "--bash" in sys.argv:
+        docker_command.append("-it")
+        
 
-    # Append all arguments passed to fxcli to the docker command
+    docker_command = docker_command+       [ "--rm",
+        "-v", f"{config_path}:/etc/jgt/config.json",
+        "-v", f"{data_path}:/data",
+        "jgwill/jgt:fxcon"]
+
+    # Check if --bash is present in the arguments
+    if "--bash" in sys.argv:
+        docker_command.append("bash")
+        # Remove --bash from the arguments list
+        sys.argv.remove("--bash")
+    else:
+        docker_command.append("jgtfxcli")
+    print(f"Running Docker command: {' '.join(docker_command)}")
+    # Append all remaining arguments passed to fxcli to the docker command
     docker_command.extend(sys.argv[1:])
 
     # Run the Docker command
