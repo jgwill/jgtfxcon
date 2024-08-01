@@ -1,5 +1,6 @@
 ctlid=2408011203
-dockertag=jgwill/jgt:fxcon
+export dockertag=jgwill/jgt:fxcon
+dockertag1=jgwill/jgt:fx
 
 containername=fxcon
 dkhostname=$containername

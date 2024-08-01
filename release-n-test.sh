@@ -11,3 +11,10 @@ make dist && twine upload dist/* &&         echo "Bypassed install and prep test
 
 #	&&    echo "        pip install -U jgtfxcon==$cversion"
 #&& sleep 29 &&  . pypi-conda-gaia-env.sh $1
+
+echo "Building Docker image"
+#(cd bin/base && dkbuild && dkpush) && echo "Docker image built and pushed to Docker Hub"
+. dkbuild.sh
+
+
+
