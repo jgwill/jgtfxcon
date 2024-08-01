@@ -5,7 +5,7 @@ jgtfxcon
 
 from setuptools import find_packages, setup
 
-from jgtfxcon import __version__ as version
+from jgtfxcon import version
 
 
 INSTALL_REQUIRES = [

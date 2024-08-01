@@ -1,4 +1,4 @@
-version := $(shell python3 -c 'from jgtfxcon import __version__; print(__version__)')
+version := $(shell python3 -c 'from jgtfxcon import version; print(version)')
 
 .PHONY: venv
 venv:
@@ -71,3 +71,13 @@ release:
 	git push origin $(version)
 	make pypi-release
 
+.PHONY: dev-pypi-release
+dev-pypi-release:
+	twine --version
+	twine upload --repository pypi-dev dist/*
+
+.PHONY: dev-release
+dev-release:
+	python bump_version.py
+	make dist
+	make dev-pypi-release

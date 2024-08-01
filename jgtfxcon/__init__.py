@@ -46,7 +46,7 @@ class NotCompatibleException(Exception):
 
 #from jgtfxcon.common_samples import common_samples
 from jgtetl import svc_offset_dt_by_tf as etl_offset_dt_by_tf,offsetdt as etl_offsetdt
-from JGTCore import __version__ #,json2dict,jsonfile2prop,json2prop,jsonfile2dict,d2p,fixdtindf,offsetdt
+from JGTCore import version #,json2dict,jsonfile2prop,json2prop,jsonfile2dict,d2p,fixdtindf,offsetdt
 #from .JGTConfig import getenv,setreal,setdemo,env
 
 # if platform.system() == 'Linux':
