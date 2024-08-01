@@ -134,4 +134,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    input("Done! Press enter key to exit\n")
+    
+    #input("Done! Press enter key to exit\n")
