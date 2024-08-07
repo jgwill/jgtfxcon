@@ -119,7 +119,7 @@ def main():
     g_stop=str_stop
     str_lots = args.lots
     #str_account = args.account
-    print("Starting example for adding a stop to an entry order with \nentry rate: {0:.5f}, stop: {1:.5f}".format(
+    print("Adding a stop to an entry order with \nentry rate: {0:.5f}, stop: {1:.5f}".format(
         str_rate, str_stop))
 
     with ForexConnect() as fx:
