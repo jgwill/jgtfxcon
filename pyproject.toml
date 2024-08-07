@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jgtfxcon"
-version = "0.5.43"
+version = "0.5.44"
 authors = [{ name = "Guillaume Isabelle", email = "jgi@jgwill.com" }]
 
 description = "PDS Services"
@@ -32,5 +32,7 @@ classifiers = [
 [project.scripts]
 jgtfxcli = "jgtfxcon.jgtfxcli:main"
 fxreport = "jgtfxcon.jgtfxreport:main"
+fxaddorder = "jgtfxcon.jgtfxentryorder:main"
+fxrmorder = "jgtfxcon.jgtfxremoveorder:main"
 dkfxcli = "jgtfxcon.dkfxcli:main"
 

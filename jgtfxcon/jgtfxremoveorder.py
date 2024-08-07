@@ -17,19 +17,29 @@ import argparse
 import threading
 from time import sleep
 
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+from jgtutils import jgtconstants as constants
+
+from jgtutils import jgtos, jgtcommon, jgtpov
+
 from forexconnect import fxcorepy, ForexConnect, Common
 
 import common_samples
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Process command parameters.')
-    common_samples.add_main_arguments(parser)
-    # specific arguments
-    parser.add_argument('-orderid', metavar="OrderID", required=True,
-                        help='OrderID for remove. For example, 193164992')
+    parser = jgtcommon.new_parser("JGT FX RemoveEntry Order CLI", "Remove an Entry order on FXConnect", "fxrmorder")
+    
+    parser=jgtcommon.add_demo_flag_argument(parser)
 
-    args = parser.parse_args()
+    # specific arguments
+    parser=jgtcommon.add_orderid_arguments(parser)
+
+    args=jgtcommon.parse_args(parser)
 
     return args
 
@@ -71,12 +81,9 @@ class OrdersMonitor:
 
 def main():
     args = parse_args()
-    str_user_id = args.l
-    str_password = args.p
-    str_url = args.u
-    str_connection = args.c
-    str_session_id = args.session
-    str_pin = args.pin
+    str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
+    str_session_id = ""
+    str_pin = ""
     str_old = args.orderid
 
     with ForexConnect() as fx:

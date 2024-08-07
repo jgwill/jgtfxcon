@@ -86,7 +86,7 @@ def get_reports(fc, dt_from, dt_to):
 
 def main():
     args = parse_args()
-    str_user_id,str_password,str_url, str_connection = jgtcommon.read_fx_str_from_config(demo=args.demo)
+    str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
 
     str_session_i_d=""
     str_pin=""

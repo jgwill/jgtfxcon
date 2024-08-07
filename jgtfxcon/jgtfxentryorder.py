@@ -17,6 +17,16 @@ import argparse
 from time import sleep
 from threading import Event
 
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+from jgtutils import jgtconstants as constants
+
+from jgtutils import jgtos, jgtcommon, jgtpov
+
+
 from forexconnect import fxcorepy, ForexConnect, Common
 
 import common_samples
@@ -26,14 +36,20 @@ g_stop = None
 g_order_id = None
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Process command parameters.')
-    common_samples.add_main_arguments(parser)
-    common_samples.add_instrument_timeframe_arguments(parser, timeframe=False)
-    common_samples.add_direction_rate_lots_arguments(parser)
-    common_samples.add_account_arguments(parser)
-    parser.add_argument('-stop', metavar="STOP", type=float,
-                        help='Stop level')
-    args = parser.parse_args()
+    parser = jgtcommon.new_parser("JGT FX CreateEntryStop Order CLI", "Create an EntryStop order on FXConnect", "fxaddorder")
+    parser=jgtcommon.add_demo_flag_argument(parser)
+    #parser=jgtcommon.add_rate_arguments(parser)
+    #parser=jgtcommon.add_stop_arguments(parser)
+    parser=jgtcommon.add_direction_rate_lots_arguments(parser)
+    parser=jgtcommon.add_instrument_timeframe_arguments(parser, timeframe=False)
+    #common_samples.add_main_arguments(parser)
+    #common_samples.add_instrument_timeframe_arguments(parser, timeframe=False)
+    #common_samples.add_direction_rate_lots_arguments(parser)
+    #common_samples.add_account_arguments(parser)
+    #parser.add_argument('-stop', metavar="STOP", type=float,
+    #                    help='Stop level')
+    #args = parser.parse_args()
+    args=jgtcommon.parse_args(parser)
 
     return args
 
@@ -84,15 +100,17 @@ class OrdersMonitor:
 def main():
     global g_stop, g_order_id,g_rate
     args = parse_args()
-    str_user_id = args.l
-    str_password = args.p
-    str_url = args.u
-    str_connection = args.c
-    str_session_id = args.session
-    str_pin = args.pin
-    str_instrument = args.i
-    str_buy_sell = args.d
-    str_rate = args.r
+    str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
+    
+    #str_user_id = args.l
+    #str_password = args.p
+    #str_url = args.u
+    #str_connection = args.c
+    str_session_id = ""
+    str_pin = ""
+    str_instrument = args.instrument
+    str_buy_sell = args.bs
+    str_rate = args.rate
     g_rate = str_rate
     if not args.stop:
         print("Stop level must be specified")
@@ -100,7 +118,7 @@ def main():
     str_stop = args.stop
     g_stop=str_stop
     str_lots = args.lots
-    str_account = args.account
+    #str_account = args.account
     print("Starting example for adding a stop to an entry order with \nentry rate: {0:.5f}, stop: {1:.5f}".format(
         str_rate, str_stop))
 
@@ -109,7 +127,8 @@ def main():
                  str_pin, common_samples.session_status_changed)
 
         try:
-            account = Common.get_account(fx, str_account)
+            str_account_fix= str_account if not args.demo else None
+            account = Common.get_account(fx, str_account_fix)
             if not account:
                 raise Exception(
                     "The account '{0}' is not valid".format(str_account))
