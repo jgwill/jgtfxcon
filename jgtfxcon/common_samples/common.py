@@ -19,14 +19,18 @@ import datetime
 import traceback
 import argparse
 import sys
+import os
 
 from forexconnect import fxcorepy
 
-logging.basicConfig(filename='{0}.log'.format(__main__.__file__), level=logging.INFO,
-                    format='%(asctime)s %(levelname)s %(message)s', datefmt='%m.%d.%Y %H:%M:%S')
-console = logging.StreamHandler(sys.stdout)
-console.setLevel(logging.INFO)
-logging.getLogger('').addHandler(console)
+logging_flag:bool=os.getenv('JGT_LOGGING', 0)==1
+if logging_flag:
+        
+    logging.basicConfig(filename='{0}.log'.format(__main__.__file__), level=logging.INFO,
+                        format='%(asctime)s %(levelname)s %(message)s', datefmt='%m.%d.%Y %H:%M:%S')
+    console = logging.StreamHandler(sys.stdout)
+    console.setLevel(logging.INFO)
+    logging.getLogger('').addHandler(console)
 
 
 def add_main_arguments(parser: argparse.ArgumentParser):
