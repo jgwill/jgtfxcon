@@ -31,7 +31,7 @@ def parse_args():
     common_samples.add_main_arguments(parser)
     common_samples.add_instrument_timeframe_arguments(parser, timeframe=False)
     common_samples.add_account_arguments(parser)
-    parser.add_argument('-Stop', metavar="STOP", type=float,
+    parser.add_argument('-stop','--stop', metavar="STOP", type=float,
                         help='Stop level')
     args = parser.parse_args()
 
@@ -146,7 +146,7 @@ def main():
     pin = args.pin
     instrument = args.i
     str_account = args.account
-    stop = args.Stop
+    stop = args.stop
     event = threading.Event()
 
     if not stop:
@@ -157,8 +157,8 @@ def main():
     with ForexConnect() as fx:
         fx.login(user_id, password, str_url, connection, session_id,
                  pin, common_samples.session_status_changed)
-
-        account = Common.get_account(fx, str_account)
+        str_account_fix= str_account if connection != "Demo" else None
+        account = Common.get_account(fx, str_account_fix)
         print("Account:")
         print(account)
 
@@ -187,5 +187,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("Done!")
+    print(" ")
     #input("Done! Press enter key to exit\n")

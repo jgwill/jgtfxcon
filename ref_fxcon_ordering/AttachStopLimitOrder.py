@@ -48,6 +48,8 @@ def parse_args():
                         help='Peg limit type')
     parser.add_argument('-limit', metavar="LIMIT", type=float, default=0, 
                         help='Limit level')
+    parser.add_argument('-account', metavar="AccountID", required=False,
+                        help='Account ID')
     args = parser.parse_args()
 
     return args
@@ -305,4 +307,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    input("Done! Press enter key to exit\n")
+    print(" ")
+    #input("Done! Press enter key to exit\n")

@@ -150,6 +150,16 @@ def main():
                 "The instrument '{0}' is not valid".format(instrument))
 
         trade = Common.get_trade(fx, str_account, offer.offer_id)
+        print(trade)
+        pto=True
+        if pto:
+  
+            print(trade.trade_id)
+            print(trade.buy_sell)
+            fx.logout()
+            print("Did we get here with trades ?")
+            exit(0)
+        
 
         if not trade:
             raise Exception("There are no opened positions for instrument '{0}'".format(instrument))
