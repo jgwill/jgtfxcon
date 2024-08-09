@@ -25,6 +25,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Process command parameters.')
     common_samples.add_main_arguments(parser)
     common_samples.add_instrument_timeframe_arguments(parser, timeframe=False)
+    parser.add_argument('-account', metavar="AccountID", required=False,
+                        help='Account ID')
     args = parser.parse_args()
     return args
 
@@ -57,7 +59,7 @@ class OffersTableListener:
         ask = offer_row.ask
 
         if selected_instrument is None or selected_instrument == instrument:
-            print("{offer_id}, {instrument}, Bid={bid:.6f}, Ask={ask:.6f}".format(
+            print("{offer_id} {instrument} Bid={bid:.6f}, Ask={ask:.6f}".format(
                 offer_id=offer_id,
                 instrument=instrument,
                 bid=bid,
@@ -107,4 +109,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    input("Done! Press any key to exit\n")
+    #input("Done! Press any key to exit\n")

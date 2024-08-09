@@ -19,6 +19,7 @@ from forexconnect import ForexConnect, EachRowListener
 
 import common_samples
 
+import json
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Process command parameters.')
@@ -65,9 +66,12 @@ def print_trade_row(trade_row, account_id):
     if trade_row.table_type == ForexConnect.TRADES:
         if not account_id or account_id == trade_row.account_id:
             string = ""
+            trade_data = {}
             for column in trade_row.columns:
                 string += column.id + "=" + str(trade_row[column.id]) + "; "
+                trade_data[column.id] = trade_row[column.id]
             print(string)
+            #print(json.dumps(trade_data, indent=2))
 
 
 def print_trades(table_manager, account_id):
