@@ -41,6 +41,9 @@ def parse_args():
                         trades - trades table. Default value is trades. Optional parameter.')
     parser.add_argument('-account', metavar="AccountID", required=False,
                         help='Account ID')
+    
+    parser.add_argument('-id','--orderid', metavar="OrderID", required=False,
+                        help='The identifier (optional for filtering).')
 
     args=jgtcommon.parse_args(parser)
 
@@ -73,6 +76,7 @@ def print_orders(table_manager, account_id):
             print_order_row(order_row, account_id)
 
 
+from FXTransact import FXTrade
 def print_trade_row(trade_row, account_id):
     if trade_row.table_type == ForexConnect.TRADES:
         if not account_id or account_id == trade_row.account_id:
@@ -81,9 +85,10 @@ def print_trade_row(trade_row, account_id):
             for column in trade_row.columns:
                 string += column.id + "=" + str(trade_row[column.id]) + "; "
                 trade_data[column.id] = trade_row[column.id]
-            print(string)
+            #print(string)
+            trade = FXTrade.from_string(string)
+            print(trade)
             #print(json.dumps(trade_data, indent=2))
-
 
 def print_trades(table_manager, account_id):
     trades_table = table_manager.get_table(ForexConnect.TRADES)
@@ -97,12 +102,10 @@ def print_trades(table_manager, account_id):
 
 def main():
     args = parse_args()
-    str_user_id = args.l
-    str_password = args.p
-    str_url = args.u
-    str_connection = args.c
-    str_session_i_d = args.session
-    str_pin = args.pin
+    str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
+    str_session_id = ""
+    str_pin = ""
+    
     str_table = args.table
 
     if str_table != 'orders' and  str_table != 'trades':
@@ -111,7 +114,7 @@ def main():
     with ForexConnect() as fx:
 
         fx.login(str_user_id, str_password, str_url,
-                 str_connection, str_session_i_d, str_pin,
+                 str_connection, str_session_id, str_pin,
                  common_samples.session_status_changed)
 
         table_manager = fx.table_manager
