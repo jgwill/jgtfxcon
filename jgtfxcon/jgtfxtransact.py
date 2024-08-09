@@ -56,6 +56,7 @@ def get_account(table_manager):
         print("AccountID: {0:s}, Balance: {1:.5f}".format(account_row.account_id, account_row.balance))
     return accounts_table.get_row(0)
 
+from FXTransact import FXOrder
 
 def print_order_row(order_row, account_id):
     if order_row.table_type == ForexConnect.ORDERS:
@@ -63,7 +64,9 @@ def print_order_row(order_row, account_id):
             string = ""
             for column in order_row.columns:
                 string += column.id + "=" + str(order_row[column.id]) + "; "
-            print(string)
+            # print(string)
+            order=FXOrder.from_string(string)
+            print(order)
 
 
 def print_orders(table_manager, account_id):
