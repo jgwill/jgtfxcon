@@ -25,6 +25,7 @@ from forexconnect import fxcorepy
 
 logging_flag:bool=os.getenv('JGT_LOGGING', 0)==1
 if logging_flag:
+    print("Logging is enabled")
         
     logging.basicConfig(filename='{0}.log'.format(__main__.__file__), level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s', datefmt='%m.%d.%Y %H:%M:%S')
@@ -189,15 +190,13 @@ def print_exception(exception: Exception):
 # function for print available descriptors
 def session_status_changed(session: fxcorepy.O2GSession,
                            status: fxcorepy.AO2GSessionStatus.O2GSessionStatus):
-    logging.info("Status: " + str(status))
+    if logging_flag:logging.info("Status: " + str(status))
     if status == fxcorepy.AO2GSessionStatus.O2GSessionStatus.TRADING_SESSION_REQUESTED:
         descriptors = session.trading_session_descriptors
-        logging.info("Session descriptors:")
-        logging.info(" {0:>7} | {1:>7} | {2:>30} | {3:>7}\n".format("id", "name", "description", "requires pin"))
+        if logging_flag:logging.info("Session descriptors:")
+        if logging_flag:logging.info(" {0:>7} | {1:>7} | {2:>30} | {3:>7}\n".format("id", "name", "description", "requires pin"))
         for desc in descriptors:
-            logging.info(" {0:>7} | {1:>7} | {2:>30} | {3:>7}\n".format(desc.id, desc.name,
-                                                                        desc.description,
-                                                                        str(desc.requires_pin)))
+            if logging_flag:logging.info(" {0:>7} | {1:>7} | {2:>30} | {3:>7}\n".format(desc.id, desc.name,desc.description,str(desc.requires_pin)))
 
 
 def diff_month(year: int, month: int, date2: datetime):
