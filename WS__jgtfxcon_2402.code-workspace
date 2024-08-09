@@ -4,5 +4,12 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"python.analysis.extraPaths": [
+			"/a/src/_jgt/jgtfxcon/jgtfxcon"
+		],
+		"python.autoComplete.extraPaths": [
+			"/a/src/_jgt/jgtfxcon/jgtfxcon/forexconnect"
+		]
+	}
 }
