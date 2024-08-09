@@ -26,7 +26,7 @@ from jgtutils import jgtos, jgtcommon, jgtpov
 
 from forexconnect import ForexConnect, EachRowListener
 
-from FXTransact import FXTransactWrapper
+from jgtutils.FXTransact import FXTransactWrapper
 
 import common_samples
 
@@ -66,7 +66,7 @@ def get_account(table_manager):
         print("AccountID: {0:s}, Balance: {1:.5f}".format(account_row.account_id, account_row.balance))
     return accounts_table.get_row(0)
 
-from FXTransact import FXOrder
+from jgtutils.FXTransact import FXOrder
 
 def parse_order_row(order_row, account_id):
     global str_order_id, str_instrument
@@ -113,7 +113,7 @@ def _order_row_to_string(order_row):
         string += column.id + "=" + str(order_row[column.id]) + "; "
     return string
 
-from FXTransact import FXOrders
+from jgtutils.FXTransact import FXOrders
 def parse_orders(table_manager, account_id):
     orders_table = table_manager.get_table(ForexConnect.ORDERS)
     if len(orders_table) == 0:
@@ -128,7 +128,7 @@ def parse_orders(table_manager, account_id):
         return fxorders
 
 
-from FXTransact import FXTrade
+from jgtutils.FXTransact import FXTrade
 def parse_trade_row(trade_row, account_id):
     global str_order_id, str_instrument
     if trade_row.table_type == ForexConnect.TRADES:
@@ -163,7 +163,7 @@ def _trade_row_to_string(trade_row, trade_data):
         trade_data[column.id] = trade_row[column.id]
     return string
 
-from FXTransact import FXTrades
+from jgtutils.FXTransact import FXTrades
 
 def parse_trades(table_manager, account_id)->FXTrades:
     trades_table = table_manager.get_table(ForexConnect.TRADES)

@@ -25,6 +25,8 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import warnings
 
+logging_flag:bool=os.getenv('JGT_LOGGING', 0)==1
+
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", ".*already registered; second conversion method ignored.*")
     # your code here
@@ -650,11 +652,13 @@ import sys
 
 try :
     import __main__
-    logging.basicConfig(filename='{0}.log'.format(__main__.__file__), level=logging.INFO,
-                    format='%(asctime)s %(levelname)s %(message)s', datefmt='%m.%d.%Y %H:%M:%S')
-    console = logging.StreamHandler(sys.stdout)
-    console.setLevel(logging.INFO)
-    logging.getLogger('').addHandler(console)
+    if logging_flag:
+        logging.basicConfig(filename='{0}.log'.format(__main__.__file__),
+                            level=logging.INFO,
+                            format='%(asctime)s %(levelname)s %(message)s', datefmt='%m.%d.%Y %H:%M:%S')
+        console = logging.StreamHandler(sys.stdout)
+        console.setLevel(logging.INFO)
+        logging.getLogger('').addHandler(console)
 except Exception as e:
     print("Exception: {0}\n{1}".format(e, traceback.format_exc()))
     print('logging failed - dont worry')
@@ -756,7 +760,7 @@ def session_status_changed(session: fxcorepy.O2GSession,
     global connection_status
     connection_status= status
     if not quiet:
-        logging.info("Status: " + str(status))
+        if logging_flag:logging.info("Status: " + str(status))
     if status == fxcorepy.AO2GSessionStatus.O2GSessionStatus.TRADING_SESSION_REQUESTED:
         descriptors = session.trading_session_descriptors
         logging.info("Session descriptors:")
