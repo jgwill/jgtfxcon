@@ -122,10 +122,8 @@ def main():
             raise Exception("No valid accounts")
 
         if str_table == "orders":
-            #print("---------------------------")
             print_orders(table_manager, account.account_id)
         else:
-            #print("---------------------------")
             print_trades(table_manager, account.account_id)
 
         try:
@@ -136,4 +134,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    #input("Done! Press enter key to exit\n")
