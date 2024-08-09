@@ -64,9 +64,7 @@ def print_order_row(order_row, account_id):
             string = ""
             for column in order_row.columns:
                 string += column.id + "=" + str(order_row[column.id]) + "; "
-            # print(string)
             order=FXOrder.from_string(string)
-            print(order)
             print(order.tojson())
 
 
@@ -76,7 +74,6 @@ def print_orders(table_manager, account_id):
         print("Table is empty!")
     else:
         for order_row in orders_table:
-            #print("---------------------------")
             print_order_row(order_row, account_id)
 
 
@@ -89,10 +86,8 @@ def print_trade_row(trade_row, account_id):
             for column in trade_row.columns:
                 string += column.id + "=" + str(trade_row[column.id]) + "; "
                 trade_data[column.id] = trade_row[column.id]
-            #print(string)
             trade = FXTrade.from_string(string)
             print(trade.tojson())
-            #print(json.dumps(trade_data, indent=2))
 
 def print_trades(table_manager, account_id):
     trades_table = table_manager.get_table(ForexConnect.TRADES)
@@ -100,7 +95,6 @@ def print_trades(table_manager, account_id):
         print("Table is empty!")
     else:
         for trade_row in trades_table:
-            #print("---------------------------")
             print_trade_row(trade_row, account_id)
 
 
