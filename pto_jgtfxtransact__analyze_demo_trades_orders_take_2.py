@@ -5,6 +5,7 @@ def analyze_trades_orders_relationship(json_file_path):
         data = json.load(file)
     
     trades = data.get('trades', [])
+    orders = data.get('orders', [])
     
     analysis_results = []
     
@@ -13,18 +14,24 @@ def analyze_trades_orders_relationship(json_file_path):
         open_order_id = trade.get('open_order_id')
         open_order_req_id = trade.get('open_order_req_id')
         
-        analysis_results.append({
-            "instrument": trade.get('instrument'),
+        related_orders = [
+            order for order in orders 
+            if order.get('order_id') == open_order_id or order.get('request_id') == open_order_req_id
+        ]
+        
+        if related_orders:
+          analysis_results.append({
             'trade_id': trade_id,
-            'open_order_id': open_order_id,
-            'open_order_req_id': open_order_req_id,
-            'relationship': f"Trade {trade_id} is related to Order {open_order_id} with Request ID {open_order_req_id}",
-        })
+            'related_orders': related_orders,
+            'relationship': f"Trade {trade_id} is related to Orders {[order.get('order_id') for order in related_orders]}"
+        }) 
     
     return analysis_results
 
 # Example usage
 json_file_path = 'demo_fxtransact.json'
 results = analyze_trades_orders_relationship(json_file_path)
-print(json.dumps(results, indent=2))
+json_str=json.dumps(results, indent=2)
+print(json_str)
 # for result in results:
+#     print(result)
