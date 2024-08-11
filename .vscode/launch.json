@@ -68,5 +68,13 @@
       "console": "integratedTerminal",
        "args": "--save -table all --demo -i SPX500"
     },
+    {
+      "name": "PDScli_c",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxtransact.py",
+      "console": "integratedTerminal",
+       "args": "-i EUR/USD -t D1 -c 1000 -kba"
+    },
   ]
 }

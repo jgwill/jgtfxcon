@@ -22,7 +22,7 @@ import pandas as pd
 verbose_level=0
 
 def _parse_args():
-    parser:argparse.ArgumentParser=jgtcommon.new_parser("JGT Price History CLI","jgtfxcli","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds")
+    parser:argparse.ArgumentParser=jgtcommon.new_parser("JGT Price History CLI","jgtfxcli","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds",enable_specified_settings=False)
 
     # jgtfxcommon.add_main_arguments(parser)
     jgtcommon.add_instrument_timeframe_arguments(parser)
