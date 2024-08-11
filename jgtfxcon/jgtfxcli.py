@@ -21,8 +21,8 @@ import JGTPDS as pds,JGTPDSSvc as svc
 import pandas as pd
 verbose_level=0
 
-def _parse_args():
-    parser:argparse.ArgumentParser=jgtcommon.new_parser("JGT Price History CLI","jgtfxcli","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds",enable_specified_settings=False)
+def _parse_args(enable_specified_settings=False):
+    parser:argparse.ArgumentParser=jgtcommon.new_parser("JGT Price History CLI","jgtfxcli","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds",enable_specified_settings=enable_specified_settings)
 
     # jgtfxcommon.add_main_arguments(parser)
     jgtcommon.add_instrument_timeframe_arguments(parser)
