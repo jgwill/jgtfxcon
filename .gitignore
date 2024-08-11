@@ -139,3 +139,6 @@ zold
 **/zold
 forexconnect.lib.tar
 *.html
+fxtransact.json
+svcLiveChartDataExport.xml
+.jgt/settings_.json
