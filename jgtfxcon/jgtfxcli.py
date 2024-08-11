@@ -20,9 +20,10 @@ import JGTPDS as pds,JGTPDSSvc as svc
 
 import pandas as pd
 verbose_level=0
-
+parser:argparse.ArgumentParser=None
 def _parse_args(enable_specified_settings=False):
-    parser:argparse.ArgumentParser=jgtcommon.new_parser("JGT Price History CLI","jgtfxcli","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds",enable_specified_settings=enable_specified_settings)
+    global parser
+    parser=jgtcommon.new_parser("JGT Price History CLI","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds","jgtfxcli",enable_specified_settings=enable_specified_settings)
 
     # jgtfxcommon.add_main_arguments(parser)
     jgtcommon.add_instrument_timeframe_arguments(parser)
@@ -55,9 +56,9 @@ def _parse_args(enable_specified_settings=False):
     return args
 
 
-def main():
+def run(enable_specified_settings=True):
     global verbose_level
-    args = _parse_args()
+    args = _parse_args(enable_specified_settings)
     #if no arguments, print help
     if len(sys.argv) == 1 and (not args.instrument and not args.timeframe):
         subprocess.run([sys.argv[0], "--help"])
@@ -159,6 +160,8 @@ def main():
     #     jgtcommon.print_exception(e)
 
 
+def main():
+    run(enable_specified_settings=False)
 
 def print_quiet(quiet, content):
     if not quiet:
