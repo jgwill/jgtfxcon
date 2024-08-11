@@ -468,8 +468,13 @@ class ForexConnect:
             if os.path.isdir(var_jgt_dir) and os.access(var_jgt_dir, os.W_OK):
                 history_dir = os.path.join(var_jgt_dir,"History")
             else:
-                history_dir = os.path.join(os.getcwd(), "History")
-                print("using ./History, might want to create :  sudo mkdir -p -m 777 " + var_jgt_dir)
+                #try to create in $HOME/.cache/jgt/History
+                history_dir = os.path.join(os.path.expanduser("~"), ".cache", "jgt", "History")
+                try:
+                    os.makedirs(history_dir, exist_ok=True)
+                except:
+                    history_dir = os.path.join(os.getcwd(), "History")
+                    print("using ./History, might want to create :  sudo mkdir -p -m 777 " + var_jgt_dir)
                 
             self._com = fxcorepy.PriceHistoryCommunicatorFactory.create_communicator(
                         self._session, history_dir)
