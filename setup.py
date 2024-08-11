@@ -44,6 +44,7 @@ setup(
     packages=find_packages(
         include=[
             "jgtfxcon",
+            "jgtfxcon.common_samples",
             "jgtfxcon.forexconnect",
             "jgtfxcon.forexconnect.lib",
             "jgtfxcon.forexconnect.lib.windows",
