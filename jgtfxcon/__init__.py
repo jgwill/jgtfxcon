@@ -27,7 +27,7 @@
 
 import os
 import platform
-import sys
+
 
 import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -46,8 +46,7 @@ class NotCompatibleException(Exception):
 
 #from jgtfxcon.common_samples import common_samples
 from jgtetl import svc_offset_dt_by_tf as etl_offset_dt_by_tf,offsetdt as etl_offsetdt
-from JGTCore import version #,json2dict,jsonfile2prop,json2prop,jsonfile2dict,d2p,fixdtindf,offsetdt
-#from .JGTConfig import getenv,setreal,setdemo,env
+version='0.5.62'
 
 # if platform.system() == 'Linux':
 #   #sys.path.append(os.path.abspath('./'))
