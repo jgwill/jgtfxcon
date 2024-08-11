@@ -9,11 +9,14 @@ dkhostname=$containername
 #dkport=4000:4000
 
 xmount=$HOME/.jgt/config.json:/root/.jgt/config.json
+xmount2=$HOME/.jgt/settings.json:/root/.jgt/settings.json
+
 #xmount2=/var:/a/var
 
 
 dkcommand=bash #command to execute (default is the one in the dockerfile)
 
+dkextra=" -v $(realpath $(pwd)/../../):/app "
 #dkextra=" -v \$dworoot/x:/x -p 2288:2288 "
 
 #dkmounthome=true

@@ -18,7 +18,12 @@ import pandas as pd
 
 def getPHs(instrument,timeframe,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,compressed=False,tlid_range=None,use_full=False,default_quote_count = 335,default_add_quote_count = 89,verbose_level=0,view_output_path_only=False,keep_bid_ask=False,dropna_volume=True):
   global _verbose_level
+  if instrument is None:
+    raise Exception("Instrument can not be none")
   instruments = instrument if isinstance(instrument, list) else instrument.split(",")
+  
+  if timeframe is None:
+    raise Exception("Timeframe can not be none")
   timeframes = timeframe if isinstance(timeframe, list) else timeframe.split(",")
   
   if not view_output_path_only:  pds.stayConnectedSetter(True) #@a Connected

@@ -59,7 +59,7 @@ def main():
     global verbose_level
     args = _parse_args()
     #if no arguments, print help
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 1 and (not args.instrument and not args.timeframe):
         subprocess.run([sys.argv[0], "--help"])
         return
     
@@ -84,16 +84,16 @@ def main():
         tlid_range = args.tlidrange
 
     # Do we have keep_bid_ask set to true?
-    config = jgtcommon.readconfig()
+    #config = jgtcommon.readconfig()
     
     keep_bid_ask = args.keepbidask
-    config_has_keep_bid_ask = False
-    if 'keep_bid_ask' in config and (config['keep_bid_ask'] == True or config['keep_bid_ask'] == "1" or config['keep_bid_ask'] == "true"):
-        config_has_keep_bid_ask = True
-    #env variable bypass if env exist JGT_KEEP_BID_ASK=1, keep_bid_ask = True
-    if os.getenv("JGT_KEEP_BID_ASK","0") == "1" or config_has_keep_bid_ask:
-        #print("KEEP BID ASK ENV VAR ON (bypassing the --keepbidask argument)")
-        keep_bid_ask = True
+    # config_has_keep_bid_ask = False
+    # if 'keep_bid_ask' in config and (config['keep_bid_ask'] == True or config['keep_bid_ask'] == "1" or config['keep_bid_ask'] == "true"):
+    #     config_has_keep_bid_ask = True
+    # #env variable bypass if env exist JGT_KEEP_BID_ASK=1, keep_bid_ask = True
+    # if os.getenv("JGT_KEEP_BID_ASK","0") == "1" or config_has_keep_bid_ask:
+    #     #print("KEEP BID ASK ENV VAR ON (bypassing the --keepbidask argument)")
+    #     keep_bid_ask = True
         
     quotescount = args.quotescount if not use_full and tlid_range is None else -1
 
