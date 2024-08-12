@@ -161,7 +161,7 @@ def run(enable_specified_settings=True):
 
 
 def main():
-    run(enable_specified_settings=False)
+    run(enable_specified_settings=True)
 
 def print_quiet(quiet, content):
     if not quiet:
