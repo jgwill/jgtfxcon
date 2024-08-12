@@ -34,6 +34,17 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import jgtflags
 
+#@STCIssue Fix and workarounds that jgtutils might be missing in the environment and install it using pip install -U jgtutils if ModuleNotFoundError: No module named 'jgtutils'
+try:
+  from jgtutils import jgtconstants as constants
+  from jgtutils import jgtos, jgtcommon, jgtpov
+except ModuleNotFoundError:
+  import subprocess
+  import site
+  user_flag = '--user' if site.ENABLE_USER_SITE else ''
+  print(f"jgtutils not found, installing it using pip (user flag:{user_flag})")
+  subprocess.run(['pip', 'install', '-U', 'jgtutils', user_flag])
+ 
 
 import warnings
 
