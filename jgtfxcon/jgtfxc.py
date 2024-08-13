@@ -214,6 +214,8 @@ def get_price_history(instrument: str, timeframe: str, datefrom: datetime=None, 
             history = fx.get_history(instrument, timeframe, datefrom, dateto)
         else:
             if dateto is not None:
+                if timeframe=="M1":
+                    dateto=None
                 history = fx.get_history(instrument, timeframe, None, dateto, quotes_count_spec)
             else:
                 history = fx.get_history(instrument, timeframe, None, None, quotes_count_spec)
