@@ -76,5 +76,29 @@
       "console": "integratedTerminal",
        "args": "-i EUR/USD -t D1 -c 1000 -kba"
     },
+    {
+      "name": "PDScli_many_timeframes",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxcli.py",
+      "console": "integratedTerminal",
+       "args": "-i EUR/USD -t D1,H4 -c 1000 -kba"
+    },
+    {
+      "name": "PDScli_many_timeframes_M1_ALT",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxcli.py",
+      "console": "integratedTerminal",
+       "args": "-i WHEATF -t M1,D1 --full -kba"
+    },
+    {
+      "name": "PDScli_many_timeframes_D1",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxcli.py",
+      "console": "integratedTerminal",
+       "args": "-i WHEATF -t D1 --full -kba"
+    },
   ]
 }
