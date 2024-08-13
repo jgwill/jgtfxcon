@@ -36,31 +36,40 @@ def parse_args():
     parser = jgtcommon.new_parser("JGT FX Transact CLI", "List and hopefully manage trade and order on FXConnect", "fxtransact")
     
     parser=jgtcommon.add_demo_flag_argument(parser)
+    parser=jgtcommon.add_verbose_argument(parser)
+    parser=jgtcommon.add_instrument_standalone_argument(parser,required=False)
+    parser=jgtcommon.add_orderid_arguments(parser,required=False)
+    parser=jgtcommon.add_tradeid_arguments(parser,required=False)
+    parser=jgtcommon.add_account_arguments(parser,required=False)
+    
+    
     parser.add_argument('-table',
                         metavar="TABLE",
                         default="all",
                         help='The print table. Possible values are: orders - orders table,\
                         trades - trades table. Default value is trades. Optional parameter.')
-    parser.add_argument('-account', metavar="AccountID", required=False,
-                        help='Account ID')
+    # parser.add_argument('-account', metavar="AccountID", required=False,
+    #                     help='Account ID')
     
-    parser.add_argument('-id','--orderid', metavar="OrderID", required=False,
-                        help='The identifier (optional for filtering).')
+    # parser.add_argument('-id','--orderid', metavar="OrderID", required=False,
+    #                     help='The identifier (optional for filtering).')
     #optional instrument
-    parser.add_argument('-i','--instrument', metavar="Instrument", required=False,
-                        help='The instrument (optional for filtering).')
+    # parser.add_argument('-i','--instrument', metavar="Instrument", required=False,
+    #                     help='The instrument (optional for filtering).')
     #-save
     parser.add_argument('-save','--save', required=False,
                         help='Save the output to a file.', action='store_true')
+    
     
     args=jgtcommon.parse_args(parser)
 
     return args
 
 str_order_id = None
+str_trade_id = None
 str_instrument = None
 
-def get_account(table_manager):
+def get_account(table_manager, quiet=True):
     accounts_table = table_manager.get_table(ForexConnect.ACCOUNTS)
     for account_row in accounts_table:
         print("AccountID: {0:s}, Balance: {1:.5f}".format(account_row.account_id, account_row.balance))
@@ -68,17 +77,17 @@ def get_account(table_manager):
 
 from jgtutils.FXTransact import FXOrder
 
-def parse_order_row(order_row, account_id):
+def parse_order_row(order_row, account_id,quiet=True):
     global str_order_id, str_instrument
     if order_row.table_type == ForexConnect.ORDERS:
         if not account_id or account_id == order_row.account_id:
             string = _order_row_to_string(order_row)
-            print(string)
+            #if not quiet:print(string)
             order=FXOrder.from_string(string)
             
             if not str_order_id and not str_instrument:
                 json_str = order.tojson()
-                print(json_str)
+                if not quiet:print(json_str)
                 return order
             
             current_instrument=order.instrument
@@ -89,7 +98,7 @@ def parse_order_row(order_row, account_id):
             
             if str_instrument and str_instrument == current_instrument:
                 json_str = order.tojson()
-                print(json_str)
+                if not quiet:print(json_str)
                 return order
             
             if str_instrument:
@@ -97,12 +106,12 @@ def parse_order_row(order_row, account_id):
             
             if not str_order_id : #NO FILTERING
                 json_str = order.tojson()
-                print(json_str)
+                if not quiet:print(json_str)
                 return order
             else:
                 if str_order_id == str(order.order_id):
                     json_str = order.tojson()
-                    print(json_str)
+                    if not quiet:print(json_str)
                     return order
         return None
     return None
@@ -114,10 +123,10 @@ def _order_row_to_string(order_row):
     return string
 
 from jgtutils.FXTransact import FXOrders
-def parse_orders(table_manager, account_id):
+def parse_orders(table_manager, account_id,quiet=True):
     orders_table = table_manager.get_table(ForexConnect.ORDERS)
     if len(orders_table) == 0:
-        print("Table is empty!")
+        if not quiet:print("Table is empty!")
         return None
     else:
         fxorders:FXOrders=FXOrders()
@@ -129,8 +138,8 @@ def parse_orders(table_manager, account_id):
 
 
 from jgtutils.FXTransact import FXTrade
-def parse_trade_row(trade_row, account_id):
-    global str_order_id, str_instrument
+def parse_trade_row(trade_row, account_id,quiet=True):
+    global str_order_id, str_instrument,str_trade_id
     if trade_row.table_type == ForexConnect.TRADES:
         if not account_id or account_id == trade_row.account_id:
             trade_data = {}
@@ -139,21 +148,27 @@ def parse_trade_row(trade_row, account_id):
             
             if str_instrument and str_instrument == trade.instrument:
                 json_str = trade.tojson()
-                print(json_str)
+                if not quiet:print(json_str)
                 return trade
             
             if str_instrument:
                 return None
                 
-            if not str_order_id : #NO FILTERING
+            if not str_order_id and not str_trade_id: #NO FILTERING
                 json_str = trade.tojson()
-                print(json_str)
+                if not quiet:print(json_str)
                 return trade
             else:
-                cur_orderid:str = str(trade.trade_id)
-                if str_order_id == str(cur_orderid):
+                cur_id:str = str(trade.trade_id)
+                #by tradeid
+                if str_trade_id and str_trade_id == str(cur_id):
                     json_str = trade.tojson()
-                    print(json_str)
+                    if not quiet:print(json_str)
+                    return trade
+                #by orderid #@STCIssue Might Want to support filtering by orderid of the original order id that generated the trade
+                if str_order_id and str_order_id == str(cur_id):
+                    json_str = trade.tojson()
+                    if not quiet:print(json_str)
                     return trade
 
 def _trade_row_to_string(trade_row, trade_data):
@@ -165,10 +180,10 @@ def _trade_row_to_string(trade_row, trade_data):
 
 from jgtutils.FXTransact import FXTrades
 
-def parse_trades(table_manager, account_id)->FXTrades:
+def parse_trades(table_manager, account_id,quiet=True)->FXTrades:
     trades_table = table_manager.get_table(ForexConnect.TRADES)
     if len(trades_table) == 0:
-        print("Table is empty!")
+        if not quiet:print("Table is empty!")
         return None
     else:
         trades=FXTrades()
@@ -180,12 +195,14 @@ def parse_trades(table_manager, account_id)->FXTrades:
 
 
 def main():
-    global str_order_id, str_instrument
+    global str_order_id, str_instrument,str_trade_id
     args = parse_args()
+    quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     str_session_id = ""
     str_pin = ""
     str_order_id=args.orderid if args.orderid else None
+    str_trade_id=args.tradeid if args.tradeid else None
     str_instrument=args.instrument if args.instrument else None
     save_flag=True if args.save else False
     
@@ -212,21 +229,23 @@ def main():
         if str_table == "orders" or str_table == "all":
             fxorders:FXOrders = parse_orders(table_manager, account.account_id)
             if fxorders:
-                print(fxorders.tojson())
+                if not quiet:print(fxorders.tojson())
                 fxtransactwrapper.add_orders(fxorders)
         
         fxtrades:FXTrades =None
         if str_table == "trades" or str_table == "all":
             fxtrades:FXTrades =parse_trades(table_manager, account.account_id)
             if fxtrades:
-                print(fxtrades.tojson())
+                if not quiet:print(fxtrades.tojson())
                 fxtransactwrapper.add_trades(fxtrades)
 
-        print("FXTransactWrapper:")
-        print(fxtransactwrapper.tojson())
-        
         if save_flag:
             save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection)
+        else:# we print the data
+            print("FXTransactWrapper:")
+            print(fxtransactwrapper.tojson())
+            
+            
         
         
         try:
