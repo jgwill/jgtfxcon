@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#INITIAL NAME : SetStop.py
+
 import argparse
 import threading
 from time import sleep
@@ -69,7 +71,7 @@ def change_trade(fx, trade):
     amount = trade.amount
     pip_size = offer.PointSize
     print("Open Price: {0:.5f}".format(open_price))
-    exit(0)
+    #exit(0)
     if trade.buy_sell == buy:
         stopv = open_price-stop*pip_size
     else:
