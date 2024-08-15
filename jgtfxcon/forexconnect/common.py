@@ -314,6 +314,39 @@ class Common:
         return None
 
     @staticmethod
+    def get_trade_by_id(fc: ForexConnect, account_id: str, trade_id: str, offer_id: str=None) -> fxcorepy.O2GTradeTableRow:
+        """ Gets an instance of O2GTradeRow from the Trades table by Account ID and Offer ID and Trade ID.
+        
+            Parameters
+            ----------
+            fc : ForexConnect
+                An instance of ForexConnect.
+            account_id : str
+                The identifier of the account the position is opened on.
+            offer_id : str
+                The unique identification number of the instrument the position is opened in.
+            trade_id : str
+                The unique identification number of the position.
+        
+            Returns
+            -------
+            O2GTradeRow
+        
+        """
+        try:
+            trades_table = fc.get_table(fxcorepy.O2GTableType.TRADES)
+            for trade in trades_table:
+                if trade.account_id == account_id and trade.offer_id == offer_id and trade.trade_id == trade_id:
+                    return trade
+        except TableManagerError:
+            trades_response_reader = fc.get_table_reader(
+                fxcorepy.O2GTableType.TRADES)
+            for trade in trades_response_reader:
+                if trade.account_id == account_id and trade.offer_id == offer_id and trade.trade_id == trade_id:
+                    return trade
+        return None
+
+    @staticmethod
     def _create_close_all_request_buy(account_id, offer_id):
         return {
             fxcorepy.O2GRequestParamsEnum.COMMAND: fxcorepy.Constants.Commands.CREATE_ORDER,

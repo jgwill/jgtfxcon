@@ -36,4 +36,4 @@ fxaddorder = "jgtfxcon.jgtfxentryorder:main"
 fxrmorder = "jgtfxcon.jgtfxremoveorder:main"
 fxtr = "jgtfxcon.jgtfxtransact:main"
 dkfxcli = "jgtfxcon.dkfxcli:main"
-
+fxclosebyinstrument = "jgtfxcon.fxclosebyinstrument:main"
