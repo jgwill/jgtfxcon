@@ -10,7 +10,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxentryorder.py",
       "console": "integratedTerminal",
-       "args": "--save -i NZD/CAD -r 0.82455 -stop 0.82406 --bs B --demo"
+      "args": "--save -i NZD/CAD -r 0.82455 -stop 0.82406 --bs B --demo"
     },
     {
       "name": "FXRemoveEntry1",
@@ -18,7 +18,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxremoveorder.py",
       "console": "integratedTerminal",
-       "args": "--save -id 169973387 --demo"
+      "args": "--save -id 169973387 --demo"
     },
     {
       "name": "FXTR_ls_trade",
@@ -26,7 +26,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxtransact.py",
       "console": "integratedTerminal",
-       "args": "--save -table trades --demo"
+      "args": "--save -table trades --demo"
     },
     {
       "name": "FXTR_ls_orders",
@@ -34,7 +34,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxtransact.py",
       "console": "integratedTerminal",
-       "args": "--save -table orders --demo"
+      "args": "--save -table orders --demo"
     },
     {
       "name": "FXTR_ls_ALL",
@@ -42,7 +42,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxtransact.py",
       "console": "integratedTerminal",
-       "args": "--save -table all --demo"
+      "args": "--save -table all --demo"
     },
     {
       "name": "FXTR_ls_trade_filtered_by_id",
@@ -50,7 +50,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxtransact.py",
       "console": "integratedTerminal",
-       "args": "--save -table trades --demo -id 68773225"
+      "args": "--save -table trades --demo -id 68773225"
     },
     {
       "name": "FXTR_ls_trade_filtered_by_instrument",
@@ -58,7 +58,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxtransact.py",
       "console": "integratedTerminal",
-       "args": "--save -table trades --demo -i NZD/CAD"
+      "args": "--save -table trades --demo -i NZD/CAD"
     },
     {
       "name": "SPX500_FXTR_ls_trade_filtered",
@@ -66,7 +66,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxtransact.py",
       "console": "integratedTerminal",
-       "args": "--save -table all --demo -i SPX500"
+      "args": "--save -table all --demo -i SPX500"
     },
     {
       "name": "PDScli_c",
@@ -74,7 +74,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxtransact.py",
       "console": "integratedTerminal",
-       "args": "-i EUR/USD -t D1 -c 1000 -kba"
+      "args": "-i EUR/USD -t D1 -c 1000 -kba"
     },
     {
       "name": "PDScli_many_timeframes",
@@ -82,7 +82,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxcli.py",
       "console": "integratedTerminal",
-       "args": "-i EUR/USD -t D1,H4 -c 1000 -kba"
+      "args": "-i EUR/USD -t D1,H4 -c 1000 -kba"
     },
     {
       "name": "PDScli_many_timeframes_M1_ALT",
@@ -90,7 +90,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxcli.py",
       "console": "integratedTerminal",
-       "args": "-i WHEATF -t M1,D1 --full -kba"
+      "args": "-i WHEATF -t M1,D1 --full -kba"
     },
     {
       "name": "PDScli_many_timeframes_D1",
@@ -98,7 +98,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxcli.py",
       "console": "integratedTerminal",
-       "args": "-i WHEATF -t D1 --full -kba"
+      "args": "-i WHEATF -t D1 --full -kba"
     },
     {
       "name": "CloseTradeByInstrument",
@@ -106,7 +106,7 @@
       "request": "launch",
       "program": "jgtfxcon/fxclosebyinstrument.py",
       "console": "integratedTerminal",
-       "args": "-i USD/CHF --demo"
+      "args": "-i USD/CHF --demo"
     },
     {
       "name": "CloseTradeByTradeId_with_instrument",
@@ -114,7 +114,7 @@
       "request": "launch",
       "program": "jgtfxcon/fxclosebyinstrument.py",
       "console": "integratedTerminal",
-       "args": "-i USD/CHF -tid 68782914 --demo"
+      "args": "-i USD/CHF -tid 68782914 --demo"
     },
     {
       "name": "CloseTradeByTradeId_ONLY",
@@ -122,7 +122,7 @@
       "request": "launch",
       "program": "jgtfxcon/fxclosebyinstrument.py",
       "console": "integratedTerminal",
-       "args": "-tid 68782914 --demo"
+      "args": "-tid 68782914 --demo"
     },
     {
       "name": "CloseTradeByTradeId2",
@@ -130,7 +130,39 @@
       "request": "launch",
       "program": "jgtfxcon/fxclosebyinstrument.py",
       "console": "integratedTerminal",
-       "args": "-i USD/CHF -tid 68782913 --demo"
+      "args": "-i USD/CHF -tid 68782913 --demo"
+    },
+    {
+      "name": "ChangeTradeStop_GLS_Sim",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxchgstop.py",
+      "console": "integratedTerminal",
+      "args": "-tid 68773276 --demo -x 1.09799"
+    },
+    {
+      "name": "ChangeTradeStop_GLS_Pips",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxchgstop.py",
+      "console": "integratedTerminal",
+      "args": "-tid 68773276 --demo -x 33 --pips"
+    },
+    {
+      "name": "ChangeTradeStop1_in_pips",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxchgstop.py",
+      "console": "integratedTerminal",
+      "args": "-tid 68782909 --demo -x 11 --pips"
+    },
+    {
+      "name": "ChangeTradeStop1_in_pips2",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxchgstop.py",
+      "console": "integratedTerminal",
+      "args": "-tid 68778202 --demo -x 14 --pips"
     },
   ]
 }
