@@ -109,12 +109,20 @@
        "args": "-i USD/CHF --demo"
     },
     {
-      "name": "CloseTradeByTradeId",
+      "name": "CloseTradeByTradeId_with_instrument",
       "type": "debugpy",
       "request": "launch",
       "program": "jgtfxcon/fxclosebyinstrument.py",
       "console": "integratedTerminal",
        "args": "-i USD/CHF -tid 68782914 --demo"
+    },
+    {
+      "name": "CloseTradeByTradeId_ONLY",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxclosebyinstrument.py",
+      "console": "integratedTerminal",
+       "args": "-tid 68782914 --demo"
     },
     {
       "name": "CloseTradeByTradeId2",
