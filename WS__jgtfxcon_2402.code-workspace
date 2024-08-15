@@ -6,7 +6,9 @@
 	],
 	"settings": {
 		"python.analysis.extraPaths": [
-			"/a/src/_jgt/jgtfxcon/jgtfxcon"
+			"/a/src/_jgt/jgtfxcon/jgtfxcon",
+			"/a/src/_jgt/jgtutils/jgtutils",
+			"/a/src/_jgt/jgtfxcon/jgtfxcon/forexconnect"
 		],
 		"python.autoComplete.extraPaths": [
 			"/a/src/_jgt/jgtfxcon/jgtfxcon/forexconnect"
