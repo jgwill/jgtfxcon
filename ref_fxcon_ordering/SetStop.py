@@ -24,7 +24,7 @@ import common_samples
 str_account = None
 instrument = None
 stop = None
-
+str_trade_id = None
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Process command parameters.')
@@ -33,15 +33,20 @@ def parse_args():
     common_samples.add_account_arguments(parser)
     parser.add_argument('-stop','--stop', metavar="STOP", type=float,
                         help='Stop level')
+    #tradeid or tid
+    parser.add_argument('-tid', '--tradeid', metavar="TRADEID", type=str,
+                        help='Trade ID')
     args = parser.parse_args()
 
     return args
 
 
 def change_trade(fx, trade):
+    global str_trade_id
     global str_account
     global instrument
     global stop
+    
     amount = trade.amount
     event = threading.Event()
 
@@ -56,11 +61,15 @@ def change_trade(fx, trade):
 
     buy_sell = sell if trade.buy_sell == buy else buy
 
+    if str_trade_id and trade.trade_id == str_trade_id:
+        print("Changing trade with ID: {0:s}".format(trade.trade_id))
     order_id = trade.stop_order_id
-
+    print("Stop OrderID: {0:s}".format(order_id))
     open_price = trade.open_rate
     amount = trade.amount
     pip_size = offer.PointSize
+    print("Open Price: {0:.5f}".format(open_price))
+    exit(0)
     if trade.buy_sell == buy:
         stopv = open_price-stop*pip_size
     else:
@@ -136,6 +145,7 @@ def main():
     global str_account
     global instrument
     global stop
+    global str_trade_id
 
     args = parse_args()
     user_id = args.l
@@ -147,6 +157,8 @@ def main():
     instrument = args.i
     str_account = args.account
     stop = args.stop
+    str_trade_id = args.tradeid if args.tradeid else None
+    
     event = threading.Event()
 
     if not stop:
