@@ -8,7 +8,8 @@ dkhostname=$containername
 # PORT
 #dkport=4000:4000
 
-xmount=$HOME/.jgt/config.json:/root/.jgt/config.json
+xmount=$HOME/.jgt/config.json:/home/user/.jgt/config.json
+xmount2=$HOME/.jgt/settings.json:/home/user/.jgt/settings.json
 #xmount2=/var:/a/var
 
 
