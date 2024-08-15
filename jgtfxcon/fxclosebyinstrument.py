@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from jgtutils import jgtconstants as constants
 
 from jgtutils import jgtcommon
-
+from jgtutils.jgtfxhelper import offer_id_to_instrument
 
 from forexconnect import fxcorepy, ForexConnect, Common
 
@@ -38,7 +38,8 @@ def parse_args():
     parser = jgtcommon.new_parser("JGT FX CloseByInstrument CLI", "Close trade on FXConnect", "fxclosetradebyinstrument")
 
     #common_samples.add_main_arguments(parser)
-    parser=jgtcommon.add_instrument_timeframe_arguments(parser, timeframe=False)
+    #parser=jgtcommon.add_instrument_timeframe_arguments(parser, timeframe=False)
+    parser=jgtcommon.add_instrument_standalone_argument(parser)
     parser=jgtcommon.add_demo_flag_argument(parser)
     parser=jgtcommon.add_tradeid_arguments(parser)
     
@@ -146,7 +147,7 @@ def main():
     str_session_id = ""
     str_pin = ""
     
-    str_instrument = args.instrument
+    str_instrument = args.instrument if args.instrument else None
     str_account = args.account
 
     with ForexConnect() as fx:
@@ -162,22 +163,40 @@ def main():
             str_account = account.account_id
             print("AccountID='{0}'".format(str_account))
 
-        offer = Common.get_offer(fx, str_instrument)
+        
+        if str_instrument:
+            offer = Common.get_offer(fx, str_instrument)
+        else:
+            offer = None
 
-        if not offer:
+        if not offer and not str_trade_id:
             raise Exception(
-                "The instrument '{0}' is not valid".format(str_instrument))
+                 "Requires instrument(-i) or TradeId(-tid) to be specified")
+            
+        if not offer:
+            print("We will lookup for this trade in all instruments")
+        
 
         if not str_trade_id:
             trade = Common.get_trade(fx, str_account, offer.offer_id)
         else:
-            trade=Common.get_trade_by_id(fx, str_account, str_trade_id, offer.offer_id)
+            if offer:
+                trade=Common.get_trade_by_id(fx, str_account, str_trade_id, offer.offer_id)
+            else:
+                trade=Common.get_trade_by_id(fx, str_account, str_trade_id)
 
         if not trade:
             print("There are no opened positions for instrument '{0}' '{1}' ".format(str_instrument, str_trade_id))
             exit(0)
 
         amount = trade.amount
+        
+        trade_offer_id = trade.offer_id
+        #if not offer:
+            #print(trade_offer_id)
+            #str_instrument=offer_id_to_instrument(trade_offer_id)
+            #offer = Common.get_offer(fx, str_instrument)
+            
 
         buy = fxcorepy.Constants.BUY
         sell = fxcorepy.Constants.SELL
@@ -186,7 +205,7 @@ def main():
 
         request = fx.create_order_request(
             order_type=fxcorepy.Constants.Orders.TRUE_MARKET_CLOSE,
-            OFFER_ID=offer.offer_id,
+            OFFER_ID=trade_offer_id,
             ACCOUNT_ID=str_account,
             BUY_SELL=buy_sell,
             AMOUNT=amount,

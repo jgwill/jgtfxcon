@@ -336,13 +336,17 @@ class Common:
         try:
             trades_table = fc.get_table(fxcorepy.O2GTableType.TRADES)
             for trade in trades_table:
-                if trade.account_id == account_id and trade.offer_id == offer_id and trade.trade_id == trade_id:
+                if offer_id and trade.account_id == account_id and trade.offer_id == offer_id and trade.trade_id == trade_id:
+                    return trade
+                if trade.account_id == account_id and trade.trade_id == trade_id:
                     return trade
         except TableManagerError:
             trades_response_reader = fc.get_table_reader(
                 fxcorepy.O2GTableType.TRADES)
             for trade in trades_response_reader:
-                if trade.account_id == account_id and trade.offer_id == offer_id and trade.trade_id == trade_id:
+                if offer_id and trade.account_id == account_id and trade.offer_id == offer_id and trade.trade_id == trade_id:
+                    return trade
+                if trade.account_id == account_id and trade.trade_id == trade_id:
                     return trade
         return None
 
