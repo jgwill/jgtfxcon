@@ -142,3 +142,7 @@ forexconnect.lib.tar
 fxtransact.json
 svcLiveChartDataExport.xml
 .jgt/settings_.json
+output/
+samples/
+jgtfxcon/debug_*
+ref_fxcon_ordering/_output.txt
