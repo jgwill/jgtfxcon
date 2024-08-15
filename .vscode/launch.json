@@ -100,5 +100,29 @@
       "console": "integratedTerminal",
        "args": "-i WHEATF -t D1 --full -kba"
     },
+    {
+      "name": "CloseTradeByInstrument",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxclosebyinstrument.py",
+      "console": "integratedTerminal",
+       "args": "-i USD/CHF --demo"
+    },
+    {
+      "name": "CloseTradeByTradeId",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxclosebyinstrument.py",
+      "console": "integratedTerminal",
+       "args": "-i USD/CHF -tid 68782914 --demo"
+    },
+    {
+      "name": "CloseTradeByTradeId2",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxclosebyinstrument.py",
+      "console": "integratedTerminal",
+       "args": "-i USD/CHF -tid 68782913 --demo"
+    },
   ]
 }
