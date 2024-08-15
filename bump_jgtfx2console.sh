@@ -1,14 +1,14 @@
 
 
 
-# This wont be run by post_dist rather its just a flag to run _bump_jgtutils function
 
 
 cdir=$(pwd)
-cdfx2console && . bump_jgtutils.sh && \
-. release-n-test.sh && \
-cd $cdir || echo "Failed te bump jgtfx2console" && return 1
+(cdfx2console && . bump_jgtutils.sh && \
+. release-n-test.sh )
 
+
+sleep 29
 
 oldjgtfx2consoleversion=$(cat pyproject.toml|grep "jgtfx2console"|tr '>' ' '|tr "'" " "|tr "=" " "|tr "," " "|awk '{print $2}')
 . .env 
@@ -27,5 +27,5 @@ else
 fi
 
 
-(conda activate baseprod && pip install --user -U jgtfx2console) &>/dev/null &
+#(conda activate baseprod && pip install --user -U jgtfx2console) &>/dev/null &
 
