@@ -1,0 +1,13 @@
+i: AUD/NZD
+t: H4
+tid: 68773276
+demo: true
+trail: true
+strategy:
+  name: "lips"
+  description: "Trail the lips"
+  on_fdb: false
+risks:
+  max_risk_money: 15
+  stop_loss_pips: 50
+  take_profit_pips: 10000
