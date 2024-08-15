@@ -42,6 +42,7 @@ def parse_args():
     parser=jgtcommon.add_instrument_standalone_argument(parser)
     parser=jgtcommon.add_demo_flag_argument(parser)
     parser=jgtcommon.add_tradeid_arguments(parser)
+    parser=jgtcommon.add_orderid_arguments(parser, required=False)
     
     parser=jgtcommon.add_account_arguments(parser)
     
