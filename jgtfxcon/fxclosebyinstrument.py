@@ -142,7 +142,8 @@ def main():
     global str_trade_id
     args = parse_args()
     str_trade_id = args.tradeid if args.tradeid else None
-    
+    if str_trade_id is None and args.orderid:
+        str_trade_id = args.orderid #support using -id
     quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     str_session_id = ""
