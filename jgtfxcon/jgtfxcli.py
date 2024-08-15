@@ -10,7 +10,7 @@ from jgtutils import jgtconstants as constants
 
 # import jgtfxcommon as jgtcommon
 from jgtutils import jgtos, jgtcommon, jgtpov
-
+from jgtutils.jgtcliconstants import PDSCLI_PROG_NAME
 #from jgtutils import jlog
 
 import argparse
@@ -23,7 +23,7 @@ verbose_level=0
 parser:argparse.ArgumentParser=None
 def _parse_args(enable_specified_settings=False):
     global parser
-    parser=jgtcommon.new_parser("JGT Price History CLI","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds","jgtfxcli",enable_specified_settings=enable_specified_settings)
+    parser=jgtcommon.new_parser("JGT PDS CLI","It saves its data in JGTPY_DATA/pds folder, if --full JGTPY_DATA_FULL/pds",PDSCLI_PROG_NAME,enable_specified_settings=enable_specified_settings)
 
     # jgtfxcommon.add_main_arguments(parser)
     jgtcommon.add_instrument_timeframe_arguments(parser)
