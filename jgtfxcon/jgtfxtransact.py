@@ -42,7 +42,6 @@ def parse_args():
     parser=jgtcommon.add_tradeid_arguments(parser,required=False)
     parser=jgtcommon.add_account_arguments(parser,required=False)
     
-    
     parser.add_argument('-table',
                         metavar="TABLE",
                         default="all",
@@ -240,7 +239,7 @@ def main():
                 fxtransactwrapper.add_trades(fxtrades)
 
         if save_flag:
-            save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection)
+            save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False)
         else:# we print the data
             print("FXTransactWrapper:")
             print(fxtransactwrapper.tojson())
@@ -253,9 +252,11 @@ def main():
         except Exception as e:
             common_samples.print_exception(e)
 
-def save_fxtransact_to_file(fxtransactwrapper:FXTransactWrapper,str_table:str="all",str_connection:str="",save_prefix:str= "fxtransact_"):
+def save_fxtransact_to_file(fxtransactwrapper:FXTransactWrapper,str_table:str="all",str_connection:str="",save_prefix:str= "fxtransact_",prefix_to_connection:bool=True):
     global str_order_id,str_instrument
-    fn = str_connection.lower()+"_"+save_prefix
+    connection_prefix = str_connection.lower()+"_" if prefix_to_connection else ""
+    
+    fn = connection_prefix+save_prefix
     savefile = fn+".json"
     
     if str_order_id:
@@ -267,6 +268,7 @@ def save_fxtransact_to_file(fxtransactwrapper:FXTransactWrapper,str_table:str="a
     if str_table == "trades":
         savefile = fn+"trades.json"
     saved_file_fix = savefile.replace("_.",".").replace("__","_")
+    
     fxtransactwrapper.tojsonfile(saved_file_fix)
     print("saved to file: "+saved_file_fix)
 
