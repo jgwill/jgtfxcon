@@ -22,6 +22,8 @@ from time import sleep
 import os
 import sys
 
+from FXHelperTransact import print_jsonl_message
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
@@ -81,7 +83,8 @@ def change_trade(fx, trade):
     buy_sell = sell if trade.buy_sell == buy else buy
 
     if str_trade_id and trade.trade_id == str_trade_id:
-        print("Changing Stop for TradeID: {0:s}".format(trade.trade_id))
+        msg = "Changing Stop for TradeID: {0:s}".format(trade.trade_id)        
+        print_jsonl_message(msg,extra_dict={"trade_id":str_trade_id})
     order_id = trade.stop_order_id
     #print("Stop OrderID: {0:s}".format(order_id))
     open_price = trade.open_rate
@@ -153,20 +156,30 @@ def change_trade(fx, trade):
         nonlocal order_id
         global fxtrade,fxtrades
         if order_row.stop_order_id == order_id:
-            print("The order has been changed. Order ID: {0:s}".format(
-                order_row.trade_id))
+            msg = "The order has been changed. Order ID: {0:s}".format(
+                order_row.trade_id)
+
+            order_changed_data={
+                "order_id":order_row.trade_id,
+                "new_stop":stopv,
+                "trade_id":str_trade_id
+            }
+            print_jsonl_message(msg,order_changed_data)
             fxtradeupdated=fxh.trade_row_to_trade_object(order_row)
+            #print(fxtradeupdated.tojson())
             msg = f"Trade stop order changed to: {stopv}"
             #fxtrade.message=msg
             fxtradeupdated.message=msg
             fxtradeupdated.tojsonfile()
             
             fxtransact_save_prefix = fxtransact_save_prefix_all+"02_"
-            fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
+            written_filepath=fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
             #@STCGoal Expect that we will have a trades.json with before the change and after the change
             fxtrades.add_trade(fxtradeupdated)
             fxtrades.tojsonfile()
-            print("We are done saving the trade after it was changed")
+            msg = "We are done saving the trade after it was changed"
+            
+            print_jsonl_message(msg,extra_dict={"filepath":written_filepath})
 
     trades_table = fx.get_table(ForexConnect.TRADES)
 
@@ -256,7 +269,9 @@ def main():
                 "The account '{0}' is not valid".format(account))
         else:
             str_account = account.account_id
-            print("AccountID='{0}'".format(str_account))
+            msg = "AccountID='{0}'".format(str_account)
+            
+            print_jsonl_message(msg,extra_dict={"account_id":str_account})
 
         #offer = Common.get_offer(fx, str_instrument)
 
