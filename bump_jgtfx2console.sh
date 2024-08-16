@@ -3,13 +3,6 @@
 
 
 
-cdir=$(pwd)
-(cdfx2console && . bump_jgtutils.sh && \
-. release-n-test.sh )
-
-
-sleep 29
-
 oldjgtfx2consoleversion=$(cat pyproject.toml|grep "jgtfx2console"|tr '>' ' '|tr "'" " "|tr "=" " "|tr "," " "|awk '{print $2}')
 . .env 
 (conda activate $WS_CONDA_ENV_NAME&>/dev/null;pip install -U jgtfx2console|tr '(' ' '|tr ')' ' '|grep "jgtfx2console in"|awk '/jgtfx2console/{print $7}')

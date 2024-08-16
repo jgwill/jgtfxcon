@@ -81,6 +81,22 @@ bump_jgtutils:
 	bash bump_jgtutils.sh
 	bash bump_jgtutils.sh
 
+.PHONY: bump_jgtfx2console
+bump_jgtfx2console:
+	bash bump_jgtfx2console.sh
+	bash bump_jgtfx2console.sh
+
+.PHONY: upbump_jgtfx2console_jgtutils
+upbump_jgtfx2console_jgtutils:
+	bash upbump_jgtfx2console_jgtutils.sh
+	sleep 22
+	make bump_jgtfx2console
+
+.PHONY: bump_all
+bump_all:
+	make bump_jgtutils
+	make bump_jgtfx2console
+
 .PHONY: dev-release
 dev-release:
 	make bump_jgtutils
