@@ -2,8 +2,9 @@ i: AUD/NZD
 t: H4
 tid: 68773276
 demo: true
-trail: true
+action: "lips_trail"
 strategy:
+  active: true
   name: "lips"
   description: "Trail the lips"
   on_fdb: false
