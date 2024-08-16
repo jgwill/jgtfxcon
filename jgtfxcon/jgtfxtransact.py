@@ -243,7 +243,8 @@ def main():
                 fxtransactwrapper.add_trades(fxtrades)
 
         if save_flag:
-            fxtdh.save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False,str_order_id=str_order_id,str_instrument=str_instrument)
+            saved_filepath=fxtdh.save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False,str_order_id=str_order_id,str_instrument=str_instrument)
+            print_jsonl_message("Saved to file",extra_dict={"file":saved_filepath})
         else:# we print the data
             print(fxtransactwrapper.tojson())
             

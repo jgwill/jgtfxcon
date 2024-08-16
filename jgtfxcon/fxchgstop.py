@@ -117,7 +117,8 @@ def change_trade(fx, trade):
     
     fxtransact_save_prefix_all = "trade_fxmvstop_"
     fxtransact_save_prefix = fxtransact_save_prefix_all+"01_"
-    fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
+    saved_filepath=fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
+    print_jsonl_message("Saved fxtrade",extra_dict={"filepath":saved_filepath})
     fxtrades.add_trade(fxtrade)
     fxtrades.tojsonfile()
     #print(trade)
