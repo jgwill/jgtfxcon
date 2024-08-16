@@ -1,0 +1,101 @@
+{
+  "ask": {
+    "5": 0.95455
+  },
+  "ask_change_direction": {
+    "5": 0
+  },
+  "ask_expire_date": {
+    "5": -2209161600000
+  },
+  "ask_id": {
+    "5": "FXCM-EURCHF-10494626"
+  },
+  "ask_tradable": {
+    "5": "T"
+  },
+  "bid": {
+    "5": 0.95451
+  },
+  "bid_change_direction": {
+    "5": 0
+  },
+  "bid_expire_date": {
+    "5": -2209161600000
+  },
+  "bid_id": {
+    "5": "FXCM-EURCHF-10494626"
+  },
+  "bid_tradable": {
+    "5": "T"
+  },
+  "buy_interest": {
+    "5": 0.517
+  },
+  "contract_currency": {
+    "5": "EUR"
+  },
+  "contract_multiplier": {
+    "5": 1
+  },
+  "default_sort_order": {
+    "5": 5
+  },
+  "digits": {
+    "5": 5
+  },
+  "dividend_buy": {
+    "5": 0
+  },
+  "dividend_sell": {
+    "5": 0
+  },
+  "fractional_pip_size": {
+    "5": 1
+  },
+  "hi_change_direction": {
+    "5": 0
+  },
+  "high": {
+    "5": 0.9582
+  },
+  "instrument": {
+    "5": "EUR/CHF"
+  },
+  "instrument_type": {
+    "5": 1
+  },
+  "low": {
+    "5": 0.95388
+  },
+  "low_change_direction": {
+    "5": 0
+  },
+  "pip_cost": {
+    "5": 0.1150781093
+  },
+  "point_size": {
+    "5": 0.0001
+  },
+  "quote_id": {
+    "5": "FXCM-EURCHF-10494626"
+  },
+  "sell_interest": {
+    "5": -1.104
+  },
+  "subscription_status": {
+    "5": "T"
+  },
+  "time": {
+    "5": 1723797985000
+  },
+  "trading_status": {
+    "5": "O"
+  },
+  "value_date": {
+    "5": "08202024"
+  },
+  "volume": {
+    "5": 0
+  }
+}
