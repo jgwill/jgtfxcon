@@ -501,3 +501,36 @@ class Common:
             column_names.append(column.id)
         return pandas.DataFrame([row_obj], index=[row[row.columns.key_column.id]],
                                 columns=column_names).sort_index(axis=1)
+
+    @staticmethod
+    def convert_row_to_dataframe_v2(row: fxcorepy.O2GRow) -> pandas.DataFrame:
+        """ Converts O2GRow to a pandas.DataFrame.
+        
+            Parameters
+            ----------
+            row : O2GRow
+                An instance of O2GRow.
+        
+            Returns
+            -------
+            pandas.DataFrame
+        
+        """
+        row_obj = {}
+        column_names = []
+        for column in row.columns:
+            if column.is_key:
+                continue
+            row_obj[column.id] = row[column.id]
+            column_names.append(column.id)
+        
+        df = pandas.DataFrame([row_obj], index=[row[row.columns.key_column.id]], columns=column_names).sort_index(axis=1)
+        
+        # Function to remove number prefix from column names
+        def remove_number_prefix(column_name):
+            return ''.join([i for i in column_name if not i.isdigit()])
+        
+        # Rename columns
+        df.columns = [remove_number_prefix(col) for col in df.columns]
+        
+        return df
