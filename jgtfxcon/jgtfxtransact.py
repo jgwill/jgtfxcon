@@ -71,7 +71,7 @@ str_order_id = None
 str_trade_id = None
 str_instrument = None
 
-def get_account(table_manager:ForexConnect.O2GTableManager, quiet=True):
+def get_account(table_manager, quiet=True):
     accounts_table = table_manager.get_table(ForexConnect.ACCOUNTS)
     for account_row in accounts_table:
         msg = "{" + " \"AccountID\": {0:s}, \"Balance\": {1:.5f} ".format(account_row.account_id, account_row.balance) + "}"
@@ -220,7 +220,7 @@ def main():
                  str_connection, str_session_id, str_pin,
                  common_samples.session_status_changed)
 
-        table_manager:ForexConnect.O2GTableManager = fx.table_manager
+        table_manager = fx.table_manager
         account = get_account(table_manager)
 
         if not account:
