@@ -76,9 +76,14 @@ dev-pypi-release:
 	twine --version
 	twine upload --repository pypi-dev dist/*
 
+.PHONY: bump_jgtutils
+bump_jgtutils:
+	bash bump_jgtutils.sh
+	bash bump_jgtutils.sh
+
 .PHONY: dev-release
 dev-release:
-	#bash bump_jgtutils.sh
+	make bump_jgtutils
 	python bump_version.py
 	git commit pyproject.toml jgtfxcon/__init__.py package.json -m bump:dev-release &>/dev/null
 	make dist
