@@ -27,6 +27,8 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from jgtutils import jgtconstants as constants
 
 from jgtutils import  jgtcommon
+from jgtutils.FXTransact import FXTrade,FXTrades
+from jgtutils.FXTransact import FXTransactDataHelper as fxtdh
 
 from forexconnect import fxcorepy, ForexConnect, Common, EachRowListener
 
@@ -37,6 +39,9 @@ str_instrument = None
 str_stop = None
 str_trade_id = None
 pips_flag=False
+quiet=True
+fxtrade:FXTrade=None
+fxtrades:FXTrades=FXTrades()
 
 def parse_args():
     parser = jgtcommon.new_parser("JGT FX MV Trade Stop CLI", "Change stop order of trade by id on FXConnect", "fxmvstop")
@@ -59,6 +64,7 @@ def change_trade(fx, trade):
     global str_instrument
     global str_stop
     global pips_flag
+    global fxtrade,fxtrades
     
     amount = trade.amount
     event = threading.Event()
@@ -75,7 +81,7 @@ def change_trade(fx, trade):
     buy_sell = sell if trade.buy_sell == buy else buy
 
     if str_trade_id and trade.trade_id == str_trade_id:
-        print("Changing trade with ID: {0:s}".format(trade.trade_id))
+        print("Changing Stop for TradeID: {0:s}".format(trade.trade_id))
     order_id = trade.stop_order_id
     #print("Stop OrderID: {0:s}".format(order_id))
     open_price = trade.open_rate
@@ -88,12 +94,32 @@ def change_trade(fx, trade):
     if not pips_flag:
         stopv=str_stop
     else:
-        print("Pip size: {0:.5f}".format(pip_size))
+        pip_size_str = "{0:.5f}".format(pip_size)
+        msg=f"Stop is in PipSized: {pip_size_str} * {str_stop}"
+        print(msg)
         if trade.buy_sell == buy:
             stopv = last_close_price-str_stop*pip_size
         else:
             stopv = last_close_price+str_stop*pip_size
     
+    future_validation_stop = False
+    if future_validation_stop:
+        from FXTradeStopValidator import FXTradeMVStopValidator
+    
+    #Create an object for our outputs
+    import FXHelperTransact as fxh
+    fxtrade =fxh.trade_row_to_trade_object(trade)
+    fxtrade.message=f"Trade stop changing to: {stopv}"
+    fxtrade.tojsonfile()
+    
+    fxtransact_save_prefix_all = "trade_fxmvstop_"
+    fxtransact_save_prefix = fxtransact_save_prefix_all+"01_"
+    fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
+    fxtrades.add_trade(fxtrade)
+    fxtrades.tojsonfile()
+    #print(trade)
+    #trade = FXTrade.from_string(string)
+        
     
     if order_id:
         stop_order_id = trade.stop_order_id
@@ -125,9 +151,22 @@ def change_trade(fx, trade):
 
     def on_changed_order(_, __, order_row):
         nonlocal order_id
+        global fxtrade,fxtrades
         if order_row.stop_order_id == order_id:
             print("The order has been changed. Order ID: {0:s}".format(
                 order_row.trade_id))
+            fxtradeupdated=fxh.trade_row_to_trade_object(order_row)
+            msg = f"Trade stop order changed to: {stopv}"
+            #fxtrade.message=msg
+            fxtradeupdated.message=msg
+            fxtradeupdated.tojsonfile()
+            
+            fxtransact_save_prefix = fxtransact_save_prefix_all+"02_"
+            fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
+            #@STCGoal Expect that we will have a trades.json with before the change and after the change
+            fxtrades.add_trade(fxtradeupdated)
+            fxtrades.tojsonfile()
+            print("We are done saving the trade after it was changed")
 
     trades_table = fx.get_table(ForexConnect.TRADES)
 
@@ -136,12 +175,14 @@ def change_trade(fx, trade):
 
     try:
         resp = fx.send_request(request)
+        sleep(2)
 
     except Exception as e:
         common_samples.print_exception(e)
         trades_listener.unsubscribe()
     else:
         # Waiting for an order to appear or timeout (default 30)
+        sleep(1)
         trades_listener.unsubscribe()
 
 
@@ -205,8 +246,8 @@ def main():
                  str_pin, common_samples.session_status_changed)
         str_account_fix= str_account if str_connection != "Demo" else None
         account = Common.get_account(fx, str_account_fix)
-        print("Account:")
-        print(account)
+        #print("Account:")
+        #print(account)
 
         table_manager = fx.table_manager
 
@@ -233,5 +274,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print(" ")
     #input("Done! Press enter key to exit\n")

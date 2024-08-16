@@ -27,6 +27,7 @@ from jgtutils import jgtos, jgtcommon, jgtpov
 from forexconnect import ForexConnect, EachRowListener
 
 from jgtutils.FXTransact import FXTransactWrapper
+from jgtutils.FXTransact import FXTransactDataHelper as fxtdh
 
 import common_samples 
 
@@ -239,7 +240,7 @@ def main():
                 fxtransactwrapper.add_trades(fxtrades)
 
         if save_flag:
-            save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False)
+            fxtdh.save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False,str_order_id=str_order_id,str_instrument=str_instrument)
         else:# we print the data
             print("FXTransactWrapper:")
             print(fxtransactwrapper.tojson())
@@ -251,26 +252,6 @@ def main():
             fx.logout()
         except Exception as e:
             common_samples.print_exception(e)
-
-def save_fxtransact_to_file(fxtransactwrapper:FXTransactWrapper,str_table:str="all",str_connection:str="",save_prefix:str= "fxtransact_",prefix_to_connection:bool=True):
-    global str_order_id,str_instrument
-    connection_prefix = str_connection.lower()+"_" if prefix_to_connection else ""
-    
-    fn = connection_prefix+save_prefix
-    savefile = fn+".json"
-    
-    if str_order_id:
-        savefile = fn+str_order_id+".json"
-    if str_instrument:
-        savefile = fn+str_instrument.replace("/","-")+".json"
-    if str_table == "orders":
-        savefile = fn+"orders.json"
-    if str_table == "trades":
-        savefile = fn+"trades.json"
-    saved_file_fix = savefile.replace("_.",".").replace("__","_")
-    
-    fxtransactwrapper.tojsonfile(saved_file_fix)
-    print("saved to file: "+saved_file_fix)
 
 
 if __name__ == "__main__":
