@@ -31,7 +31,7 @@ fxtrades:FXTrades=FXTrades()
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
-from jgterrorcodes import TRADE_AMOUNT_TO_CLOSE_INVALID_EXIT_ERROR_CODE,TRADE_NOT_FOUND_EXIT_ERROR_CODE
+from jgterrorcodes import TRADE_AMOUNT_TO_CLOSE_INVALID_EXIT_ERROR_CODE,TRADE_NOT_FOUND_EXIT_ERROR_CODE,TRADE_NO_OPEN_POSITION_EXIT_ERROR_CODE,TRADE_CLOSE_ARGUMENTS_INVALID_EXIT_ERROR_CODE
 
 from jgtutils import jgtcommon
 from jgtutils.jgtfxhelper import offer_id_to_instrument
@@ -171,6 +171,11 @@ def main():
     str_pin = ""
     
     str_instrument = args.instrument if args.instrument else None
+    
+    if str_instrument is None and str_trade_id is None:
+        exit_argument_invalid()
+        
+    
     str_account = args.account
     lots_to_close=args.lots
 
@@ -195,8 +200,9 @@ def main():
             offer = None
 
         if not offer and not str_trade_id:
-            raise Exception(
-                 "Requires instrument(-i) or TradeId(-tid) to be specified")
+            exit_argument_invalid()
+            #raise Exception(
+            #     "Requires instrument(-i) or TradeId(-tid) to be specified")
             
         if not offer:
             if verbose>0:
@@ -214,7 +220,9 @@ def main():
         if not trade:
             msg = "There are no opened positions."            
             print_jsonl_message(msg, extra_dict={"instrument": str_instrument, "trade_id": str_trade_id})
-            exit(0)
+            if str_trade_id:
+                exit(TRADE_NOT_FOUND_EXIT_ERROR_CODE)
+            exit(TRADE_NO_OPEN_POSITION_EXIT_ERROR_CODE)
 
 
         trade_offer_id = trade.offer_id
@@ -317,6 +325,11 @@ def main():
             fx.logout()
         except Exception as e:
             common_samples.print_exception(e)
+
+def exit_argument_invalid():
+    exit_msg="Requires instrument(-i) or TradeId(-tid) to be specified"
+    print_jsonl_message(exit_msg)
+    exit(TRADE_CLOSE_ARGUMENTS_INVALID_EXIT_ERROR_CODE)
 
 
 if __name__ == "__main__":
