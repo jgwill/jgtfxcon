@@ -206,6 +206,8 @@ def main():
     str_pin = ""
     str_order_id=args.orderid if args.orderid else None
     str_trade_id=args.tradeid if args.tradeid else None
+    if str_trade_id and not str_order_id:
+        str_order_id=str_trade_id #@STCIssue Fix not working for trades
     str_instrument=args.instrument if args.instrument else None
     save_flag=True if args.save else False
     
@@ -243,8 +245,9 @@ def main():
                 fxtransactwrapper.add_trades(fxtrades)
 
         if save_flag:
-            saved_filepath=fxtdh.save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False,str_order_id=str_order_id,str_instrument=str_instrument)
+            saved_filepath=fxtdh.save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False,str_order_id=str_order_id,str_instrument=str_instrument,str_trade_id=str_trade_id)
             print_jsonl_message("Saved to file",extra_dict={"file":saved_filepath})
+
         else:# we print the data
             print(fxtransactwrapper.tojson())
             
