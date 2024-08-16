@@ -71,6 +71,12 @@ release:
 	git push origin $(version)
 	make pypi-release
 
+.PHONY: quick-release
+quick-release:
+	make bump_version
+	make dist
+	make pypi-release
+	
 .PHONY: dev-pypi-release
 dev-pypi-release:
 	twine --version
@@ -97,11 +103,15 @@ bump_all:
 	make bump_jgtutils
 	make bump_jgtfx2console
 
+.PHONY: bump_version
+bump_version:
+	python bump_version.py
+	git commit pyproject.toml jgtfxcon/__init__.py package.json -m bump:dev &>/dev/null
+
 .PHONY: dev-release
 dev-release:
 	make bump_all
-	python bump_version.py
-	git commit pyproject.toml jgtfxcon/__init__.py package.json -m bump:dev-release &>/dev/null
+	make bump_version
 	make dist
 	make dev-pypi-release
 
