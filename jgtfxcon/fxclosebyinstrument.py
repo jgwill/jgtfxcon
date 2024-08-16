@@ -20,12 +20,18 @@ from time import sleep
 import os
 import sys
 
+import pandas as pd
+
+from FXHelperTransact import print_jsonl_message
+from FXTransact import FXTrade,FXTransactDataHelper as ftdh
+import FXHelperTransact as fht
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
 
 from jgtutils import jgtcommon
-from jgtutils.jgtfxhelper import offer_id_to_instrument
+from jgtutils.jgtfxhelper import offer_id_to_instrument,offers_to_dict
 
 from forexconnect import fxcorepy, ForexConnect, Common
 
@@ -33,6 +39,9 @@ import common_samples
 
 
 str_trade_id = None
+lots_to_close=-1
+quiet=True
+verbose=0
 
 def parse_args():
     parser = jgtcommon.new_parser("JGT FX CloseByInstrument CLI", "Close trade on FXConnect", "fxclosetradebyinstrument")
@@ -43,8 +52,10 @@ def parse_args():
     parser=jgtcommon.add_demo_flag_argument(parser)
     parser=jgtcommon.add_tradeid_arguments(parser)
     parser=jgtcommon.add_orderid_arguments(parser, required=False)
+    parser=jgtcommon.add_lots_arguments(parser,default_value=-1)
     
     parser=jgtcommon.add_account_arguments(parser)
+    parser=jgtcommon.add_verbose_argument(parser)
     
     args = jgtcommon.parse_args(parser)
 
@@ -139,8 +150,12 @@ class OrdersMonitor:
 
 
 def main():
-    global str_trade_id
+    global str_trade_id, quiet,verbose,lots_to_close
+    
     args = parse_args()
+
+    verbose=args.verbose
+    
     str_trade_id = args.tradeid if args.tradeid else None
     if str_trade_id is None and args.orderid:
         str_trade_id = args.orderid #support using -id
@@ -151,6 +166,7 @@ def main():
     
     str_instrument = args.instrument if args.instrument else None
     str_account = args.account
+    lots_to_close=args.lots
 
     with ForexConnect() as fx:
         fx.login(str_user_id, str_password, str_url, str_connection, str_session_id,
@@ -163,7 +179,8 @@ def main():
                 "The account '{0}' is not valid".format(account))
         else:
             str_account = account.account_id
-            print("AccountID='{0}'".format(str_account))
+            msg = f"Account information."
+            print_jsonl_message(msg, extra_dict={"account_id": str_account})#extra_dict={"account_id": str_account, "balance": account.balance, "equity": account.equity, "used_margin": account.used_margin, "usable_margin": account.usable_margin})
 
         
         if str_instrument:
@@ -172,11 +189,13 @@ def main():
             offer = None
 
         if not offer and not str_trade_id:
+            #from jgtutils.jgterrorcodes import 
             raise Exception(
                  "Requires instrument(-i) or TradeId(-tid) to be specified")
             
         if not offer:
-            print("We will lookup for this trade in all instruments")
+            if verbose>0:
+                print_jsonl_message("We will lookup for this trade in all instruments")
         
 
         if not str_trade_id:
@@ -188,16 +207,63 @@ def main():
                 trade=Common.get_trade_by_id(fx, str_account, str_trade_id)
 
         if not trade:
-            print("There are no opened positions for instrument '{0}' '{1}' ".format(str_instrument, str_trade_id))
+            msg = "There are no opened positions for instrument '{0}' '{1}' ".format(str_instrument, str_trade_id)
+            print_jsonl_message(msg, extra_dict={"instrument": str_instrument, "trade_id": str_trade_id})
             exit(0)
 
-        amount = trade.amount
-        
         trade_offer_id = trade.offer_id
-        #if not offer:
+        if not offer:
             #print(trade_offer_id)
-            #str_instrument=offer_id_to_instrument(trade_offer_id)
-            #offer = Common.get_offer(fx, str_instrument)
+            __instrument=offer_id_to_instrument(trade_offer_id)
+            offer = Common.get_offer(fx, __instrument)
+        
+        offer_df:pd.DataFrame=Common.convert_row_to_dataframe(offer)
+        offer_df.to_json("offer.json")
+        trade_df:pd.DataFrame=Common.convert_row_to_dataframe(trade)
+        trade_df.to_json("trade.json")
+
+        contract_multiplier=offer.contract_multiplier if offer.contract_multiplier else 1
+        
+        lotsize=1
+        instruments_table = fx.get_table(ForexConnect.OFFERS)
+        for row in instruments_table:
+            offer_df2:pd.DataFrame=pd.DataFrame()
+            current_instrument = row.instrument
+            fn = f"{current_instrument}.json"
+            savepath=os.path.join("offers",fn.replace("/","-"))
+            offer_df2=Common.convert_row_to_dataframe_v2(row)
+            def __remove_number_prefix(column_name):
+                return ''.join([i for i in column_name if not i.isdigit()])
+            offer_df2.columns = [__remove_number_prefix(col) for col in offer_df2.columns]
+            columns_to_clean = [
+                "ask", "ask_change_direction", "ask_expire_date", "ask_id", "ask_tradable",
+                "bid", "bid_change_direction", "bid_expire_date", "bid_id", "bid_tradable",
+                "buy_interest", "default_sort_order", "dividend_buy", "dividend_sell",
+                "hi_change_direction", "high", "instrument", "instrument_type", "low",
+                "low_change_direction", "pip_cost", "point_size", "quote_id", "subscription_status","trading_status","sell_interest","time","value_date","volume"
+            ]
+            for col in columns_to_clean:
+                if col in offer_df2.columns:
+                    offer_df2.drop(col, axis=1, inplace=True)
+            offer_df2.to_json(savepath)
+            offer_df2.to_csv(savepath.replace(".json",".csv"),index=False)
+            offer_df2.to_markdown(savepath.replace(".json",".md"))
+            if current_instrument == str_instrument:
+                lotsize=row.default_lot_size
+                break
+        print(f"Lot size for {str_instrument} is {lotsize}")
+        amount = trade.amount
+        """
+        -In case of FX instruments, the returned value is expressed in the instrument base currency.
+        -In case of CFD instruments, the returned value is expressed in contracts.
+        
+        """
+        fxtrade=fht.trade_row_to_trade_object(trade)
+        if lots_to_close>0:
+            #offer = Common.get_offer(fx, trade.instrument)
+            amount=lots_to_close
+            print_jsonl_message(f"Closing {lots_to_close} lots", extra_dict={"lots": lots_to_close,"total_amount_of_trade":trade.amount})
+        
             
 
         buy = fxcorepy.Constants.BUY
@@ -247,12 +313,16 @@ def main():
                 closed_trade_row = closed_trades_monitor.wait(30, order_id)
 
             if closed_trade_row is None:
-                print("Response waiting timeout expired.\n")
+                response_timeout_expired = "Response waiting timeout expired.\n"
+                print_jsonl_message(response_timeout_expired, extra_dict={"status": "timeout"})
             else:
-                print("For the order: OrderID = {0} the following positions have been closed: ".format(order_id))
-                print("Closed Trade ID: {0:s}; Amount: {1:d}; Closed Rate: {2:.5f}".format(closed_trade_row.trade_id,
-                                                                                           closed_trade_row.amount,
-                                                                                           closed_trade_row.close_rate))
+                #print("For the order: OrderID = {0} the following positions have been closed: ".format(order_id))
+                msg =f"Closed positions for the OrderID = {order_id}"
+                # msg = "Closed Trade ID: {0:s}; Amount: {1:d}; Closed Rate: {2:.5f}".format(closed_trade_row.trade_id,
+                #                                                                            closed_trade_row.amount,
+                #                                                                            closed_trade_row.close_rate)
+                                                                         
+                print_jsonl_message(msg, extra_dict={"trade_id": closed_trade_row.trade_id, "amount": closed_trade_row.amount, "close_rate": closed_trade_row.close_rate, "original_order_id": order_id})
                 sleep(1)
             trades_listener.unsubscribe()
             orders_listener.unsubscribe()
