@@ -1,4 +1,5 @@
 
+import json
 from jgtutils.FXTransact import FXTrade,FXOrder
 
 
@@ -11,3 +12,11 @@ def _trade_row_to_string(trade_row)->str:
     for column in trade_row.columns:
         string += column.id + "=" + str(trade_row[column.id]) + "; "
     return string
+  
+
+def print_jsonl_message(msg,extra_dict:dict=None):
+    o={}
+    o["message"]=msg
+    if extra_dict:
+        o.update(extra_dict)
+    print(json.dumps(o))

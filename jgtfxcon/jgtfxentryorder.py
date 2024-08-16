@@ -20,10 +20,12 @@ from threading import Event
 import os
 import sys
 
+from FXHelperTransact import print_jsonl_message
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
-
+from jgtutils.jgterrorcodes import ORDER_ADDING_FAILED_EXIT_ERROR_CODE,TRADE_STOP_INVALID_EXIT_ERROR_CODE
 from jgtutils import jgtos, jgtcommon, jgtpov
 
 
@@ -113,14 +115,23 @@ def main():
     str_rate = args.rate
     g_rate = str_rate
     if not args.stop:
-        print("Stop level must be specified")
+        msg = "Stop level must be specified"
+        print_jsonl_message(msg)
         return
     str_stop = args.stop
     g_stop=str_stop
     str_lots = args.lots
     #str_account = args.account
-    print("Adding a stop to an entry order with \nentry rate: {0:.5f}, stop: {1:.5f}".format(
-        str_rate, str_stop))
+    msg = "Adding an entry order with \nentry rate: {0:.5f}, stop: {1:.5f}".format(
+        str_rate, str_stop)
+    entry_order = {
+        "entry_rate": str_rate,
+        "stop": str_stop,
+        "lots": str_lots
+    }
+    
+
+    print_jsonl_message(msg,entry_order)
 
     with ForexConnect() as fx:
         fx.login(str_user_id, str_password, str_url, str_connection, str_session_id,
@@ -130,16 +141,19 @@ def main():
             str_account_fix= str_account if not args.demo else None
             account = Common.get_account(fx, str_account_fix)
             if not account:
+                #ACCOUNT_NOT_FOUND_EXIT_ERROR_CODE
                 raise Exception(
                     "The account '{0}' is not valid".format(str_account))
 
             else:
                 str_account = account.account_id
-                print("AccountID='{0}'".format(str_account))
+                msg = "AccountID='{0}'".format(str_account)
+                print_jsonl_message(msg)
 
             offer = Common.get_offer(fx, str_instrument)
 
             if offer is None:
+                #INSTRUMENT_NOT_VALID_EXIT_ERROR_CODE
                 raise Exception(
                     "The instrument '{0}' is not valid".format(str_instrument))
 
@@ -184,22 +198,31 @@ def main():
                     print("Request failed Error Handling coming up....")
                     print("INput Stop value:",str_stop)
                     orders_listener.unsubscribe()
-                    exit(1)
+                    exit(TRADE_STOP_INVALID_EXIT_ERROR_CODE)
 
                 common_samples.print_exception(e)
                 orders_listener.unsubscribe()
-                exit(1)
+                exit(ORDER_ADDING_FAILED_EXIT_ERROR_CODE)
 
             else:
                 # Waiting for an order to appear or timeout (default 30)
                 order_row = orders_monitor.wait(30, order_id)
                 if order_row is None:
-                    print("Response waiting timeout expired.\n")
+                    msg = "Response waiting timeout expired.\n"
+                    print_jsonl_message(msg)
                 else:
-                    print("The order has been added. OrderID={0:s}, "
-                          "Type={1:s}, BuySell={2:s}, Rate={3:.5f}, TimeInForce={4:s}".format(
+                    msg = "The order has been added. OrderID={0:s}, Type={1:s}, BuySell={2:s}, Rate={3:.5f}, TimeInForce={4:s}".format(
                         order_row.order_id, order_row.type, order_row.buy_sell, order_row.rate,
-                        order_row.time_in_force))
+                        order_row.time_in_force)
+
+                    order_added = {
+                        "order_id": order_row.order_id,
+                        "bs": order_row.buy_sell,
+                        "rate": order_row.rate,
+                        "stop": order_row.stop,
+                        "status": "added" 
+                    }
+                    print_jsonl_message(msg,order_added)
                     # sleep(1)
                     # print("...or it is here ?? (It might be done already)")
                     # sleep(1)
@@ -218,5 +241,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("")
     #input("Done! Press enter key to exit\n")

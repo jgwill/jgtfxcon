@@ -14,21 +14,29 @@
 # limitations under the License.
 
 import argparse
+import json
 import threading
 from time import sleep
 
 import os
 import sys
 
+from FXHelperTransact import print_jsonl_message
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
+from jgtutils.jgterrorcodes import ORDER_NOT_FOUND_EXIT_ERROR_CODE
 
 from jgtutils import jgtos, jgtcommon, jgtpov
 
 from forexconnect import fxcorepy, ForexConnect, Common
 
 import common_samples
+
+
+RAISE_EXCEPTION_ON_ORDER_NOT_FOUND = False
+
 
 
 def parse_args():
@@ -101,12 +109,23 @@ def main():
                 break
 
             if order is None:
-                raise Exception("Order {0} not found".format(order_id))
+                msg = "Order {0} not found".format(order_id)
+                order_not_found={
+                    "order_id":order_id,
+                    "status":"not found"
+                }
+                print_jsonl_message(msg,order_not_found)
+                
+                if RAISE_EXCEPTION_ON_ORDER_NOT_FOUND:
+                    raise Exception(msg)
+                else: #Exit the program with an error code 
+                    sys.exit(ORDER_NOT_FOUND_EXIT_ERROR_CODE)
 
+            order_account_id = order.account_id
             request = fx.create_request({
 
                 fxcorepy.O2GRequestParamsEnum.COMMAND: fxcorepy.Constants.Commands.DELETE_ORDER,
-                fxcorepy.O2GRequestParamsEnum.ACCOUNT_ID: order.account_id,
+                fxcorepy.O2GRequestParamsEnum.ACCOUNT_ID: order_account_id,
                 fxcorepy.O2GRequestParamsEnum.ORDER_ID: str_old
             })
 
@@ -125,9 +144,21 @@ def main():
                 # Waiting for an order to delete or timeout (default 30)
                 is_deleted = orders_monitor.wait(30, order_id)
                 if not is_deleted:
-                    print("Response waiting timeout expired.\n")
+                    msg = "Response waiting timeout expired.\n"
+                    timed_out={
+                        "order_id":order_id,
+                        "status":"waiting timeout expired"
+                    }
+                    print_jsonl_message(msg,timed_out)
                 else:
-                    print("The order has been deleted. Order ID: {0:s}".format(order_row.order_id))
+                    msg="The order has been deleted. Order ID: {0:s}".format(order_row.order_id)
+                    order_deleted={
+                        "order_id":order_row.order_id,
+                        "buy_sell":order_row.buy_sell,
+                        "rate":order_row.rate,
+                        "status":"deleted"
+                                   }
+                    print_jsonl_message(msg,order_deleted)
                     sleep(1)
                 orders_listener.unsubscribe()
 
@@ -137,6 +168,7 @@ def main():
             fx.logout()
         except Exception as e:
             common_samples.print_exception(e)
+
 
 
 if __name__ == "__main__":

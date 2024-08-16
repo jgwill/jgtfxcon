@@ -18,6 +18,8 @@ import argparse
 import os
 import sys
 
+from FXHelperTransact import print_jsonl_message
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
@@ -72,7 +74,8 @@ str_instrument = None
 def get_account(table_manager:ForexConnect.O2GTableManager, quiet=True):
     accounts_table = table_manager.get_table(ForexConnect.ACCOUNTS)
     for account_row in accounts_table:
-        print("AccountID: {0:s}, Balance: {1:.5f}".format(account_row.account_id, account_row.balance))
+        msg = "{" + " \"AccountID\": {0:s}, \"Balance\": {1:.5f} ".format(account_row.account_id, account_row.balance) + "}"
+        print(msg)
     return accounts_table.get_row(0)
 
 from jgtutils.FXTransact import FXOrder
@@ -126,7 +129,7 @@ from jgtutils.FXTransact import FXOrders
 def parse_orders(table_manager, account_id,quiet=True):
     orders_table = table_manager.get_table(ForexConnect.ORDERS)
     if len(orders_table) == 0:
-        if not quiet:print("Table is empty!")
+        if not quiet:print_jsonl_message("Table is empty!")
         return None
     else:
         fxorders:FXOrders=FXOrders()
@@ -183,7 +186,7 @@ from jgtutils.FXTransact import FXTrades
 def parse_trades(table_manager, account_id,quiet=True)->FXTrades:
     trades_table = table_manager.get_table(ForexConnect.TRADES)
     if len(trades_table) == 0:
-        if not quiet:print("Table is empty!")
+        if not quiet:print_jsonl_message("Table is empty!")
         return None
     else:
         trades=FXTrades()
@@ -242,7 +245,6 @@ def main():
         if save_flag:
             fxtdh.save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False,str_order_id=str_order_id,str_instrument=str_instrument)
         else:# we print the data
-            print("FXTransactWrapper:")
             print(fxtransactwrapper.tojson())
             
             
