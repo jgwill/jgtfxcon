@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from jgtutils import jgtconstants as constants
 
 from jgtutils import jgtcommon
-from jgtutils.jgtfxhelper import offer_id_to_instrument,offers_to_dict
+from jgtutils.jgtfxhelper import offer_id_to_instrument
 
 from forexconnect import fxcorepy, ForexConnect, Common
 
@@ -54,7 +54,7 @@ def parse_args():
     parser=jgtcommon.add_orderid_arguments(parser, required=False)
     parser=jgtcommon.add_lots_arguments(parser,default_value=-1)
     
-    parser=jgtcommon.add_account_arguments(parser)
+    parser=jgtcommon.add_account_arguments(parser)    
     parser=jgtcommon.add_verbose_argument(parser)
     
     args = jgtcommon.parse_args(parser)
@@ -189,7 +189,6 @@ def main():
             offer = None
 
         if not offer and not str_trade_id:
-            #from jgtutils.jgterrorcodes import 
             raise Exception(
                  "Requires instrument(-i) or TradeId(-tid) to be specified")
             
@@ -211,47 +210,13 @@ def main():
             print_jsonl_message(msg, extra_dict={"instrument": str_instrument, "trade_id": str_trade_id})
             exit(0)
 
+
         trade_offer_id = trade.offer_id
         if not offer:
             #print(trade_offer_id)
             __instrument=offer_id_to_instrument(trade_offer_id)
             offer = Common.get_offer(fx, __instrument)
         
-        offer_df:pd.DataFrame=Common.convert_row_to_dataframe(offer)
-        offer_df.to_json("offer.json")
-        trade_df:pd.DataFrame=Common.convert_row_to_dataframe(trade)
-        trade_df.to_json("trade.json")
-
-        contract_multiplier=offer.contract_multiplier if offer.contract_multiplier else 1
-        
-        lotsize=1
-        instruments_table = fx.get_table(ForexConnect.OFFERS)
-        for row in instruments_table:
-            offer_df2:pd.DataFrame=pd.DataFrame()
-            current_instrument = row.instrument
-            fn = f"{current_instrument}.json"
-            savepath=os.path.join("offers",fn.replace("/","-"))
-            offer_df2=Common.convert_row_to_dataframe_v2(row)
-            def __remove_number_prefix(column_name):
-                return ''.join([i for i in column_name if not i.isdigit()])
-            offer_df2.columns = [__remove_number_prefix(col) for col in offer_df2.columns]
-            columns_to_clean = [
-                "ask", "ask_change_direction", "ask_expire_date", "ask_id", "ask_tradable",
-                "bid", "bid_change_direction", "bid_expire_date", "bid_id", "bid_tradable",
-                "buy_interest", "default_sort_order", "dividend_buy", "dividend_sell",
-                "hi_change_direction", "high", "instrument", "instrument_type", "low",
-                "low_change_direction", "pip_cost", "point_size", "quote_id", "subscription_status","trading_status","sell_interest","time","value_date","volume"
-            ]
-            for col in columns_to_clean:
-                if col in offer_df2.columns:
-                    offer_df2.drop(col, axis=1, inplace=True)
-            offer_df2.to_json(savepath)
-            offer_df2.to_csv(savepath.replace(".json",".csv"),index=False)
-            offer_df2.to_markdown(savepath.replace(".json",".md"))
-            if current_instrument == str_instrument:
-                lotsize=row.default_lot_size
-                break
-        print(f"Lot size for {str_instrument} is {lotsize}")
         amount = trade.amount
         """
         -In case of FX instruments, the returned value is expressed in the instrument base currency.
