@@ -146,3 +146,9 @@ output/
 samples/
 jgtfxcon/debug_*
 ref_fxcon_ordering/_output.txt
+.stc/stclog-2407151831_from-2401-tag-STC.md
+ref_fxcon_ordering/_add_stop.sh
+ref_fxcon_ordering/_load_variables.sh
+ref_fxcon_ordering/_grap_orderId_from_output__pto_24080115.sh
+dev_dk_refresh.sh
+help-jgtfxcli.txt
