@@ -18,7 +18,7 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxremoveorder.py",
       "console": "integratedTerminal",
-      "args": "--save -id 169973387 --demo"
+      "args": "-id 169973387 --demo"
     },
     {
       "name": "FXTR_ls_trade",
