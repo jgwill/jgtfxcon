@@ -4,6 +4,7 @@
 # This wont be run by post_dist rather its just a flag to run _bump_jgtutils function
 
 
+pip install --user -U jgtutils
 
 
 oldjgtutilsversion=$(cat pyproject.toml|grep "jgtutils"|tr '>' ' '|tr "'" " "|tr "=" " "|tr "," " "|awk '{print $2}')
