@@ -23,12 +23,15 @@ import sys
 import pandas as pd
 
 from FXHelperTransact import print_jsonl_message
-from FXTransact import FXTrade,FXTransactDataHelper as ftdh
+from FXTransact import FXTrade,FXTrades,FXTransactDataHelper as ftdh
 import FXHelperTransact as fht
+fxtrade:FXTrade=None
+fxtrades:FXTrades=FXTrades()
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
+from jgterrorcodes import TRADE_AMOUNT_TO_CLOSE_INVALID_EXIT_ERROR_CODE,TRADE_NOT_FOUND_EXIT_ERROR_CODE
 
 from jgtutils import jgtcommon
 from jgtutils.jgtfxhelper import offer_id_to_instrument
@@ -128,8 +131,10 @@ class OrdersMonitor:
 
         if is_order_added:
             order_row = self.__added_orders[order_id]
-            print("The order has been added. Order ID: {0:s}, Rate: {1:.5f}, Time In Force: {2:s}".format(
-                order_row.order_id, order_row.rate, order_row.time_in_force))
+            added_order_message = "The order has been added. Order ID: {0:s}, Rate: {1:.5f}, Time In Force: {2:s}".format(
+                order_row.order_id, order_row.rate, order_row.time_in_force)
+
+            print_jsonl_message(added_order_message, extra_dict={"order_id": order_row.order_id, "rate": order_row.rate})
 
         # looking for a deleted order
         if order_id not in self.__deleted_orders:
@@ -137,7 +142,8 @@ class OrdersMonitor:
 
         if is_order_deleted:
             order_row = self.__deleted_orders[order_id]
-            print("The order has been deleted. Order ID: {0}".format(order_row.order_id))
+            deleted_order_message = "The order has been deleted. Order ID: {0}".format(order_row.order_id)
+            print_jsonl_message(deleted_order_message, extra_dict={"order_id": order_row.order_id})
 
         return is_order_added and is_order_deleted
 
@@ -150,7 +156,7 @@ class OrdersMonitor:
 
 
 def main():
-    global str_trade_id, quiet,verbose,lots_to_close
+    global str_trade_id, quiet,verbose,lots_to_close,fxtrade,fxtrades
     
     args = parse_args()
 
@@ -206,7 +212,7 @@ def main():
                 trade=Common.get_trade_by_id(fx, str_account, str_trade_id)
 
         if not trade:
-            msg = "There are no opened positions for instrument '{0}' '{1}' ".format(str_instrument, str_trade_id)
+            msg = "There are no opened positions."            
             print_jsonl_message(msg, extra_dict={"instrument": str_instrument, "trade_id": str_trade_id})
             exit(0)
 
@@ -224,12 +230,23 @@ def main():
         
         """
         fxtrade=fht.trade_row_to_trade_object(trade)
+        msg="Trade information."
         if lots_to_close>0:
             #offer = Common.get_offer(fx, trade.instrument)
             amount=lots_to_close
-            print_jsonl_message(f"Closing {lots_to_close} lots", extra_dict={"lots": lots_to_close,"total_amount_of_trade":trade.amount})
+            specified_lots_message = f"Specified {lots_to_close} amount(lots) to close."
+            print_jsonl_message(specified_lots_message, extra_dict={"lots": lots_to_close,"total_amount_of_trade":trade.amount})
+            msg+=specified_lots_message
         
+        #Is the amount to close bellow the amount of the trade ?
+        if amount>trade.amount:
+            print_jsonl_message("Amount to close is greater than the amount of the trade.", extra_dict={"amount": amount, "trade_amount": trade.amount})
+            exit(TRADE_AMOUNT_TO_CLOSE_INVALID_EXIT_ERROR_CODE)
             
+        fxtransact_save_prefix_all = "trade_close_"
+        fxtrade.message=msg
+        fxtrades.add_trade(fxtrade)
+        fxtrades.tojsonfile()
 
         buy = fxcorepy.Constants.BUY
         sell = fxcorepy.Constants.SELL
@@ -281,8 +298,12 @@ def main():
                 response_timeout_expired = "Response waiting timeout expired.\n"
                 print_jsonl_message(response_timeout_expired, extra_dict={"status": "timeout"})
             else:
+                fxtradeclosed=fht.trade_row_to_trade_object(closed_trade_row)
                 #print("For the order: OrderID = {0} the following positions have been closed: ".format(order_id))
                 msg =f"Closed positions for the OrderID = {order_id}"
+                fxtradeclosed.message="Closed trade."
+                fxtrades.add_trade(fxtradeclosed)
+                fxtrade.tojsonfile()
                 # msg = "Closed Trade ID: {0:s}; Amount: {1:d}; Closed Rate: {2:.5f}".format(closed_trade_row.trade_id,
                 #                                                                            closed_trade_row.amount,
                 #                                                                            closed_trade_row.close_rate)
