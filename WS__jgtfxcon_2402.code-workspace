@@ -12,6 +12,9 @@
 		],
 		"python.autoComplete.extraPaths": [
 			"/a/src/_jgt/jgtfxcon/jgtfxcon/forexconnect"
+		],
+		"github.copilot.chat.customUserInstructions": [
+			"jgtfxcon is a python module wrapping the forexconnect package. It enables various CLI to run price update, entry ordering and trade management."
 		]
 	}
 }

@@ -133,6 +133,46 @@
       "args": "-i USD/CHF -tid 68782913 --demo"
     },
     {
+      "name": "CloseTradeByTradeId_Lots",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxdevclose_lots.py",
+      "console": "integratedTerminal",
+      "args": " -tid 68785085 --demo -n 1"
+    },
+    {
+      "name": "CloseTradeByTradeId_Lots2",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxdevclose_lots.py",
+      "console": "integratedTerminal",
+      "args": " -tid 68785152 --demo -n 1"
+    },
+    {
+      "name": "devCloseTradeByTradeId_Lots3AUDUSD_1M",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxdevclose_lots.py",
+      "console": "integratedTerminal",
+      "args": " -tid 68785279 --demo -n 700000"
+    },
+    {
+      "name": "CloseTradeByTradeId_Lots3AUDUSD_1M",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxclosebyinstrument.py",
+      "console": "integratedTerminal",
+      "args": " -tid 68785380 --demo -n 10000"
+    },
+    {
+      "name": "CloseTradeByTradeId_Lots4_Copper",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxdevclose_lots.py",
+      "console": "integratedTerminal",
+      "args": " -tid 68785155 --demo -n 1"
+    },
+    {
       "name": "ChangeTradeStop_GLS_Sim",
       "type": "debugpy",
       "request": "launch",
