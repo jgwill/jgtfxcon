@@ -21,6 +21,7 @@ from time import sleep
 
 import os
 import sys
+import json,yaml
 
 from FXHelperTransact import print_jsonl_message
 
@@ -172,12 +173,14 @@ def change_trade(fx, trade):
             #fxtrade.message=msg
             fxtradeupdated.message=msg
             fxtradeupdated.tojsonfile()
+            fxtradeupdated.toyamlfile()
             
             fxtransact_save_prefix = fxtransact_save_prefix_all+"02_"
             written_filepath=fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
             #@STCGoal Expect that we will have a trades.json with before the change and after the change
             fxtrades.add_trade(fxtradeupdated)
             fxtrades.tojsonfile()
+            #fxtrades.toyamlfile()
             msg = "We are done saving the trade after it was changed"
             
             print_jsonl_message(msg,extra_dict={"filepath":written_filepath})
