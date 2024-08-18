@@ -1,4 +1,5 @@
 version := $(shell python3 -c 'from jgtfxcon import version; print(version)')
+SHELL := /bin/bash
 
 .PHONY: venv
 venv:
@@ -84,8 +85,7 @@ dev-pypi-release:
 
 .PHONY: bump_jgtutils
 bump_jgtutils:
-	bash bump_jgtutils.sh
-	bash bump_jgtutils.sh
+	. /opt/binscripts/load.sh && _bump_jgtutils
 
 .PHONY: bump_jgtfx2console
 bump_jgtfx2console:
