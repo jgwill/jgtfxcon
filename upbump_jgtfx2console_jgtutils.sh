@@ -4,5 +4,5 @@
 
 
 cdir=$(pwd)
-(cdfx2console && . bump_jgtutils.sh && \
+(cdfx2console && make bump_jgtutils && \
 . release-n-test.sh )
