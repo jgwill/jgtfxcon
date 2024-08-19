@@ -26,6 +26,8 @@ from jgtutils import jgtconstants as constants
 
 from jgtutils import jgtos, jgtcommon, jgtpov
 
+SAVE_FXTR_FILE_AUTOMATICALLY=True
+
 from forexconnect import ForexConnect, EachRowListener
 
 from jgtutils.FXTransact import FXTransactWrapper
@@ -75,7 +77,7 @@ def get_account(table_manager, quiet=True):
     accounts_table = table_manager.get_table(ForexConnect.ACCOUNTS)
     for account_row in accounts_table:
         msg = "{" + " \"AccountID\": {0:s}, \"Balance\": {1:.5f} ".format(account_row.account_id, account_row.balance) + "}"
-        print(msg)
+        if not quiet:print(msg)
     return accounts_table.get_row(0)
 
 from jgtutils.FXTransact import FXOrder
@@ -244,9 +246,9 @@ def main():
                 if not quiet:print(fxtrades.tojson())
                 fxtransactwrapper.add_trades(fxtrades)
 
-        if save_flag:
+        if save_flag or SAVE_FXTR_FILE_AUTOMATICALLY:
             saved_filepath=fxtdh.save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False,str_order_id=str_order_id,str_instrument=str_instrument,str_trade_id=str_trade_id)
-            print_jsonl_message("Saved to file",extra_dict={"file":saved_filepath})
+            print_jsonl_message("Trade Data Saved.",extra_dict={"file":saved_filepath},scope="fxtr")
 
         else:# we print the data
             print(fxtransactwrapper.tojson())
