@@ -154,10 +154,15 @@ def change_trade(fx, trade):
     if request is None:
         raise Exception("Cannot create request")
 
+    done_saving_updates=False
+    
     def on_changed_order(_, __, order_row):
-        nonlocal order_id
+        nonlocal order_id,done_saving_updates
         global fxtrade,fxtrades
         if order_row.stop_order_id == order_id:
+            if done_saving_updates:
+                sleep(1)
+                return
             msg = "The order has been changed. Order ID: {0:s}".format(
                 order_row.trade_id)
 
@@ -173,7 +178,7 @@ def change_trade(fx, trade):
             #fxtrade.message=msg
             fxtradeupdated.message=msg
             fxtradeupdated.tojsonfile()
-            fxtradeupdated.toyamlfile()
+            #fxtradeupdated.toyamlfile()
             
             fxtransact_save_prefix = fxtransact_save_prefix_all+"02_"
             written_filepath=fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
@@ -184,6 +189,7 @@ def change_trade(fx, trade):
             msg = "We are done saving the trade after it was changed"
             
             print_jsonl_message(msg,extra_dict={"filepath":written_filepath})
+            done_saving_updates=True
 
     trades_table = fx.get_table(ForexConnect.TRADES)
 
