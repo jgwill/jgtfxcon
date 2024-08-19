@@ -14,9 +14,11 @@ def _trade_row_to_string(trade_row)->str:
     return string
   
 
-def print_jsonl_message(msg,extra_dict:dict=None):
+def print_jsonl_message(msg,extra_dict:dict=None,scope=None):
     o={}
     o["message"]=msg
     if extra_dict:
         o.update(extra_dict)
+    if scope:
+        o["scope"]=scope
     print(json.dumps(o))
