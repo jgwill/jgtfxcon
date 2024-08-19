@@ -74,6 +74,7 @@ release:
 
 .PHONY: quick-release
 quick-release:
+	make bump_jgtutils
 	make bump_version
 	make dist
 	make pypi-release
