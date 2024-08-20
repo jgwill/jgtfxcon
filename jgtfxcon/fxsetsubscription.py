@@ -111,8 +111,17 @@ class SubscriptionMonitor:
                 old_status = current_status
                 self.__event.set()
         return
-
-        #return _on_changed
+    #on_delete_callback : typing.Callable[[AO2GTableListener, str, O2GRow], None]
+    #           The function that is called when a row is deleted from the table.
+    def on_delete_callback(self, table_listener, row_id, row):
+        global str_instrument
+        global old_status
+        global current_status
+        if row.instrument == str_instrument:
+            current_status = row.subscription_status
+            if current_status != old_status:
+                print("On delete callback")
+                self.__event.set()
 
 
 def main():
@@ -177,7 +186,8 @@ def update_subscription(str_user_id, str_password, str_url, str_connection, str_
 
             monitor=SubscriptionMonitor()
             
-            offers_listener = Common.subscribe_table_updates(offers_table, on_change_callback=monitor.on_changed)
+            offers_listener = Common.subscribe_table_updates(offers_table, on_change_callback=monitor.on_changed,
+                                                             on_delete_callback=monitor.on_delete_callback)
                                                              #,on_status_change_callback=monitor.on_status_change)
 
             try:
