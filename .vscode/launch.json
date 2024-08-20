@@ -37,6 +37,14 @@
       "args": "--save -table orders --demo"
     },
     {
+      "name": "FXTR_ls_",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxtransact.py",
+      "console": "integratedTerminal",
+      "args": "--demo"
+    },
+    {
       "name": "FXTR_ls_ALL",
       "type": "debugpy",
       "request": "launch",
@@ -203,6 +211,38 @@
       "program": "jgtfxcon/fxchgstop.py",
       "console": "integratedTerminal",
       "args": "-tid 68778202 --demo -x 14 --pips"
+    },
+    {
+      "name": "Info_Subscripbe__EURGBP",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxsetsubscription.py",
+      "console": "integratedTerminal",
+      "args": "-i EUR/GBP --info --demo"
+    },
+    {
+      "name": "UnSubscripbe__EURGBP",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxsetsubscription.py",
+      "console": "integratedTerminal",
+      "args": "-i EUR/GBP -U --demo"
+    },
+    {
+      "name": "Subscripbe__EURGBP",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxsetsubscription.py",
+      "console": "integratedTerminal",
+      "args": "-i EUR/GBP -S --demo"
+    },
+    {
+      "name": "Subscripbe_to_instrument_USDZAR",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxsetsubscription.py",
+      "console": "integratedTerminal",
+      "args": "-i USD/ZAR --info --demo"
     },
   ]
 }

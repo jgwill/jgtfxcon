@@ -155,3 +155,6 @@ help-jgtfxcli.txt
 trade_*.json
 offers/*
 trade*.json
+fxtransact.yaml
+tests/*.yaml
+ref_fxcon_ordering/__output.txt
