@@ -1,0 +1,8 @@
+{
+  "risk_settings": {
+    "risk_money_max": 15,
+    "stop_loss_max_pips": 50,
+    "take_profit_pips": 10000
+  }
+}
+

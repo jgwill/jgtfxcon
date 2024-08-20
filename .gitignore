@@ -158,3 +158,5 @@ trade*.json
 fxtransact.yaml
 tests/*.yaml
 ref_fxcon_ordering/__output.txt
+ref_fxcon_ordering/tmp.txt
+tests/test_settings_01_spec_instrument_timeframe/.jgt/settings_sample.yml
