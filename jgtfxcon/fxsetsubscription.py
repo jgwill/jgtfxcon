@@ -15,6 +15,15 @@
 
 import argparse
 
+import os
+import sys
+
+from jgtutils.jgtclihelper import print_jsonl_message
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+from jgtutils import jgtos, jgtcommon
+
 from forexconnect import ForexConnect, EachRowListener, ResponseListener
 
 from forexconnect import fxcorepy
@@ -24,19 +33,29 @@ from time import sleep
 
 import common_samples
 
+SCOPE = "fxsymbolsubscription"
+
 str_instrument = None
 old_status = None
+new_status = None
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Process command parameters.')
-    common_samples.add_main_arguments(parser)
-    parser.add_argument('-i', metavar="INSTRUMENT", required=True,
-                        help='An instrument which you want to use in sample. For example, "EUR/USD".')
-    parser.add_argument('-status', metavar="STATUS", required=True,
-                        help='Status')
-
-    args = parser.parse_args()
+    parser = jgtcommon.new_parser("JGT FX SetSubscription for Instrument", "Deals with Instrument subscription", "fxsetsubscription")
+    parser=jgtcommon.add_demo_flag_argument(parser)
+    parser=jgtcommon.add_instrument_standalone_argument(parser,required=True)
+    
+    #flag to get the status
+    xclusive_group = parser.add_mutually_exclusive_group(required=True)
+    xclusive_group.add_argument('-I','--info',action='store_true',
+                        help='Info only on the tatus')
+    xclusive_group.add_argument('-S','-A','-T','--active',action='store_true',help='Activate a subscription')
+    xclusive_group.add_argument('-D','-U','--deactivate',action='store_true',help='Deactivate a subscription')
+    
+    #parser.add_argument('-S','--status', metavar="STATUS", required=True,
+    #                    help='Status')
+    args=jgtcommon.parse_args(parser)
+    
 
     return args
 
@@ -53,11 +72,13 @@ def on_changed():
     def _on_changed(table_listener, row_id, row):
         global str_instrument
         global old_status
+        global new_status
         if row.instrument == str_instrument:
             new_status = row.subscription_status
             if new_status != old_status:
-                string = 'instrument='+row.instrument+'; new subscription_status='+new_status
-                print(string)
+                context_status_label = get_subscription_status_label(new_status)
+                _print_subscription_info(new_status, context_status_label)
+                
                 old_status = new_status
         return
 
@@ -68,42 +89,61 @@ def main():
     global str_instrument
     global old_status
     args = parse_args()
-    str_user_id = args.l
-    str_password = args.p
-    str_url = args.u
-    str_connection = args.c
-    str_session_i_d = args.session
-    str_pin = args.pin
-    str_instrument = args.i
-    status = args.status
+    str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
+    
+    str_session_id = ""
+    str_pin = ""
+    str_instrument = args.instrument
+    
+    info_only_flag = args.info
+    active_flag=args.active
+    deactivate_flag=args.deactivate
+    target_status="T" if active_flag else "D" if deactivate_flag else None
 
     with ForexConnect() as fx:
         try:
             fx.login(str_user_id, str_password, str_url,
-                     str_connection, str_session_i_d, str_pin,
+                     str_connection, str_session_id, str_pin,
                      common_samples.session_status_changed)
 
             offer = get_offer(fx, str_instrument)
 
-            string = 'instrument='+offer.instrument+'; subscription_status='+offer.subscription_status
+            i = offer.instrument
+            context_status_code = offer.subscription_status
+            
+            context_status_label = get_subscription_status_label(context_status_code)
+            
+            
+            
+            if info_only_flag==True:
+                _print_subscription_info(context_status_code, context_status_label)
+                _logout(fx)
+                exit(0)
+                
             old_status = offer.subscription_status
-            print(string)
 
-            if status == old_status:
-                raise Exception('New status = current status')
-
+            if target_status == old_status and not info_only_flag:
+                msg=f"{str_instrument} already {context_status_label}, nothing to change."                
+                _print_subscription_info(context_status_code, context_status_label)
+                print_jsonl_message(msg,scope=SCOPE)
+                _logout(fx)
+                exit(0)
+                #raise Exception('New status = current status')
             offers_table = fx.get_table(ForexConnect.OFFERS)
 
             request = fx.create_request({
                 fxcorepy.O2GRequestParamsEnum.COMMAND: fxcorepy.Constants.Commands.SET_SUBSCRIPTION_STATUS,
                 fxcorepy.O2GRequestParamsEnum.OFFER_ID: offer.offer_id,
-                fxcorepy.O2GRequestParamsEnum.SUBSCRIPTION_STATUS: status
+                fxcorepy.O2GRequestParamsEnum.SUBSCRIPTION_STATUS: target_status
             })
 
             offers_listener = Common.subscribe_table_updates(offers_table, on_change_callback=on_changed())
 
             try:
-                fx.send_request(request)
+                target_status_label=get_subscription_status_label(target_status)
+                print_jsonl_message(f"Changing subscription status for {str_instrument}",extra_dict={"target_status":target_status_label,"code":target_status},scope=SCOPE)
+                resp=fx.send_request(request)
+                sleep(5)
 
             except Exception as e:
                 common_samples.print_exception(e)
@@ -115,12 +155,22 @@ def main():
         except Exception as e:
             common_samples.print_exception(e)
 
-        try:
-            fx.logout()
-        except Exception as e:
-            common_samples.print_exception(e)
+        _logout(fx)
+
+def _print_subscription_info(context_status_code, context_status_label):
+    string = str_instrument+' is '+context_status_label 
+    print_jsonl_message(string,extra_dict={"instrument":str_instrument,"subscription":context_status_label,"code":context_status_code},scope=SCOPE)
+
+def get_subscription_status_label(context_status_code):
+    return "Active" if context_status_code=="T" else "Inactive" if context_status_code=="D" else "Unknown"
+
+def _logout(fx):
+    try:
+        fx.logout()
+    except Exception as e:
+        common_samples.print_exception(e)
 
 
 if __name__ == "__main__":
     main()
-    input("Done! Press enter key to exit\n")
+    

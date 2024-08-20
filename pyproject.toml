@@ -39,3 +39,5 @@ dkfxcli = "jgtfxcon.dkfxcli:main"
 fxclosebyinstrument = "jgtfxcon.fxclosebyinstrument:main"
 fxrmtrade = "jgtfxcon.fxclosebyinstrument:main"
 fxmvstop = "jgtfxcon.fxchgstop:main"
+fxsubscription = "jgtfxcon.fxsetsubscription:main"
+
