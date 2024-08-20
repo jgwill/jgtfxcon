@@ -15,6 +15,9 @@
 
 import argparse
 
+
+from threading import Event
+
 import os
 import sys
 
@@ -23,6 +26,7 @@ from jgtutils.jgtclihelper import print_jsonl_message
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtos, jgtcommon
+from jgtutils.jgterrorcodes import SUBSCRIPTION_MANAGEMENT_EXIT_ERROR_CODE
 
 from forexconnect import ForexConnect, EachRowListener, ResponseListener
 
@@ -33,11 +37,11 @@ from time import sleep
 
 import common_samples
 
-SCOPE = "fxsymbolsubscription"
+SCOPE = "fxsubs"
 
 str_instrument = None
 old_status = None
-new_status = None
+current_status = None
 
 
 def parse_args():
@@ -67,22 +71,48 @@ def get_offer(fx, s_instrument):
         if offer_row.instrument == s_instrument:
             return offer_row
 
-
-def on_changed():
-    def _on_changed(table_listener, row_id, row):
+class SubscriptionMonitor:
+    def __init__(self):
+        self.__subscription_status = None
+        self.__event = Event()
+    
+    def wait(self, time):
+        self.__event.wait(time)
+        return self.get_status()
+    
+    def get_status(self):
+        return self.__subscription_status
+    
+    def reset(self):
+        self.__subscription_status = None
+        self.__event.clear()
+    
+    #on_status_change_callback : typing.Callable[[AO2GTableListener, O2GTableStatus], None]
+    ##The function that is called when the table status is changed.
+    def on_status_change(self, table_listener, status):
+        global old_status
+        global current_status
+        self.__subscription_status = status
+        print("Subscription status changed to ", status)
+        self.__event.set()
+        #print("Event set")
+        
+    def on_changed(self,table_listener, row_id, row):
         global str_instrument
         global old_status
-        global new_status
+        global current_status
+        #print("Row changed:",row_id)
         if row.instrument == str_instrument:
-            new_status = row.subscription_status
-            if new_status != old_status:
-                context_status_label = get_subscription_status_label(new_status)
-                _print_subscription_info(new_status, context_status_label)
+            current_status = row.subscription_status
+            if current_status != old_status:
+                self.__subscription_status = current_status
+                _print_subscription_info(current_status,extra_info="status changed")
                 
-                old_status = new_status
+                old_status = current_status
+                self.__event.set()
         return
 
-    return _on_changed
+        #return _on_changed
 
 
 def main():
@@ -100,6 +130,11 @@ def main():
     deactivate_flag=args.deactivate
     target_status="T" if active_flag else "D" if deactivate_flag else None
 
+    update_subscription(str_user_id, str_password, str_url, str_connection, str_session_id, str_pin, info_only_flag, target_status)
+
+def update_subscription(str_user_id, str_password, str_url, str_connection, str_session_id, str_pin, info_only_flag, target_status=None,validation_pass=False):
+    global old_status
+    global current_status
     with ForexConnect() as fx:
         try:
             fx.login(str_user_id, str_password, str_url,
@@ -111,20 +146,23 @@ def main():
             i = offer.instrument
             context_status_code = offer.subscription_status
             
-            context_status_label = get_subscription_status_label(context_status_code)
+            
             
             
             
             if info_only_flag==True:
-                _print_subscription_info(context_status_code, context_status_label)
+                _print_subscription_info(context_status_code)
                 _logout(fx)
+                if context_status_code!=target_status:
+                    exit(SUBSCRIPTION_MANAGEMENT_EXIT_ERROR_CODE)
                 exit(0)
                 
             old_status = offer.subscription_status
 
-            if target_status == old_status and not info_only_flag:
+            if target_status == old_status :
+                context_status_label=get_subscription_status_label(context_status_code)
                 msg=f"{str_instrument} already {context_status_label}, nothing to change."                
-                _print_subscription_info(context_status_code, context_status_label)
+                _print_subscription_info(context_status_code)
                 print_jsonl_message(msg,scope=SCOPE)
                 _logout(fx)
                 exit(0)
@@ -137,29 +175,45 @@ def main():
                 fxcorepy.O2GRequestParamsEnum.SUBSCRIPTION_STATUS: target_status
             })
 
-            offers_listener = Common.subscribe_table_updates(offers_table, on_change_callback=on_changed())
+            monitor=SubscriptionMonitor()
+            
+            offers_listener = Common.subscribe_table_updates(offers_table, on_change_callback=monitor.on_changed)
+                                                             #,on_status_change_callback=monitor.on_status_change)
 
             try:
                 target_status_label=get_subscription_status_label(target_status)
-                print_jsonl_message(f"Changing subscription status for {str_instrument}",extra_dict={"target_status":target_status_label,"code":target_status},scope=SCOPE)
+                print_jsonl_message(f"status changing for {target_status_label} {str_instrument}",extra_dict={"old_code":old_status,"target_code":target_status},scope=SCOPE)
+                
                 resp=fx.send_request(request)
-                sleep(5)
+                sleep(1)
 
             except Exception as e:
                 common_samples.print_exception(e)
                 offers_listener.unsubscribe()
             else:
-                sleep(1)
+                # sleep(1)
+                _monitor_results = monitor.wait(2)
+                if _monitor_results is None:
+                    #Loop back to git the status info
+                    target_status_1=target_status
+                    update_subscription(str_user_id, str_password, str_url, str_connection, str_session_id, str_pin, True,target_status_1,True)
+                #print("Wait value ", _new_status)
+                #print("Monitor status:", monitor.get_status())
+                
                 offers_listener.unsubscribe()
+                if not current_status==target_status:
+                    print_jsonl_message(f"Subscription change failed for {str_instrument}",extra_dict={"target_status":target_status_label,"code":target_status},scope=SCOPE)
+                    exit(SUBSCRIPTION_MANAGEMENT_EXIT_ERROR_CODE)
 
         except Exception as e:
             common_samples.print_exception(e)
 
         _logout(fx)
 
-def _print_subscription_info(context_status_code, context_status_label):
+def _print_subscription_info(context_status_code,extra_info=""):
+    context_status_label = get_subscription_status_label(context_status_code)
     string = str_instrument+' is '+context_status_label 
-    print_jsonl_message(string,extra_dict={"instrument":str_instrument,"subscription":context_status_label,"code":context_status_code},scope=SCOPE)
+    print_jsonl_message(string,extra_dict={"instrument":str_instrument,"subscription":context_status_label,"code":context_status_code, "info":extra_info},scope=SCOPE)
 
 def get_subscription_status_label(context_status_code):
     return "Active" if context_status_code=="T" else "Inactive" if context_status_code=="D" else "Unknown"
