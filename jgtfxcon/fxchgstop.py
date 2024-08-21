@@ -111,7 +111,7 @@ def change_trade(fx, trade):
         from FXTradeStopValidator import FXTradeMVStopValidator
     
     #Create an object for our outputs
-    import FXHelperTransact as fxh
+    import FXCONHelperTransact as fxh
     fxtrade =fxh.trade_row_to_trade_object(trade)
     fxtrade.message=f"Trade stop changing to: {stopv}"
     fxtrade.tojsonfile()

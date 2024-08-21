@@ -24,7 +24,7 @@ import pandas as pd
 
 from jgtutils.jgtclihelper import print_jsonl_message
 from FXTransact import FXTrade,FXTrades,FXTransactDataHelper as ftdh
-import FXHelperTransact as fht
+import FXCONHelperTransact as fht
 fxtrade:FXTrade=None
 fxtrades:FXTrades=FXTrades()
 
