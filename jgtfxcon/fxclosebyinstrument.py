@@ -22,7 +22,7 @@ import sys
 
 import pandas as pd
 
-from FXHelperTransact import print_jsonl_message
+from jgtutils.jgtclihelper import print_jsonl_message
 from FXTransact import FXTrade,FXTrades,FXTransactDataHelper as ftdh
 import FXHelperTransact as fht
 fxtrade:FXTrade=None

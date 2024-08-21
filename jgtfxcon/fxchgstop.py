@@ -23,7 +23,7 @@ import os
 import sys
 import json,yaml
 
-from FXHelperTransact import print_jsonl_message
+from jgtutils.jgtclihelper import print_jsonl_message
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 

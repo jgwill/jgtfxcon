@@ -18,7 +18,7 @@ import argparse
 import os
 import sys
 
-from FXHelperTransact import print_jsonl_message
+from jgtutils.jgtclihelper import print_jsonl_message
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
