@@ -40,4 +40,4 @@ fxclosebyinstrument = "jgtfxcon.fxclosebyinstrument:main"
 fxrmtrade = "jgtfxcon.fxclosebyinstrument:main"
 fxmvstop = "jgtfxcon.fxchgstop:main"
 fxsubscription = "jgtfxcon.fxsetsubscription:main"
-
+fxcloselots = "jgtfxcon.fxdevclose_lots:main"

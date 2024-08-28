@@ -24,7 +24,7 @@ import pandas as pd
 
 from jgtutils.jgtclihelper import print_jsonl_message
 from FXTransact import FXTrade,FXTransactDataHelper as ftdh
-import FXHelperTransact as fht
+import FXCONHelperTransact as fht
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
