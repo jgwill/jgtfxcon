@@ -68,7 +68,7 @@ pypi-release:
 .PHONY: release
 release:
 	make dist
-	git tag -s $(version)
+	git tag  $(version)
 	git push origin $(version)
 	make pypi-release
 
