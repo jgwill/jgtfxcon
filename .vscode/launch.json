@@ -10,7 +10,15 @@
       "request": "launch",
       "program": "jgtfxcon/jgtfxentryorder.py",
       "console": "integratedTerminal",
-      "args": "--save -i NZD/CAD -r 0.82455 -stop 0.82406 --bs B --demo"
+      "args": "-i NZD/CAD -r 0.82455 -stop 0.82406 --bs B --demo"
+    },
+    {
+      "name": "AddEntry240821",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxentryorder.py",
+      "console": "integratedTerminal",
+      "args": "-i EUR/CHF -r 0.952 -stop 0.97 --bs S --demo"
     },
     {
       "name": "FXRemoveEntry1",
@@ -91,6 +99,14 @@
       "program": "jgtfxcon/jgtfxcli.py",
       "console": "integratedTerminal",
       "args": "-i EUR/USD -t D1,H4 -c 1000 -kba"
+    },
+    {
+      "name": "jgtfxcli_debug_240821a",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxcli.py",
+      "console": "integratedTerminal",
+      "args": "-i EUR/USD -t D1 "
     },
     {
       "name": "PDScli_many_timeframes_M1_ALT",
@@ -186,7 +202,23 @@
       "request": "launch",
       "program": "jgtfxcon/fxchgstop.py",
       "console": "integratedTerminal",
-      "args": "-tid 68773276 --demo -x 1.09799"
+      "args": "-tid 68773276 --demo -x 1.09549"
+    },
+    {
+      "name": "CHGStop240821",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxchgstop.py",
+      "console": "integratedTerminal",
+      "args": "-tid 68794251 -x 0.95244 --demo"
+    },
+    {
+      "name": "CHGStop240821INVALID",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxchgstop.py",
+      "console": "integratedTerminal",
+      "args": "-tid 68794251 -x 0.9498 --demo"
     },
     {
       "name": "ChangeTradeStop_GLS_Pips",

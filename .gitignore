@@ -131,7 +131,7 @@ jgtfxcon/*.html
 jgtfxcon/*.rst
 test/**
 jgtfxcon/*.csv
-.vscode
+#.vscode
 _
 *.csv
 env-jgtfxcon-win-python37.create.bat
@@ -160,3 +160,4 @@ tests/*.yaml
 ref_fxcon_ordering/__output.txt
 ref_fxcon_ordering/tmp.txt
 tests/test_settings_01_spec_instrument_timeframe/.jgt/settings_sample.yml
+*.pdf

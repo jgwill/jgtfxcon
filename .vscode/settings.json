@@ -1,0 +1,10 @@
+{
+  "python.analysis.exclude": [
+    "build/**"
+  ],
+  "files.exclude": {
+    "build/**": true,
+    "dist/**": true,
+    "jgtfxcon.egg-info": true
+  }
+}
