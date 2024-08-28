@@ -31,6 +31,7 @@ from jgtutils import jgtconstants as constants
 
 from jgtutils import  jgtcommon
 from jgtutils.FXTransact import FXTrade,FXTrades
+from jgtutils.FXTransact import TRADE_FXMVSTOP_PREFIX
 from jgtutils.FXTransact import FXTransactDataHelper as fxtdh
 
 from forexconnect import fxcorepy, ForexConnect, Common, EachRowListener
@@ -45,7 +46,9 @@ pips_flag=False
 quiet=True
 fxtrade:FXTrade=None
 fxtrades:FXTrades=FXTrades()
-
+FXTRADE_DEBUG_FLAG=True
+APP_SCOPE = "fxchgstop"
+ 
 def parse_args():
     parser = jgtcommon.new_parser("JGT FX MV Trade Stop CLI", "Change stop order of trade by id on FXConnect", "fxmvstop")
     
@@ -55,6 +58,7 @@ def parse_args():
     parser=jgtcommon.add_tradeid_arguments(parser,required=False)
     parser=jgtcommon.add_stop_arguments(parser,pips_flag=True)
     parser=jgtcommon.add_account_arguments(parser,required=False)
+    parser=jgtcommon.add_verbose_argument(parser)
     
     args = jgtcommon.parse_args(parser)
 
@@ -84,8 +88,8 @@ def change_trade(fx, trade):
     buy_sell = sell if trade.buy_sell == buy else buy
 
     if str_trade_id and trade.trade_id == str_trade_id:
-        msg = "Changing Stop for TradeID: {0:s}".format(trade.trade_id)        
-        print_jsonl_message(msg,extra_dict={"trade_id":str_trade_id})
+        msg = "Starting the Stop changes for TradeID: {0:s}".format(trade.trade_id)        
+        print_jsonl_message(msg,extra_dict={"trade_id":str_trade_id},scope=APP_SCOPE)
     order_id = trade.stop_order_id
     #print("Stop OrderID: {0:s}".format(order_id))
     open_price = trade.open_rate
@@ -106,22 +110,33 @@ def change_trade(fx, trade):
         else:
             stopv = last_close_price+str_stop*pip_size
     
-    future_validation_stop = False
+    future_validation_stop = True
     if future_validation_stop:
-        from FXTradeStopValidator import FXTradeMVStopValidator
+        #from FXTradeStopValidator import FXTradeMVStopValidator
+        from jgtutils.jgtfxhelper import is_entry_stop_valid
+        stop_entry_validated=is_entry_stop_valid(last_close_price,stopv,trade.buy_sell)
+        msg=f"Stop is invalid - Passed Current Market price" if not stop_entry_validated else f"Stop is valid"
+        if not quiet or not stop_entry_validated:
+            print_jsonl_message(msg,extra_dict={"last_close":last_close_price,"stop_rate":stopv,"bs":trade.buy_sell},scope=APP_SCOPE)
+        if not stop_entry_validated:
+            from jgtutils.jgterrorcodes import TRADE_STOP_INVALID_EXIT_ERROR_CODE
+            exit(TRADE_STOP_INVALID_EXIT_ERROR_CODE)
     
     #Create an object for our outputs
     import FXCONHelperTransact as fxh
     fxtrade =fxh.trade_row_to_trade_object(trade)
-    fxtrade.message=f"Trade stop changing to: {stopv}"
-    fxtrade.tojsonfile()
+    fxtrade.message=f"Requesting Trade Stop Changes: {stopv}"
     
-    fxtransact_save_prefix_all = "trade_fxmvstop_"
-    fxtransact_save_prefix = fxtransact_save_prefix_all+"01_"
-    saved_filepath=fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
-    print_jsonl_message("Saved fxtrade",extra_dict={"filepath":saved_filepath})
     fxtrades.add_trade(fxtrade)
-    fxtrades.tojsonfile()
+    if FXTRADE_DEBUG_FLAG:
+        fxtrade.tojsonfile(use_local=True)
+        
+        fxtransact_save_prefix_all = TRADE_FXMVSTOP_PREFIX
+        fxtransact_save_prefix = fxtransact_save_prefix_all+"01_"
+    
+        saved_filepath=fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
+        print_jsonl_message(fxtrade.message,extra_dict={"filepath":saved_filepath},scope=APP_SCOPE)
+        fxtrades.tojsonfile(use_local=True)
     #print(trade)
     #trade = FXTrade.from_string(string)
         
@@ -163,7 +178,7 @@ def change_trade(fx, trade):
             if done_saving_updates:
                 sleep(1)
                 return
-            msg = "The order has been changed. Order ID: {0:s}".format(
+            msg = "Trade Stop Order changed. StopOrderID: {0:s}".format(
                 order_row.trade_id)
 
             order_changed_data={
@@ -171,24 +186,27 @@ def change_trade(fx, trade):
                 "new_stop":stopv,
                 "trade_id":str_trade_id
             }
-            print_jsonl_message(msg,order_changed_data)
+            print_jsonl_message(msg,order_changed_data,scope=APP_SCOPE)
             fxtradeupdated=fxh.trade_row_to_trade_object(order_row)
             #print(fxtradeupdated.tojson())
-            msg = f"Trade stop order changed to: {stopv}"
             #fxtrade.message=msg
             fxtradeupdated.message=msg
-            fxtradeupdated.tojsonfile()
-            #fxtradeupdated.toyamlfile()
-            
-            fxtransact_save_prefix = fxtransact_save_prefix_all+"02_"
-            written_filepath=fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
-            #@STCGoal Expect that we will have a trades.json with before the change and after the change
             fxtrades.add_trade(fxtradeupdated)
-            fxtrades.tojsonfile()
-            #fxtrades.toyamlfile()
-            msg = "We are done saving the trade after it was changed"
+            if FXTRADE_DEBUG_FLAG:
+                fxtradeupdated.tojsonfile()
+                #fxtradeupdated.toyamlfile()
             
-            print_jsonl_message(msg,extra_dict={"filepath":written_filepath})
+                fxtransact_save_prefix = fxtransact_save_prefix_all+"02_"
+                written_filepath=fxtdh.save_fxtrade_to_file(fxtrade,save_prefix=fxtransact_save_prefix,prefix_to_connection=False,str_order_id=str_trade_id)
+                #@STCGoal Expect that we will have a trades.json with before the change and after the change
+                fxtrades.tojsonfile()
+                #fxtrades.toyamlfile()
+                msg = "Changing trade stop completed and saved to file"
+                
+               
+                if not quiet:
+                    print_jsonl_message(msg,extra_dict={"filepath":written_filepath},scope=APP_SCOPE)
+                #print_jsonl_message(" --DEV NOTES - WE WANT RESULTS TO OBSERVE WHEN THE TRADE WAS CHANGED - Where does get saved is the question",scope="DEV")
             done_saving_updates=True
 
     trades_table = fx.get_table(ForexConnect.TRADES)
@@ -281,7 +299,8 @@ def main():
             str_account = account.account_id
             msg = "AccountID='{0}'".format(str_account)
             
-            print_jsonl_message(msg,extra_dict={"account_id":str_account})
+            if not quiet:
+                print_jsonl_message(msg,extra_dict={"account_id":str_account},scope=APP_SCOPE)
 
         #offer = Common.get_offer(fx, str_instrument)
 

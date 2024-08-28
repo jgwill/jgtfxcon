@@ -46,6 +46,8 @@ def parse_args():
 
     # specific arguments
     parser=jgtcommon.add_orderid_arguments(parser)
+    
+    parser=jgtcommon.add_verbose_argument(parser)
 
     args=jgtcommon.parse_args(parser)
 
@@ -89,6 +91,7 @@ class OrdersMonitor:
 
 def main():
     args = parse_args()
+    quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     str_session_id = ""
     str_pin = ""

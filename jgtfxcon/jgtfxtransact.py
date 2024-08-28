@@ -72,6 +72,7 @@ def parse_args():
 str_order_id = None
 str_trade_id = None
 str_instrument = None
+quiet=True
 
 def get_account(table_manager, quiet=True):
     accounts_table = table_manager.get_table(ForexConnect.ACCOUNTS)
@@ -143,13 +144,13 @@ def parse_orders(table_manager, account_id,quiet=True):
 
 
 from jgtutils.FXTransact import FXTrade
-def parse_trade_row(trade_row, account_id,quiet=True):
+def parse_trade_row(trade_row, account_id,quiet=True)->FXTrade:
     global str_order_id, str_instrument,str_trade_id
     if trade_row.table_type == ForexConnect.TRADES:
         if not account_id or account_id == trade_row.account_id:
             trade_data = {}
             string =_trade_row_to_string(trade_row, trade_data)
-            trade = FXTrade.from_string(string)
+            trade:FXTrade = FXTrade.from_string(string)
             
             if str_instrument and str_instrument == trade.instrument:
                 json_str = trade.tojson()
@@ -193,14 +194,15 @@ def parse_trades(table_manager, account_id,quiet=True)->FXTrades:
     else:
         trades=FXTrades()
         for trade_row in trades_table:
-            trade_data=parse_trade_row(trade_row, account_id)
+            trade_data:FXTrade=parse_trade_row(trade_row, account_id)
             if trade_data:
                 trades.add_trade(trade_data)
+                trade_data.tojsonfile()
         return trades
 
 
 def main():
-    global str_order_id, str_instrument,str_trade_id
+    global str_order_id, str_instrument,str_trade_id,quiet
     args = parse_args()
     quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
@@ -248,11 +250,12 @@ def main():
 
         if save_flag or SAVE_FXTR_FILE_AUTOMATICALLY:
             saved_filepath=fxtdh.save_fxtransact_to_file(fxtransactwrapper,str_table,str_connection,save_prefix="fxtransact_",prefix_to_connection=False,str_order_id=str_order_id,str_instrument=str_instrument,str_trade_id=str_trade_id)
-            print_jsonl_message("Trade Data Saved.",extra_dict={"file":saved_filepath},scope="fxtr")
+            if quiet:print_jsonl_message("Trade Data Saved.",extra_dict={"file":saved_filepath},scope="fxtr")
 
         else:# we print the data
             print(fxtransactwrapper.tojson())
-            
+        if not quiet:print(fxtransactwrapper.tojson())  
+
             
         
         

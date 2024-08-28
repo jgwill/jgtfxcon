@@ -25,13 +25,17 @@ from jgtutils.jgtclihelper import print_jsonl_message
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
-from jgtutils.jgterrorcodes import ORDER_ADDING_FAILED_EXIT_ERROR_CODE,TRADE_STOP_INVALID_EXIT_ERROR_CODE
+from jgtutils.jgterrorcodes import ORDER_ADDING_FAILED_EXIT_ERROR_CODE,ORDER_STOP_INVALID_EXIT_ERROR_CODE
 from jgtutils import jgtos, jgtcommon, jgtpov
-
+from jgtutils.FXTransact import FXOrder,FXTransactWrapper as ftw
+from jgtutils.jgtfxhelper import is_entry_stop_valid
+import FXCONHelperTransact as fxh
 
 from forexconnect import fxcorepy, ForexConnect, Common
 
 import common_samples
+
+from jgtutils.FXTransact import ORDER_ADD_PREFIX
 
 g_rate = None
 g_stop = None
@@ -44,6 +48,7 @@ def parse_args():
     #parser=jgtcommon.add_stop_arguments(parser)
     parser=jgtcommon.add_direction_rate_lots_arguments(parser)
     parser=jgtcommon.add_instrument_timeframe_arguments(parser, timeframe=False)
+    parser=jgtcommon.add_verbose_argument(parser)
     #common_samples.add_main_arguments(parser)
     #common_samples.add_instrument_timeframe_arguments(parser, timeframe=False)
     #common_samples.add_direction_rate_lots_arguments(parser)
@@ -102,6 +107,7 @@ class OrdersMonitor:
 def main():
     global g_stop, g_order_id,g_rate
     args = parse_args()
+    quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     
     #str_user_id = args.l
@@ -117,7 +123,9 @@ def main():
     if not args.stop:
         msg = "Stop level must be specified"
         print_jsonl_message(msg)
-        return
+        from jgtutils.jgterrorcodes import STOP_INVALID_EXIT_ERROR_CODE
+        exit(STOP_INVALID_EXIT_ERROR_CODE)
+        
     str_stop = args.stop
     g_stop=str_stop
     str_lots = args.lots
@@ -130,7 +138,27 @@ def main():
         "lots": str_lots
     }
     
-
+    # def is_entry_stop_valid(entry_rate,stop_rate,bs):
+    #     """
+    #     Entry Rate and Stop Rate validation
+        
+    #     """
+    #     if bs=="S":
+    #         if entry_rate<stop_rate:
+    #             return True
+    #         else:
+    #             return False
+    #     elif bs=="B":
+    #         if entry_rate>stop_rate:
+    #             return True
+    #         else:
+    #             return False
+    
+    stop_entry_validated=is_entry_stop_valid(str_rate,str_stop,str_buy_sell)
+    if not stop_entry_validated:
+        print_jsonl_message("ERROR::Entry Rate and Stop Rate are not valid for the Buy/Sell direction",scope="fxaddorder",extra_dict={"entry_rate":str_rate,"stop_rate":str_stop,"bs":str_buy_sell})
+        exit(ORDER_STOP_INVALID_EXIT_ERROR_CODE)
+        
     print_jsonl_message(msg,entry_order)
 
     with ForexConnect() as fx:
@@ -142,13 +170,20 @@ def main():
             account = Common.get_account(fx, str_account_fix)
             if not account:
                 #ACCOUNT_NOT_FOUND_EXIT_ERROR_CODE
+                from jgtutils.jgterrorcodes import ACCOUNT_EXIT_ERROR_CODE
+                _RAISE_ACCOUNT_EXCEPTION=False
+                msg = "The account '{0}' is not valid".format(str_account)
+                if not _RAISE_ACCOUNT_EXCEPTION:
+                    print_jsonl_message(msg,scope="fxaddorder",extra_dict={"account":str_account})
+                    exit(ACCOUNT_EXIT_ERROR_CODE)
                 raise Exception(
-                    "The account '{0}' is not valid".format(str_account))
+                    msg)
 
             else:
                 str_account = account.account_id
                 msg = "AccountID='{0}'".format(str_account)
-                print_jsonl_message(msg)
+                if not quiet:
+                    print_jsonl_message(msg)
 
             offer = Common.get_offer(fx, str_instrument)
 
@@ -195,10 +230,9 @@ def main():
                 _type_of_exception = type(e).__name__
                 print("Exception type: ", _type_of_exception)
                 if _type_of_exception=="RequestFailedError":
-                    print("Request failed Error Handling coming up....")
-                    print("INput Stop value:",str_stop)
+                    print_jsonl_message(" ERROR::Request failed Error Handling coming up....",scope="fxaddorder",extra_dict={"error":str(e),"stop":str_stop})
                     orders_listener.unsubscribe()
-                    exit(TRADE_STOP_INVALID_EXIT_ERROR_CODE)
+                    exit(ORDER_STOP_INVALID_EXIT_ERROR_CODE)
 
                 common_samples.print_exception(e)
                 orders_listener.unsubscribe()
@@ -223,6 +257,11 @@ def main():
                         "status": "added" 
                     }
                     print_jsonl_message(msg,order_added)
+                    #@STCIssue Shall we save some FXOrder object here?
+                    order_data:FXOrder=fxh.order_row_to_order_object(order_row)
+                    
+                    savepath=FXOrder.mkpath(order_row.order_id,fn=ORDER_ADD_PREFIX,use_local=True)
+                    order_data.tojsonfile(filename=savepath,use_local=True)
                     # sleep(1)
                     # print("...or it is here ?? (It might be done already)")
                     # sleep(1)
