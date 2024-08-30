@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jgtfxcon"
-version = "0.6.101"
+version = "0.6.102"
 authors = [{ name = "Guillaume Isabelle", email = "jgi@jgwill.com" }]
 
 description = "PDS Services"
@@ -36,6 +36,7 @@ fxaddorder = "jgtfxcon.jgtfxentryorder:main"
 fxrmorder = "jgtfxcon.jgtfxremoveorder:main"
 fxtr = "jgtfxcon.jgtfxtransact:main"
 efxtr = "jgtfxcon.jgtfxtransact:emain"
+ifxtr = "jgtfxcon.jgtfxtransact:iemain"
 dkfxcli = "jgtfxcon.dkfxcli:main"
 fxclosebyinstrument = "jgtfxcon.fxclosebyinstrument:main"
 fxrmtrade = "jgtfxcon.fxclosebyinstrument:main"
