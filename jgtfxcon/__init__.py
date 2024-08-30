@@ -57,7 +57,7 @@ class NotCompatibleException(Exception):
 
 #from jgtfxcon.common_samples import common_samples
 from jgtetl import svc_offset_dt_by_tf as etl_offset_dt_by_tf,offsetdt as etl_offsetdt
-version='0.6.103'
+version='0.6.104'
 
 # if platform.system() == 'Linux':
 #   #sys.path.append(os.path.abspath('./'))
