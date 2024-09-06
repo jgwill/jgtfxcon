@@ -42,7 +42,7 @@ import common_samples
 quiet=True
 
 def parse_args():
-    parser = jgtcommon.new_parser("JGT FX Report CLI", "Obtain a report from FXConnect", "fxreport")
+    parser = jgtcommon.new_parser("JGT FX Report CLI", "Obtain a report from FXConnect", "fxreport",add_exiting_quietly_flag=True)
     parser=jgtcommon.add_demo_flag_argument(parser)
     #parser = argparse.ArgumentParser(description='Process command parameters.')
     #common_samples.add_main_arguments(parser)
@@ -53,6 +53,13 @@ def parse_args():
     #report_format = "html"
     parser.add_argument('-F', '--report_format', metavar="FORMAT", default="html",
                         help='The report format. Possible values are: html, pdf, xls. Default value is html. Optional parameter.')
+    #--report_basename
+    report_name_groups=parser.add_mutually_exclusive_group()
+    report_name_groups.add_argument('-B', '--report_basename', metavar="BASENAME", default=None,
+                        help='The report base name.')
+    #--report_fullname
+    report_name_groups.add_argument('-P', '--report_fullname', metavar="FULLNAME", default=None,
+                        help='The report full name.')
     #args = parser.parse_args()
     args=jgtcommon.parse_args(parser)
 
@@ -67,10 +74,13 @@ def month_delta(date, delta):
     return date.replace(day=d, month=m, year=y)
 
 report_format = "html"
-
+report_basename=None
+report_fullname=None
 def get_reports(fc:ForexConnect, dt_from, dt_to):
     global quiet
     global report_format
+    global report_basename
+    global report_fullname
     accounts_response_reader = fc.get_table_reader(ForexConnect.ACCOUNTS)
     if dt_to is None:
         dt_to = datetime.datetime.today()
@@ -87,8 +97,12 @@ def get_reports(fc:ForexConnect, dt_from, dt_to):
             print("account_id={0:s}; Balance={1:.5f}".format(account.account_id, account.balance))
         #report_url = "Report URL={0:s}\n".format(url)
         print_jsonl_message("Report Generated",extra_dict={"report_url":url},scope="fxreport")
-        report_basename = f"{FXREPORT_FILE_PREFIX}{account.account_id}"
-        fn = f"{report_basename}__{tlid.get_minutes()}.{report_format}"
+        report_basename = f"{FXREPORT_FILE_PREFIX}{account.account_id}" if report_basename is None else report_basename
+        
+        if report_fullname is None:
+            fn = f"{report_basename}__{tlid.get_minutes()}.{report_format}"
+        else:
+            fn = report_fullname
         file_name = mkfn_cfxdata_filepath(fn) #os.path.join(os.getcwd())
         
         if not quiet:print("Connecting...")
@@ -114,10 +128,16 @@ def get_reports(fc:ForexConnect, dt_from, dt_to):
 def main():
     global quiet
     global report_format
+    global report_basename
+    global report_fullname
+    
     args = parse_args()
     quiet=args.quiet
+    report_basename=args.report_basename if args.report_basename else None
+    report_fullname=args.report_fullname if args.report_fullname else None
     report_format=args.report_format
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
+    
 
     str_session_i_d=""
     str_pin=""
