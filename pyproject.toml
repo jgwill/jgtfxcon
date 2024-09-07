@@ -33,6 +33,8 @@ classifiers = [
 
 jgtfxcli = "jgtfxcon.jgtfxcli:main"
 fxreport = "jgtfxcon.jgtfxreport:main"
+#pto_fxreport_xls2csv_tables.py
+fxreport2csv = "jgtfxcon.pto_fxreport_xls2csv_tables:main"
 fxaddorder = "jgtfxcon.jgtfxentryorder:main"
 fxrmorder = "jgtfxcon.jgtfxremoveorder:main"
 efxrmorder = "jgtfxcon.jgtfxremoveorder:emain"
