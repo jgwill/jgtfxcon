@@ -1,0 +1,32 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Demo::Create Entry Order",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "CreateEntryOrder.py",
+      "console": "integratedTerminal",
+      "args": "-l U10D2460743 -p Xy1el -c Demo -i AUD/CAD -u http://www.fxcorporate.com/Hosts.jsp -d B -r 0.9010 -lots 1 -account 00465876"
+    },
+    {
+      "name": "Demo::Get Report",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "GetReport.py",
+      "console": "integratedTerminal",
+      "args": "-l U10D2460743 -p Xy1el -c Demo -u https://www.fxcorporate.com/Hosts.jsp"
+    },
+    {
+      "name": "Real::Get Report",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "GetReport.py",
+      "console": "integratedTerminal",
+      "args": "-l $user_id -p $password -c Real -u https://www.fxcorporate.com/Hosts.jsp"
+    }
+  ]
+}

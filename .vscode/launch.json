@@ -213,6 +213,14 @@
       "args": "-tid 68794251 -x 0.95244 --demo"
     },
     {
+      "name": "CHGStop240830",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/fxchgstop.py",
+      "console": "integratedTerminal",
+      "args": "-tid 68785148  -x 5651 --demo -v 2"
+    },
+    {
       "name": "CHGStop240821INVALID",
       "type": "debugpy",
       "request": "launch",
@@ -275,6 +283,31 @@
       "program": "jgtfxcon/fxsetsubscription.py",
       "console": "integratedTerminal",
       "args": "-i USD/ZAR --info --demo"
+    },
+    {
+      "name": "fxreport_demo_html",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxreport.py",
+      "console": "integratedTerminal",
+      "args": "--demo -F html"
+    },
+    {
+      "name": "fxreport_demo_xls",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "jgtfxcon/jgtfxreport.py",
+      "console": "integratedTerminal",
+      "args": "--demo --no_tlid -B __DEMO -s \"08.31.2024 00:00:00\" -F xls"
+    },
+    {
+      "name": "fxreport_get_tables_in_python",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "/b/Dropbox/i/trading/_fxreport_get_tables_in_python.py",
+      "console": "integratedTerminal",
+      "cwd": "/b/Dropbox/i/trading",
+      "args": ""
     },
   ]
 }

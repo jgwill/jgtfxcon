@@ -109,6 +109,11 @@ bump_version:
 	python bump_version.py
 	#git commit pyproject.toml jgtfxcon/__init__.py package.json -m bump:dev &>/dev/null
 
+.PHONY: bump_version_commited
+bump_version_commited:
+	python bump_version.py
+	git commit pyproject.toml jgtfxcon/__init__.py package.json -m bump:version
+
 .PHONY: dev-release
 dev-release:
 	make bump_all
