@@ -54,7 +54,7 @@ def parse_args():
     parser=jgtcommon.add_instrument_standalone_argument(parser)
     parser=jgtcommon.add_demo_flag_argument(parser)
     parser=jgtcommon.add_tradeid_arguments(parser)
-    parser=jgtcommon.add_orderid_arguments(parser, required=False)
+    #parser=jgtcommon.add_orderid_arguments(parser, required=False)
     parser=jgtcommon.add_lots_arguments(parser,default_value=-1)
     
     parser=jgtcommon.add_account_arguments(parser)    
@@ -163,8 +163,8 @@ def main():
     verbose=args.verbose
     
     str_trade_id = args.tradeid if args.tradeid else None
-    if str_trade_id is None and args.orderid:
-        str_trade_id = args.orderid #support using -id
+    # if str_trade_id is None and args.orderid:
+    #     str_trade_id = args.orderid #support using -id
     quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     str_session_id = ""
