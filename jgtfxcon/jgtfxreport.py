@@ -66,6 +66,9 @@ def parse_args():
     report_name_groups.add_argument('-P', '--report_fullname', metavar="FULLNAME", default=None,
                         help='The report full name.')
     #args = parser.parse_args()
+    
+    #--no_tlid
+    parser.add_argument('--no-tlid','--no_tlid', action='store_true',help='Do not use TLID in the report name')
     args=jgtcommon.parse_args(parser)
 
     return args
@@ -81,11 +84,14 @@ def month_delta(date, delta):
 report_format = "html"
 report_basename=None
 report_fullname=None
+no_tlid=False
+
 def get_reports(fc:ForexConnect, dt_from, dt_to):
     global quiet
     global report_format
     global report_basename
     global report_fullname
+    global no_tlid
     accounts_response_reader = fc.get_table_reader(ForexConnect.ACCOUNTS)
     if dt_to is None:
         dt_to = datetime.datetime.today()
@@ -102,13 +108,18 @@ def get_reports(fc:ForexConnect, dt_from, dt_to):
             print("account_id={0:s}; Balance={1:.5f}".format(account.account_id, account.balance))
         #report_url = "Report URL={0:s}\n".format(url)
         print_jsonl_message("Report Generated",extra_dict={"report_url":url},scope="fxreport")
-        report_basename = f"{FXREPORT_FILE_PREFIX}{account.account_id}" if report_basename is None else report_basename
+        #FXREPORT_FILE_PREFIX
+        if report_basename is None:
+            report_basename = f"{FXREPORT_FILE_PREFIX}{account.account_id}" if report_basename is None else report_basename
         
+        tlid_suffix = f"__{tlid.get_minutes()}" if not no_tlid else ""
         if report_fullname is None:
-            fn = f"{report_basename}__{tlid.get_minutes()}.{report_format}"
+            _fn = f"{report_basename}{tlid_suffix}.{report_format}"
+            fn=_fn.replace(f".{report_format}.{report_format}",f".{report_format}")
+            file_name = mkfn_cfxdata_filepath(fn) #os.path.join(os.getcwd())
         else:
-            fn = report_fullname
-        file_name = mkfn_cfxdata_filepath(fn) #os.path.join(os.getcwd())
+            fn = report_fullname.replace(f".{report_format}.{report_format}",f".{report_format}")
+            file_name=fn #We assume a full path was given
         
         if not quiet:print("Connecting...")
         response = urlopen(url)
@@ -136,11 +147,13 @@ def main():
     global report_basename
     global report_fullname
     global fx
+    global no_tlid
     
     args = parse_args()
     quiet=args.quiet
     report_basename=args.report_basename if args.report_basename else None
     report_fullname=args.report_fullname if args.report_fullname else None
+    no_tlid=args.no_tlid if args.no_tlid else False
     report_format=args.report_format
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     
