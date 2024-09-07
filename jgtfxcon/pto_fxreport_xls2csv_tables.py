@@ -17,7 +17,8 @@ def _parse_args(from_jgt_env=True):
     return args
 
 def main():
-    args=_parse_args()
+    from_jgt_env=True
+    args=_parse_args(from_jgt_env=from_jgt_env)
     demo=args.demo
     #if "demo" in os.environ and os.environ["demo"]=="1":
     #    demo=True
