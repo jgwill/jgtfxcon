@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jgtfxcon"
-version = "0.6.108"
+version = "0.6.109"
 authors = [{ name = "Guillaume Isabelle", email = "jgi@jgwill.com" }]
 
 description = "PDS Services"
@@ -36,6 +36,8 @@ fxreport = "jgtfxcon.jgtfxreport:main"
 fxaddorder = "jgtfxcon.jgtfxentryorder:main"
 fxrmorder = "jgtfxcon.jgtfxremoveorder:main"
 efxrmorder = "jgtfxcon.jgtfxremoveorder:emain"
+# by implication, rm in context of fx is a remove order request.
+efxrm = "jgtfxcon.jgtfxremoveorder:emain"
 fxtr = "jgtfxcon.jgtfxtransact:main"
 efxtr = "jgtfxcon.jgtfxtransact:emain"
 ifxtr = "jgtfxcon.jgtfxtransact:iemain"
@@ -43,5 +45,8 @@ dkfxcli = "jgtfxcon.dkfxcli:main"
 fxclosebyinstrument = "jgtfxcon.fxclosebyinstrument:main"
 fxrmtrade = "jgtfxcon.fxclosebyinstrument:main"
 fxmvstop = "jgtfxcon.fxchgstop:main"
+efxmvstop = "jgtfxcon.fxchgstop:emain"
+# By implication, mv in context of fx is a stop move request.
+efxmv = "jgtfxcon.fxchgstop:emain"
 fxsubscription = "jgtfxcon.fxsetsubscription:main"
 fxcloselots = "jgtfxcon.fxdevclose_lots:main"
