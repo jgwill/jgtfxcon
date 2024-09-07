@@ -230,7 +230,7 @@ def change_trade(fx, trade):
 def on_each_row(fx, row_data):
     global str_instrument,str_trade_id
     trade = None
-    if str_instrument and row_data.instrument == str_instrument and str_trade_id is None:
+    if str_instrument and row_data.instrument == str_instrument and (str_trade_id is None or str_trade_id == ""):
         #print("Changing trad, row_data:")
         #print(row_data)
         change_trade(fx, row_data)
