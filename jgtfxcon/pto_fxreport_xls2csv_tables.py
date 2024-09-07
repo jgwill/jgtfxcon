@@ -33,7 +33,7 @@ def doit(bn="__REAL",demo=False):
         if not shutil.which("soffice"):
             print("soffice not found in the path. Please install LibreOffice and make sure soffice is in the path before running this script without the XLSX file already created")
         base_dir=os.path.dirname(file_path)
-        subprocess.run(['soffice', '--headless', '--convert-to', 'xlsx', file_path.replace('.xlsx', '.xls'), "--outdir",base_dir])
+        subprocess.run(['soffice', '--headless', '--convert-to', 'xlsx', source_xls, "--outdir",base_dir],check=True)
 
 
 
