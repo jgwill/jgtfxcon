@@ -33,8 +33,8 @@ def doit(bn="__REAL",demo=False):
         arg_demo="--demo" if demo else "--real" 
         subprocess.run(['fxreport',arg_demo,'--no_tlid','-B',bn,'-s',dt_from_last_week_as_string_fxformat(),'-F','xls'],check=True)
     
-        print(f"File {file_path} does not exist. Run soffice --headless --convert-to xlsx {file_path.replace('.xlsx', '.xls')} {file_path}")
-        print("Trying to run it for us !")
+    if not os.path.exists(file_path):            
+        print(f"Converting File: {source_xls} -> {file_path}")
         #check if soffice is in the path
         if not shutil.which("soffice"):
             print("soffice not found in the path. Please install LibreOffice and make sure soffice is in the path before running this script without the XLSX file already created")
