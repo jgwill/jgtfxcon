@@ -52,11 +52,11 @@ APP_SCOPE = "fxchgstop"
 def parse_args():
     parser = jgtcommon.new_parser("JGT FX MV Trade Stop CLI", "Change stop order of trade by id on FXConnect", "fxmvstop")
     
-    parser=jgtcommon.add_demo_flag_argument(parser)
-    parser=jgtcommon.add_instrument_standalone_argument(parser,required=False)
-    parser=jgtcommon.add_orderid_arguments(parser,required=False)
-    parser=jgtcommon.add_tradeid_arguments(parser,required=False)
-    parser=jgtcommon.add_stop_arguments(parser,pips_flag=True)
+    parser=jgtcommon.add_demo_flag_argument(parser,from_jgt_env=from_jgt_env)
+    parser=jgtcommon.add_instrument_standalone_argument(parser,required=False,from_jgt_env=from_jgt_env)
+    #parser=jgtcommon.add_orderid_arguments(parser,required=False,from_jgt_env=from_jgt_env)
+    parser=jgtcommon.add_tradeid_arguments(parser,required=False,from_jgt_env=from_jgt_env)
+    parser=jgtcommon.add_stop_arguments(parser,pips_flag=True,from_jgt_env=from_jgt_env)
     parser=jgtcommon.add_account_arguments(parser,required=False)
     parser=jgtcommon.add_verbose_argument(parser)
     
@@ -269,8 +269,8 @@ def main():
     pips_flag=args.pips if args.pips else False
     
     str_trade_id = args.tradeid if args.tradeid else None
-    if str_trade_id is None and args.orderid:
-        str_trade_id = args.orderid #support using -id
+    # if str_trade_id is None and args.orderid:
+    #     str_trade_id = args.orderid #support using -id
     if str_trade_id is None:
         print("Trade ID must be specified")
         return
