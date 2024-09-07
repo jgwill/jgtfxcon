@@ -22,11 +22,16 @@ import sys
 
 from jgtutils.jgtclihelper import print_jsonl_message
 
+import forexconnect
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from jgtutils import jgtconstants as constants
 
 from jgtutils import jgtos, jgtcommon, jgtpov
+from jgtcommon import is_market_open
+from jgterrorcodes import MARKET_CLOSED_EXIT_ERROR_CODE
+
 import tlid
 from jgtutils.FXTransact import FXREPORT_FILE_PREFIX
 from jgtutils.jgtfxhelper import mkfn_cfxdata_filepath
@@ -40,7 +45,7 @@ from forexconnect import ForexConnect
 import common_samples
 
 quiet=True
-
+fx=None
 def parse_args():
     parser = jgtcommon.new_parser("JGT FX Report CLI", "Obtain a report from FXConnect", "fxreport",add_exiting_quietly_flag=True)
     parser=jgtcommon.add_demo_flag_argument(parser)
@@ -130,6 +135,7 @@ def main():
     global report_format
     global report_basename
     global report_fullname
+    global fx
     
     args = parse_args()
     quiet=args.quiet
@@ -151,14 +157,43 @@ def main():
             
             get_reports(fx, date_from, date_to)
 
+        except forexconnect.errors.LoginFailedError as e:
+            
+            if not is_market_open(None):
+                print(f"Market is closed. Exiting. (error code should be {MARKET_CLOSED_EXIT_ERROR_CODE} but its 89)")
+                sys.exit(MARKET_CLOSED_EXIT_ERROR_CODE)
+            #_exit_clean_on_market_closed()
         except Exception as e:
-            common_samples.print_exception(e)
+            handle_exception(e)
         try:
             fx.logout()
         except Exception as e:
-            common_samples.print_exception(e)
+            handle_exception(e)
 
+def handle_exception(e):
+    #print Exception type
+    _is_market_open=is_market_open(None)
+    
+    print(type(e)) 
+    if  _is_market_open:
+        #we want the exception data to be printed only if the market is closed
+        common_samples.print_exception(e)
+    # _is_market_closed=is_market_open(None,exit_cli_if_closed=False,market_closed_callback=_exit_clean_on_market_closed)
 
+# def _exit_clean_on_market_closed():
+#     global fx
+#     _is_market_open=is_market_open(None)
+#     try:
+#         if fx is not None:
+#             fx.logout()
+#     except Exception as e:
+#         common_samples.print_exception(e)
+#         pass
+    
+#     if not is_market_open:
+#         print("Market is closed. Exiting.")
+#         sys.exit(MARKET_CLOSED_EXIT_ERROR_CODE)
+    
 if __name__ == "__main__":
     main()
     print("")
