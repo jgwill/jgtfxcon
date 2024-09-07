@@ -49,7 +49,7 @@ fxtrades:FXTrades=FXTrades()
 FXTRADE_DEBUG_FLAG=True
 APP_SCOPE = "fxchgstop"
  
-def parse_args():
+def parse_args(from_jgt_env=False):
     parser = jgtcommon.new_parser("JGT FX MV Trade Stop CLI", "Change stop order of trade by id on FXConnect", "fxmvstop",add_exiting_quietly_flag=False)
     
     parser=jgtcommon.add_demo_flag_argument(parser,from_jgt_env=from_jgt_env)
@@ -249,15 +249,20 @@ def check_trades(fx, table_manager, account_id):
         for row in orders_table:
             on_each_row(fx, row)
 
-
 def main():
+    doit(False)
+
+def emain():
+    doit(True)
+    
+def doit(from_jgt_env=False):
     global str_account
     global str_instrument
     global str_stop
     global str_trade_id
     global pips_flag
 
-    args = parse_args()
+    args = parse_args(from_jgt_env)
     quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     str_session_id = ""

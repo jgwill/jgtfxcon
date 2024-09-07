@@ -37,15 +37,18 @@ import common_samples
 
 import json
 
-def parse_args():
+def parse_args(from_jgt_env=False,instrument_from_jgt_env=False):
     parser = jgtcommon.new_parser("JGT FX Transact CLI", "List and hopefully manage trade and order on FXConnect", "fxtransact",add_exiting_quietly_flag=True)
     
-    parser=jgtcommon.add_demo_flag_argument(parser)
+    parser=jgtcommon.add_demo_flag_argument(parser,from_jgt_env=from_jgt_env)
     parser=jgtcommon.add_verbose_argument(parser)
-    parser=jgtcommon.add_instrument_standalone_argument(parser,required=False)
-    parser=jgtcommon.add_orderid_arguments(parser,required=False)
-    parser=jgtcommon.add_tradeid_arguments(parser,required=False)
+    parser=jgtcommon.add_instrument_standalone_argument(parser,required=False,from_jgt_env=instrument_from_jgt_env)
+    parser=jgtcommon.add_orderid_arguments(parser,required=False,from_jgt_env=from_jgt_env)
+    parser=jgtcommon.add_tradeid_arguments(parser,required=False,from_jgt_env=from_jgt_env)
     parser=jgtcommon.add_account_arguments(parser,required=False)
+    
+    # parser.add_argument('-E','--bypass_env', required=False,
+    #                     help='Bypass the from environment filtering with order_id,trade_id.', action='store_true')
     
     parser.add_argument('-table',
                         metavar="TABLE",
@@ -200,10 +203,18 @@ def parse_trades(table_manager, account_id,quiet=True)->FXTrades:
                 trade_data.tojsonfile()
         return trades
 
-
 def main():
+    doit()
+
+def emain():
+    doit(True)
+
+def iemain():
+    doit(True,True)
+
+def doit(from_jgt_env=False,instrument_from_jgt_env=False):
     global str_order_id, str_instrument,str_trade_id,quiet
-    args = parse_args()
+    args = parse_args(from_jgt_env, instrument_from_jgt_env)
     quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     str_session_id = ""
@@ -214,6 +225,11 @@ def main():
         str_order_id=str_trade_id #@STCIssue Fix not working for trades
     str_instrument=args.instrument if args.instrument else None
     save_flag=True if args.save else False
+    
+    #bypass_env
+    # if args.bypass_env:
+    #     str_order_id=None
+    #     str_trade_id=None
     
     str_table = args.table
 

@@ -39,13 +39,13 @@ RAISE_EXCEPTION_ON_ORDER_NOT_FOUND = False
 
 
 
-def parse_args():
-    parser = jgtcommon.new_parser("JGT FX RemoveEntry Order CLI", "Remove an Entry order on FXConnect", "fxrmorder")
+def parse_args(from_jgt_env=False):
+    parser = jgtcommon.new_parser("JGT FX RemoveEntry Order CLI", "Remove an Entry order on FXConnect", "fxrmorder",add_exiting_quietly_flag=True)
     
-    parser=jgtcommon.add_demo_flag_argument(parser)
+    parser=jgtcommon.add_demo_flag_argument(parser,from_jgt_env=from_jgt_env)
 
     # specific arguments
-    parser=jgtcommon.add_orderid_arguments(parser)
+    parser=jgtcommon.add_orderid_arguments(parser,from_jgt_env=from_jgt_env)
     
     parser=jgtcommon.add_verbose_argument(parser)
 
@@ -90,7 +90,13 @@ class OrdersMonitor:
 
 
 def main():
-    args = parse_args()
+    doit(False)
+
+def emain():
+    doit(True)
+    
+def doit(from_jgt_env=False):
+    args = parse_args(from_jgt_env)
     quiet=args.quiet
     str_user_id,str_password,str_url, str_connection,str_account = jgtcommon.read_fx_str_from_config(demo=args.demo)
     str_session_id = ""
