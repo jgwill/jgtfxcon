@@ -5,15 +5,24 @@ import os
 import sys
 import subprocess
 
+from jgtutils.jgtcommon import new_parser, parse_args,add_demo_flag_argument
 from jgtutils.jgtos import mkfn_cdata_filepath
 
+def _parse_args(from_jgt_env=True):
+    parser = new_parser("JGT FX Report Transformer CLI", "Transform FX report XLSX to CSV tables", "fxreport2csv")
+    parser=add_demo_flag_argument(parser,from_jgt_env=from_jgt_env)
+    
+    
+    args=parse_args(parser)
+    return args
 
 def main():
-    demo=False
-    if "demo" in os.environ and os.environ["demo"]=="1":
-        demo=True
+    args=_parse_args()
+    demo=args.demo
+    #if "demo" in os.environ and os.environ["demo"]=="1":
+    #    demo=True
     
-    doit()
+    doit(demo=demo)
 
 def doit(bn="__REAL",demo=False):
 
