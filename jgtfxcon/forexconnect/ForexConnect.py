@@ -161,6 +161,10 @@ class ForexConnect:
 
         if not status_connect:
             if self._status_listener.last_error:
+                # from jgtutils.jgtcommon import is_market_open
+                # from jgtutils.jgterrorcodes import MARKET_CLOSED_EXIT_ERROR_CODE
+                # #if market is closed, we can't login and we will exit with our error code
+                # _is_market_open=is_market_open(None,exit_cli_if_closed=True)
                 raise LoginFailedError(self._status_listener.last_error)
             else:
                 raise LoginFailedError("Not connected")
