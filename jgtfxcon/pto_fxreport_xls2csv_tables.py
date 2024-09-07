@@ -69,10 +69,11 @@ def doit(bn="__REAL",demo=False):
             if table is None:
                 alt_endding_kw="No data found for the statement period"
                 table = _extract_table(df, header_keyword, alt_endding_kw)
-                print(header_keyword)
-                print(table)
+                #print(header_keyword)
+                #print(table)
             else:
-                print("We got it the first time:",header_keyword)
+                #print("We got it the first time:",header_keyword)
+                pass
             if table is None:return pd.DataFrame()
             
             return table
@@ -103,13 +104,13 @@ def doit(bn="__REAL",demo=False):
             
             # Trim df from our end_idx
             extracted_table = table.copy()
-            print(table.columns)
+            #print(table.columns)
             df.drop(df.index[0:end_idx+1], inplace=True)
             df.reset_index(drop=True, inplace=True)
             ldf = len(df)
-            print("head", df.head(1))
-            print("tail", df.tail(1))
-            print("columns:",table.columns)
+            #print("head", df.head(1))
+            #print("tail", df.tail(1))
+            #print("columns:",table.columns)
             return extracted_table  # Return the extracted table
         except IndexError as e:
             print(f"Error: {e}")
