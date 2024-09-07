@@ -38,7 +38,7 @@ import common_samples
 import json
 
 def parse_args():
-    parser = jgtcommon.new_parser("JGT FX Transact CLI", "List and hopefully manage trade and order on FXConnect", "fxtransact")
+    parser = jgtcommon.new_parser("JGT FX Transact CLI", "List and hopefully manage trade and order on FXConnect", "fxtransact",add_exiting_quietly_flag=True)
     
     parser=jgtcommon.add_demo_flag_argument(parser)
     parser=jgtcommon.add_verbose_argument(parser)

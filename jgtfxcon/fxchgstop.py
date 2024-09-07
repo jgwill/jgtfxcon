@@ -50,7 +50,7 @@ FXTRADE_DEBUG_FLAG=True
 APP_SCOPE = "fxchgstop"
  
 def parse_args():
-    parser = jgtcommon.new_parser("JGT FX MV Trade Stop CLI", "Change stop order of trade by id on FXConnect", "fxmvstop")
+    parser = jgtcommon.new_parser("JGT FX MV Trade Stop CLI", "Change stop order of trade by id on FXConnect", "fxmvstop",add_exiting_quietly_flag=False)
     
     parser=jgtcommon.add_demo_flag_argument(parser,from_jgt_env=from_jgt_env)
     parser=jgtcommon.add_instrument_standalone_argument(parser,required=False,from_jgt_env=from_jgt_env)

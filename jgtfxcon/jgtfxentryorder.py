@@ -42,7 +42,7 @@ g_stop = None
 g_order_id = None
 
 def parse_args():
-    parser = jgtcommon.new_parser("JGT FX CreateEntryStop Order CLI", "Create an EntryStop order on FXConnect", "fxaddorder")
+    parser = jgtcommon.new_parser("JGT FX CreateEntryStop Order CLI", "Create an EntryStop order on FXConnect", "fxaddorder",add_exiting_quietly_flag=True)
     parser=jgtcommon.add_demo_flag_argument(parser)
     #parser=jgtcommon.add_rate_arguments(parser)
     #parser=jgtcommon.add_stop_arguments(parser)

@@ -45,7 +45,7 @@ current_status = None
 
 
 def parse_args():
-    parser = jgtcommon.new_parser("JGT FX SetSubscription for Instrument", "Deals with Instrument subscription", "fxsetsubscription")
+    parser = jgtcommon.new_parser("JGT FX SetSubscription for Instrument", "Deals with Instrument subscription", "fxsetsubscription",add_exiting_quietly_flag=True)
     parser=jgtcommon.add_demo_flag_argument(parser)
     parser=jgtcommon.add_instrument_standalone_argument(parser,required=True)
     
