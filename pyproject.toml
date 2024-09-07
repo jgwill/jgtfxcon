@@ -17,6 +17,7 @@ dependencies = [
   'jgtfx2console>=0.5.13',
   'tlid',
   'flask',
+  'openpyxl',
 ]
 classifiers = [
   "Programming Language :: Python :: 3",
