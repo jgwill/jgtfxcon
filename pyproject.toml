@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jgtfxcon"
-version = "0.6.114"
+version = "0.6.115"
 authors = [{ name = "Guillaume Isabelle", email = "jgi@jgwill.com" }]
 
 description = "PDS Services"
@@ -33,7 +33,7 @@ classifiers = [
 [project.scripts]
 
 jgtfxcli = "jgtfxcon.jgtfxcli:main"
-pdscld = "jgtfxcon.jgtfxcli:main"
+pdscli = "jgtfxcon.jgtfxcli:main"
 fxreport = "jgtfxcon.jgtfxreport:main"
 #pto_fxreport_xls2csv_tables.py
 fxreport2csv = "jgtfxcon.pto_fxreport_xls2csv_tables:main"
