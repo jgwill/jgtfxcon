@@ -1,137 +1,50 @@
 # LLMS.txt for jgtfxcon
-# FX Connectivity and Market Data Retrieval Package
+# FX Connectivity - Market Data Provider
 
-GET /README.md
+## Platform Role
+jgtfxcon provides market data to the JGT platform. It's a simple data provider that sits between the platform and market data sources.
 
-## Package Purpose
-jgtfxcon provides FX connectivity and market data retrieval for the JGT platform. It serves as the bridge between the trading platform and market data providers, handling price history retrieval, real-time data feeds, and trade execution connectivity.
+## Core Function
+**getPH()** - Price History retrieval. That's it.
 
-## Core Capabilities
-
-### Market Data Retrieval
-- **getPH()** - Primary function for retrieving price history data
-- **Connection Management** - Automatic connection handling and disconnection
-- **Multi-Timeframe Support** - All standard forex timeframes (m1 to M1)
-- **File Storage Integration** - Automatic saving to JGTPY_DATA/pds structure
-
-### CLI Interface (jgtfxcli)
-```bash
-# Basic price history retrieval
-jgtfxcli -i EUR/USD -t H4 -c 500
-
-# Full data retrieval with specific quote count
-jgtfxcli -i SPX500 -t D1 --full -c 1000
-
-# Multi-timeframe batch retrieval
-jgtfxcli -i "EUR/USD" -t "H1,H4,H8,D1,W1,M1" -c 500
+## Platform Integration
+```
+jgtpy (IDS/CDS generation) → calls jgtfxcon for fresh data → stores in PDS files
 ```
 
-### Python API
+### Used by jgtpy
+- `cdscli.py` and `jgtcli.py` call jgtfxcon when fresh data needed
+- Automatic data refresh when cache is invalid
+- Simple subprocess calls to jgtfxcli
+
+## CLI Usage (jgtfxcli)
+```bash
+# Basic usage in platform
+jgtfxcli -i EUR/USD -t H4 -c 500
+
+# Full data storage
+jgtfxcli -i SPX500 -t D1 --full -c 1000
+```
+
+## Python API
 ```python
 import jgtfxcon
 
 # Simple data retrieval
 df = jgtfxcon.h('EUR/USD', 'H4', 400)
-
-# Advanced usage with custom parameters
-df = jgtfxcon.getPH('SPX500', 'D1', quote_count=1000, quiet=True)
-
-# Connection management
-jgtfxcon.on()     # Connect
-jgtfxcon.off()    # Disconnect
-jgtfxcon.status() # Check connection status
 ```
 
-## Integration with JGT Platform
-
-### Data Pipeline Role
-jgtfxcon sits at the beginning of the JGT data pipeline:
-```
-Market Providers → jgtfxcon → PDS Files → jgtpy (IDS) → jgtml (Signals)
-```
-
-### Used by Other Packages
-- **jgtpy**: Calls jgtfxcon for fresh market data when cache is invalid
-- **jgtml**: Indirectly uses jgtfxcon through jgtpy for signal scanning
-- **jgtapp**: Uses jgtfxcon CLI commands for data refresh operations
-
-### File Storage Structure
-```
-$JGTPY_DATA/pds/           # Standard data storage
-$JGTPY_DATA_FULL/pds/      # Full historical data storage
-```
-
-## Key Components
-
-### Core Modules
-- **JGTPDS.py** - Price Data Service implementation
-- **JGTPDSSvc.py** - Service layer for batch operations
-- **jgtfxcli.py** - Command-line interface
-- **jgtfxcommon.py** - Common utilities and connection handling
-
-### Configuration
-- **Connection Settings** - Via environment variables and config files
-- **Data Paths** - Configurable through JGTPY_DATA environment variables
-- **Keep Bid/Ask** - Optional retention of bid/ask spread data
-
-## Command Line Arguments
-
-### Essential Flags
-- `-i, --instrument` - Trading instrument (EUR/USD, SPX500, etc.)
-- `-t, --timeframe` - Timeframe (m1, m5, m15, H1, H4, D1, W1, M1)
-- `-c, --quotescount` - Number of bars to retrieve
-- `--full` - Use full data storage path
-- `--keepbidask` - Retain bid/ask columns in data
-
-### Advanced Options
-- `--viewpath` - Display output file path without execution
-- `--compress` - Enable data compression
-- `--dropna-volume` - Remove bars with null volume
-- `--server` - Start PDS server mode (deprecated)
-
-## Data Format
-
-### Standard Columns
-```
-Date, Open, High, Low, Close, Volume
-```
-
-### With Bid/Ask (--keepbidask)
-```
-Date, Bid, Ask, High, Low, Close, Volume
-```
-
-## Platform Integration Examples
-
-### Used in jgtapp.py
-```python
-from jgtutils.jgtcliconstants import PDSCLI_PROG_NAME
-
-# Refresh market data
-subprocess.run([PDSCLI_PROG_NAME, '-i', instrument, '-t', timeframe, '--full'])
-```
-
-### Used in jgtpy workflows
-```python
-# jgtpy calls jgtfxcon when fresh data needed
-if not cache_valid:
-    subprocess.run(['jgtfxcli', '-i', instrument, '-t', timeframe])
-```
+## Data Storage
+- Saves to `$JGTPY_DATA/pds/` (standard) or `$JGTPY_DATA_FULL/pds/` (full)
+- Standard CSV format: Date, Open, High, Low, Close, Volume
 
 ## Development State
-- **Status**: Production-ready and stable
-- **Primary Use**: Market data retrieval for JGT platform
-- **Dependencies**: ForexConnect library (Linux preferred)
-- **Maintenance**: Regular updates for new instruments and timeframes
-
-## Error Handling
-- **Connection Failures** - Automatic retry logic
-- **Data Validation** - Checks for complete bar data
-- **File System** - Creates necessary directories automatically
-- **Exit Codes** - Proper error reporting for CLI integration
+- Production-ready
+- Stable dependency for jgtpy data services
+- Primary purpose: data connectivity, not analysis
 
 ---
 
-*jgtfxcon is the foundational data connectivity layer that enables the entire JGT platform's market analysis and trading capabilities.*
+*jgtfxcon: Simple market data provider for JGT platform*
 
 
