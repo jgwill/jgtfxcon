@@ -12,14 +12,24 @@ This directory contains RISE-compliant specifications for JGTfxcon - the ForexCo
 
 ## Specification Map
 
+| Spec File | CLI Command | Module | Status |
+|-----------|-------------|--------|--------|
+| [`app.specs.md`](./app.specs.md) | - | Master Overview | ✅ |
+| [`pds.spec.md`](./pds.spec.md) | - | JGTPDS.py (core) | ✅ |
+| [`jgtfxcli.spec.md`](./jgtfxcli.spec.md) | `jgtfxcli` | Price data CLI + Service | ✅ |
+| [`fxtransact.spec.md`](./fxtransact.spec.md) | `fxtr` | Orders/trades viewer | ✅ |
+| [`fxaddorder.spec.md`](./fxaddorder.spec.md) | `fxaddorder` | Entry order creation | ✅ |
+| [`fxrmorder.spec.md`](./fxrmorder.spec.md) | `fxrmorder` | Order deletion | ✅ |
+| [`fxreport.spec.md`](./fxreport.spec.md) | `fxreport` | Trade reports | ✅ |
+
 ```
 app.specs.md                    ← Master specification (start here)
 ├── pds.spec.md                 ← Price Data Service (OHLCV fetching)
-├── fxcli.spec.md               ← CLI for price data operations
-├── fxtransact.spec.md          ← Order creation and management
-├── fxentryorder.spec.md        ← Entry order logic
-├── fxreport.spec.md            ← Trade reporting
-└── config.spec.md              ← Broker configuration
+├── jgtfxcli.spec.md            ← CLI for price data + JGTPDSSvc
+├── fxtransact.spec.md          ← Orders/trades viewing (fxtr)
+├── fxaddorder.spec.md          ← Entry order creation
+├── fxrmorder.spec.md           ← Order deletion
+└── fxreport.spec.md            ← Trade reporting
 ```
 
 ## RISE Framework Compliance
