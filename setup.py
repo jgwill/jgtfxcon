@@ -4,8 +4,22 @@ jgtfxcon
 """
 
 from setuptools import find_packages, setup
+import re
+from pathlib import Path
 
-from jgtfxcon import version
+def read_version():
+    """Read version from __init__.py without importing."""
+    init_file = Path(__file__).parent / "jgtfxcon" / "__init__.py"
+    if not init_file.exists():
+        return "0.0.0"
+    content = init_file.read_text()
+    # Look for version = '...' pattern
+    match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', content)
+    if match:
+        return match.group(1)
+    return "0.0.0"
+
+version = read_version()
 
 
 INSTALL_REQUIRES = [
