@@ -6,7 +6,7 @@ import pathlib
 from pathlib import Path
 import pandas as pd
 
-version='0.5.64'
+version='0.5.65'
 
 from datetime import datetime
 from datetime import timedelta
