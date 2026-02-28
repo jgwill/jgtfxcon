@@ -62,7 +62,7 @@ dist:
 .PHONY: pypi-release
 pypi-release:
 	twine --version
-	twine upload -s dist/*
+	twine upload dist/*
 
 .PHONY: release
 release:
