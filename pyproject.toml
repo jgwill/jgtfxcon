@@ -35,5 +35,7 @@ fxreport = "jgtfxcon.jgtfxreport:main"
 fxaddorder = "jgtfxcon.jgtfxentryorder:main"
 fxrmorder = "jgtfxcon.jgtfxremoveorder:main"
 fxtr = "jgtfxcon.jgtfxtransact:main"
+fxopen = "jgtfxcon.jgtfxmarketopen:main"
+fxclose = "jgtfxcon.jgtfxclose:main"
 dkfxcli = "jgtfxcon.dkfxcli:main"
 
