@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jgtfxcon"
-version = "0.6.115"
+version = "0.6.125"
 authors = [{ name = "Guillaume Isabelle", email = "jgi@jgwill.com" }]
 
 description = "PDS Services"
@@ -13,8 +13,8 @@ requires-python = ">=3.7"
 dependencies = [
   'pandas>=0.25.1',
   'python-dotenv>=0.19.2',
-  'jgtutils>=0.2.208',
-  'jgtfx2console>=0.5.13',
+  'jgtutils>=0.2.218',
+  'jgtfx2console>=0.5.15',
   'tlid',
   'flask',
   'openpyxl',

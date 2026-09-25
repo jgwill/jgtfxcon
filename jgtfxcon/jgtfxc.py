@@ -95,6 +95,7 @@ def login_forexconnect(user_id, password, url, connection, quiet=False):
         #session_status= jgtfxcommon.get_connection_status()
     except Exception as e:
         jgtfxcommon.print_exception(e)
+        print(f'Current user id: {user_id}')
         print("------bahhhhhhhhhhhh----------")
     return fx
 _config=None
@@ -115,6 +116,8 @@ def connect(quiet=True,json_config_str=None):
     str_url = _config['url']
     str_connection = _config['connection']
     quotes_count = _config['quotes_count']
+    #print(_config)
+
     
 
     fx = login_forexconnect(str_user_id, str_password, str_url, str_connection,quiet=quiet)
