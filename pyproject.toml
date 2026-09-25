@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jgtfxcon"
-version = "0.6.125"
+version = "0.7.0"
 authors = [{ name = "Guillaume Isabelle", email = "jgi@jgwill.com" }]
 
 description = "PDS Services"
@@ -13,7 +13,7 @@ requires-python = ">=3.7"
 dependencies = [
   'pandas>=0.25.1',
   'python-dotenv>=0.19.2',
-  'jgtutils>=0.2.218',
+  'jgtutils>=1.0.30',
   'jgtfx2console>=0.5.15',
   'tlid',
   'flask',
@@ -45,6 +45,8 @@ efxrm = "jgtfxcon.jgtfxremoveorder:emain"
 fxtr = "jgtfxcon.jgtfxtransact:main"
 efxtr = "jgtfxcon.jgtfxtransact:emain"
 ifxtr = "jgtfxcon.jgtfxtransact:iemain"
+fxopen = "jgtfxcon.jgtfxmarketopen:main"
+fxclose = "jgtfxcon.jgtfxclose:main"
 dkfxcli = "jgtfxcon.dkfxcli:main"
 fxclosebyinstrument = "jgtfxcon.fxclosebyinstrument:main"
 fxrmtrade = "jgtfxcon.fxclosebyinstrument:main"
@@ -54,3 +56,7 @@ efxmvstop = "jgtfxcon.fxchgstop:emain"
 efxmv = "jgtfxcon.fxchgstop:emain"
 fxsubscription = "jgtfxcon.fxsetsubscription:main"
 fxcloselots = "jgtfxcon.fxdevclose_lots:main"
+
+[tool.setuptools.package-data]
+# ForexConnect's Linux runtime ships inside the wheel, as it did through 0.6.125
+"jgtfxcon.forexconnect.lib.linux" = ["*.so", "*.so.*", "requirements.txt"]

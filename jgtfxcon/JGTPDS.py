@@ -231,6 +231,34 @@ def getPH2file(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=No
 
 
 #getPH(instrument,timeframe,quote_count,start,end,False,quiet,tlid_range)
+_QUOTE_COLUMNS = ['BidOpen','BidHigh','BidLow','BidClose','AskOpen','AskHigh','AskLow','AskClose']
+
+def _refuse_placeholder_candles(df):
+  """Refuse FXCM placeholder candles: all eight bid/ask quotes exactly 1.0.
+
+  ForexConnect sometimes answers a candle that way with the real volume kept:
+  the bar that just closed at the 21:00 UTC rollover, and the oldest rows of a
+  window fetched after the Friday close. No market quotes 1.0 on all eight
+  fields, so the test is by value with no threshold.
+
+  A placeholder in the last two rows (the bar that just closed, the forming
+  bar) cuts the frame there, so a forming bar is never written after a hole
+  and the next fetch brings the real bar. Any other placeholder is dropped.
+  """
+  if df.empty:
+    return df
+  placeholder = (df[_QUOTE_COLUMNS].astype(float) == 1.0).all(axis=1).to_numpy()
+  if not placeholder.any():
+    return df
+  keep = ~placeholder
+  edge = [i for i in range(max(0, len(df) - 2), len(df)) if placeholder[i]]
+  if edge:
+    keep[edge[0]:] = False
+  print(f"jgtfxcon: refused {int(placeholder.sum())} placeholder candles (all quotes 1.0), "
+        f"{int((~keep).sum())} rows left out, first {df['Date'].iloc[placeholder.argmax()]}", file=sys.stderr)
+  return df.loc[keep].reset_index(drop=True)
+
+
 def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,with_index=True,quiet=True,tlid_range=None, rounding_nb=10,use_full=False,default_quote_count = 335,default_add_quote_count = 89,keep_bid_ask=False,dropna_volume=True)->pd.DataFrame:
   """Get Price History from Broker
 
@@ -296,6 +324,7 @@ def getPH(instrument:str,timeframe:str,quote_count:int=-1,start=None,end=None,wi
     #print(p)
 
     df=pd.DataFrame(p,columns=['Date','BidOpen','BidHigh','BidLow','BidClose','AskOpen','AskHigh','AskLow','AskClose','Volume'])
+    df=_refuse_placeholder_candles(df)
 
     if not stayConnected:
       con=disconnect(quiet=quiet)

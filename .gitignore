@@ -163,3 +163,4 @@ tests/test_settings_01_spec_instrument_timeframe/.jgt/settings_sample.yml
 *.pdf
 .hch/
 zarch/
+rispecs/.hch/

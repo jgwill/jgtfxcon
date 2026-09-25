@@ -1,0 +1,50 @@
+# LLMS.txt for jgtfxcon
+# FX Connectivity - Market Data Provider
+
+## Platform Role
+jgtfxcon provides market data to the JGT platform. It's a simple data provider that sits between the platform and market data sources.
+
+## Core Function
+**getPH()** - Price History retrieval. That's it.
+
+## Platform Integration
+```
+jgtpy (IDS/CDS generation) → calls jgtfxcon for fresh data → stores in PDS files
+```
+
+### Used by jgtpy
+- `cdscli.py` and `jgtcli.py` call jgtfxcon when fresh data needed
+- Automatic data refresh when cache is invalid
+- Simple subprocess calls to jgtfxcli
+
+## CLI Usage (jgtfxcli)
+```bash
+# Basic usage in platform
+jgtfxcli -i EUR/USD -t H4 -c 500
+
+# Full data storage
+jgtfxcli -i SPX500 -t D1 --full -c 1000
+```
+
+## Python API
+```python
+import jgtfxcon
+
+# Simple data retrieval
+df = jgtfxcon.h('EUR/USD', 'H4', 400)
+```
+
+## Data Storage
+- Saves to `$JGTPY_DATA/pds/` (standard) or `$JGTPY_DATA_FULL/pds/` (full)
+- Standard CSV format: Date, Open, High, Low, Close, Volume
+
+## Development State
+- Production-ready
+- Stable dependency for jgtpy data services
+- Primary purpose: data connectivity, not analysis
+
+---
+
+*jgtfxcon: Simple market data provider for JGT platform*
+
+
